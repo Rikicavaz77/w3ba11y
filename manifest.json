@@ -1,0 +1,16 @@
+{
+  "name": "w3ba11y",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["activeTab", "scripting", "tabs", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {},
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["main.js", "status.js", "img/img.js", "img/finder.js", "img/interface.js", "img/base.js"]
+    }
+  ]
+}
