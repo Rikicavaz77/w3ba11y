@@ -39,6 +39,6 @@ function injectCustomDOM(documentHTML) {
   shadowRoot.appendChild(documentHTML);
 
   const styleElement = document.createElement('style');
-  styleElement.textContent = `.highlight { border: 4px solid red; }`;
+  styleElement.textContent = `.highlight { border: 4px solid red !important; }`;
   shadowRoot.appendChild(styleElement);
 }
