@@ -9,5 +9,8 @@ chrome.action.onClicked.addListener((tab) => {
               files: [style]
             });
           }
+        else if (message.action === 'insertHTML') {
+            chrome.tabs.sendMessage(tabId, { action: 'insertHTML' });
+        }
     });
 });  

@@ -16,9 +16,9 @@ class Img {
     }
 
     getAltStatusMessage(imgAlt, imgBackgroundImage) {
-        if (imgAlt === null && !imgBackgroundImage) {
+        if (!imgBackgroundImage && (imgAlt === null || imgAlt === '' || imgAlt.length > 100)) {
             return new Status('error', 'Image alt', 'Missing image alt');
-        } else if (imgAlt === '' || imgAlt.length > 75) {
+        } else if (!imgBackgroundImage && imgAlt.length > 75 && imgAlt.length <= 100) {
             return new Status('warning', 'Image alt', 'Empty image alt');
         } else {
             return new Status('correct', 'Image alt', '');
