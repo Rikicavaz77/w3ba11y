@@ -20,29 +20,30 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 function injectCustomDOM(documentHTML) {
   const cssVariablesStyle = extractAndCreateCSSVariablesStyle();
 
-  // Create the new HTML structure
   const newHTML = `
     <!DOCTYPE html>
     <html lang="en">
       <head>
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
       </head>
-      <body style="display:flex;">
-        <aside class="cc" style="width:25%;"></aside>
-        <main style="width:75%; contain: layout;"></main>
+      <body>
+        <aside>
+          <header class="w3ba11y__header">
+            <img src="${chrome.runtime.getURL('/static/img/logo.png')}" alt="Logo" width="100px">
+            <h1>w3ba11y</h1>
+          </header>
+        </aside>
+        <main></main>
       </body>
     </html>
   `;
 
-  // Replace the current document's HTML with the new HTML structure
   document.documentElement.innerHTML = newHTML;
 
-  // Select the main element and attach a shadow root
   const main = document.querySelector('main');
   const shadowRoot = main.attachShadow({ mode: 'open' });
   shadowRoot.appendChild(documentHTML);
 
-  // Append the CSS variables and custom styles to the shadow root
   appendStylesToShadowRoot(shadowRoot, cssVariablesStyle, createCustomStyles());
 }
 

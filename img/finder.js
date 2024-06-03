@@ -58,7 +58,7 @@ function getImgAll(doc) {
           const fileName = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
           let memorySize = getEstimatedMemorySize(img.naturalWidth, img.naturalHeight, fileName);
           try {
-              const response = await fetch(src, { method: 'HEAD' });
+              const response = await fetch(src, { method: 'HEAD', mode: 'no-cors'});
               if (response.ok) {
                   const contentLength = response.headers.get('Content-Length');
                   if (contentLength) {
@@ -77,7 +77,6 @@ function getImgAll(doc) {
                   alt: isBackground ? null : node.alt || '',
                   backgroundImage: isBackground,
                   id: node.id || '',
-                  classes: node.className || '',
               });
           };
           img.onerror = reject;

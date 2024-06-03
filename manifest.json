@@ -12,5 +12,11 @@
       "matches": ["<all_urls>"],
       "js": ["main.js", "status.js", "img/img.js", "img/finder.js", "img/interface.js", "img/base.js"]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["static/img/logo.png"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

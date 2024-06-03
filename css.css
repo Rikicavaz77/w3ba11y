@@ -7,9 +7,11 @@ html {
   margin: 0;
 }
 body {
+  display: flex;
   padding: 0;
   margin: 0;
   height: 100vh;
+  overflow-y: hidden;
 }
 button {
   border: none;
@@ -25,12 +27,69 @@ main {
 
 aside {
   width: 25%;
+  background-color: #d0cee5;
 }
 
 main {
   width: 75%;
+  contain: layout;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 0.063em;
+  height: 0.063em;
+  margin: -0.063em;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+
+.w3ba11y__header {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+
+.w3ba11y__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+
+.section__header {
+  text-align: center;
+}
+.header__tabs {
+  display: flex;
+}
+
+.tab__button {
+  width: 100%;
+  background-color: #d0cee5;
+}
+.tab__button--active {
+  background-color: #f2f1ff;
+}
+
+
+.section__body {
+  background-color: #f2f1ff;
+}
+
+.tab {
+  display: none;
+  padding: .75rem;
+}
+
+.tab--active {
+  display: block;
+}
 
 .ri-arrow-drop-down-line {
   font-size: 36px;
@@ -38,6 +97,8 @@ main {
 }
 .ri-arrow-drop-down-line--rotate {
   rotate: 180deg;
+  border-left: none;
+  border-right: 1px solid #f2f1ff;
 }
 .ri-eye-fill {
   font-size: 18px;
@@ -46,12 +107,6 @@ main {
   font-size: 20px;
   color: rgb(218, 19, 19);
 
-}
-
-.cc {
-  width: 25%;
-  background-color: #f2f1ff;
-  overflow-y: scroll;
 }
 
 .tag {
@@ -65,7 +120,7 @@ main {
   background-color: #ffffff;
 }
 .tag__img {
-  width: 2rem;
+  width: 4.5rem;
   height: auto;
   border: 1px solid black;
 }
@@ -119,4 +174,45 @@ main {
 }
 .status--current {
   border: 2px solid black;
+}
+
+
+.tag__form {
+  padding: .75rem;
+  background-color: #ffffff;
+  margin: .75rem 0;
+  border-radius: 4px;
+}
+
+
+.form__status-bar {
+  display: flex;
+  justify-content: space-around;
+}
+
+.form__label {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: bold;
+}
+
+.form__input--text {
+  width: calc(100% - 1rem);
+  padding: .5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form__input--submit {
+  display: inline-block;
+  padding: .5rem 1rem;
+  background-color: #f2f1ff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form__input--submit:hover {
+  background-color: #d0cee5;
 }
