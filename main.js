@@ -1,20 +1,21 @@
 let originalDocumentHTML = null;
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'run') {
-    if (!originalDocumentHTML) {
-      originalDocumentHTML = document.documentElement.cloneNode(true);
-    } else {
-      location.reload();
-      return;
+window.addEventListener('load', () => {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'run') {
+      if (!originalDocumentHTML) {
+        originalDocumentHTML = document.documentElement.cloneNode(true);
+      } else {
+        location.reload();
+        return;
+      }
+
+      const documentHTML = document.documentElement.cloneNode(true);
+      injectCustomDOM(documentHTML);
+
+      chrome.runtime.sendMessage({ action: "insertCSS", style: "css.css" });
     }
-
-    const documentHTML = document.documentElement.cloneNode(true);
-    injectCustomDOM(documentHTML);
-
-    chrome.runtime.sendMessage({ action: "insertCSS", style: "css.css" });
-    chrome.runtime.sendMessage({ action: "insertHTML" });
-  }
+  });
 });
 
 function injectCustomDOM(documentHTML) {
@@ -42,9 +43,19 @@ function injectCustomDOM(documentHTML) {
 
   const main = document.querySelector('main');
   const shadowRoot = main.attachShadow({ mode: 'open' });
-  shadowRoot.appendChild(documentHTML);
+  const iframe = document.createElement('iframe');
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+  iframe.style.border = 'none';
+  iframe.src = window.location.href;
+  shadowRoot.appendChild(iframe);
 
-  appendStylesToShadowRoot(shadowRoot, cssVariablesStyle, createCustomStyles());
+  appendStylesToShadowRoot(shadowRoot, cssVariablesStyle, createCustomStyles()); //RISOLVERE
+
+  iframe.onload = () => {
+    console.log("Iframe loaded successfully.");
+    chrome.runtime.sendMessage({ action: "insertHTML" });
+  };
 }
 
 function extractAndCreateCSSVariablesStyle() {

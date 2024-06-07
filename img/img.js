@@ -167,6 +167,7 @@ class Img {
                 <header class="tag__header">
                     <img src="${this.getSrc()}" alt="" class="tag__img">
                     <ul class="hlist tag__status">
+                        <li class="hlist">${this.getBackgroundImage() ? "B" : "T"}</li>
                         <li class="hlist"><span class="status status--warning"></span>${this.getTotalWarnings()}</li>
                         <li class="hlist"><span class="status status--error"></span>${this.getTotalErrors()}</li>
                         <li>

@@ -120,12 +120,14 @@ main {
   background-color: #ffffff;
 }
 .tag__img {
-  width: 4.5rem;
+  width: 20%;
   height: auto;
   border: 1px solid black;
 }
 .tag__status {
-  gap: 1.5rem;
+  display: flex;
+  width: 80%;
+  justify-content: space-between;
   margin: .25rem;
 }
 .info__status,

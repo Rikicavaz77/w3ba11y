@@ -6,25 +6,39 @@ function getImgAll(doc) {
   
     function searchDOM(doc) {
       const srcChecker = /url\(\s*?['"]?\s*?(\S+?)\s*?["']?\s*?\)/i;
-      return Array.from(doc.querySelectorAll('*'))
-        .reduce((collection, node) => {
-          let prop = window.getComputedStyle(node, null)
-            .getPropertyValue('background-image');
-          let match = srcChecker.exec(prop);
+    
+      function collectImagesFromNode(node, collection) {
+        let prop = window.getComputedStyle(node, null).getPropertyValue('background-image');
+        let match = srcChecker.exec(prop);
+        if (match) {
+          collection.add({ src: match[1], node, isBackground: true });
+        }
+
+        if (node.style && node.style.backgroundImage) {
+          match = srcChecker.exec(node.style.backgroundImage);
           if (match) {
             collection.add({ src: match[1], node, isBackground: true });
           }
-  
-          if (/^img$/i.test(node.tagName)) {
-            collection.add({ src: node.src, node, isBackground: false });
-          } else if (/^frame$/i.test(node.tagName)) {
-            try {
-              searchDOM(node.contentDocument || node.contentWindow.document)
-                .forEach(img => {
-                  if (img) { collection.add(img); }
-                });
-            } catch (e) {}
-          }
+        }
+    
+        if (/^img$/i.test(node.tagName)) {
+          if (node.src != '') collection.add({ src: node.src, node, isBackground: false });
+          else if (node.dataset.src) collection.add({ src: node.dataset.src, node, isBackground: false });
+        } 
+
+        else if (/^frame$/i.test(node.tagName)) {
+          try {
+            searchDOM(node.contentDocument || node.contentWindow.document)
+              .forEach(img => {
+                if (img) { collection.add(img); }
+              });
+          } catch (e) {}
+        }
+      }
+
+      return Array.from(doc.querySelectorAll('*'))
+        .reduce((collection, node) => {
+          collectImagesFromNode(node, collection);
           return collection;
         }, new Set());
     }
@@ -49,38 +63,46 @@ function getImgAll(doc) {
       return Math.ceil(width * height * bytesPerPixel);
     }
   
-    function loadImg(srcObj, timeout = 500) {
+    function loadImg(srcObj, timeout = 10000) {
       const { src, node, isBackground } = srcObj;
   
-      var imgPromise = new Promise(async (resolve, reject) => {
-          let img = new Image();
+      var imgPromise = new Promise((resolve, reject) => {
           const cleanUrl = src.replace(/[?#].*$/, '');
           const fileName = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
-          let memorySize = getEstimatedMemorySize(img.naturalWidth, img.naturalHeight, fileName);
-          try {
-              const response = await fetch(src, { method: 'HEAD', mode: 'no-cors'});
-              if (response.ok) {
-                  const contentLength = response.headers.get('Content-Length');
-                  if (contentLength) {
-                      memorySize = (parseInt(contentLength, 10) / 1024).toFixed(2);
-                  }
-              }
-          } catch (error) {}
+          let memorySize = 0;
+          const resources = performance.getEntriesByType('resource');
+          const resource = resources.find(res => res.name === src);
   
-          img.onload = () => {
+          if (resource && resource.decodedBodySize) {
+              memorySize = (resource.decodedBodySize / 1024).toFixed(2);
               resolve({
                   node: node,
                   src: src,
-                  width: img.naturalWidth,
-                  height: img.naturalHeight,
-                  memorySize: memorySize === 0 ? (getEstimatedMemorySize(img.naturalWidth, img.naturalHeight, fileName) / 1024).toFixed(2) : memorySize,
+                  width: node.naturalWidth,
+                  height: node.naturalHeight,
+                  memorySize: memorySize,
                   alt: isBackground ? null : node.alt || '',
                   backgroundImage: isBackground,
                   id: node.id || '',
               });
-          };
-          img.onerror = reject;
-          img.src = src;
+          } else {
+              let img = new Image();
+              img.onload = () => {
+                  memorySize = (getEstimatedMemorySize(img.naturalWidth, img.naturalHeight, fileName) / 1024).toFixed(2);
+                  resolve({
+                      node: node,
+                      src: src,
+                      width: img.naturalWidth,
+                      height: img.naturalHeight,
+                      memorySize: memorySize,
+                      alt: isBackground ? null : node.alt || '',
+                      backgroundImage: isBackground,
+                      id: node.id || '',
+                  });
+              };
+              img.onerror = reject;
+              img.src = src;
+          }
       });
   
       var timer = new Promise((resolve, reject) => {
@@ -90,7 +112,7 @@ function getImgAll(doc) {
       return Promise.race([imgPromise, timer]);
   }
   
-    function loadImgAll(imgList, timeout = 500) {
+    function loadImgAll(imgList, timeout = 10000) {
       return new Promise((resolve, reject) => {
         Promise.all(
           imgList

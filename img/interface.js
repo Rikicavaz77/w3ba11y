@@ -31,16 +31,17 @@ function toggleActiveState(elements, activeElement) {
 
 function handleTagElementClick(tagElement, button, images) {
     const shadowRoot = document.querySelector('main').shadowRoot;
+    const iframe = shadowRoot.querySelector('iframe').contentDocument;
     const imgId = tagElement.getAttribute('id');
     const imgObject = images.find(img => img.id === imgId);
 
     if (!imgObject) return;
 
     const handleEyeClick = () => {
-        const imgTag = shadowRoot.getElementById(imgId);
+        const imgTag = iframe.getElementById(imgId);
         imgTag.scrollIntoView();
         images.forEach(img => {
-            shadowRoot.getElementById(img.getTagId()).classList.remove('highlight');
+            iframe.getElementById(img.getTagId()).classList.remove('highlight');
         });
         imgTag.classList.add('highlight');
     };
@@ -141,12 +142,24 @@ function updateImgResults(images) {
 
     const generateStatusHTML = (groupedStatuses, statusType) => {
         return Object.keys(groupedStatuses).map(title => {
-            const statusItems = groupedStatuses[title].map(status => `
+            // Create a map to count occurrences of each message
+            const messageCount = {};
+            groupedStatuses[title].forEach(status => {
+                const message = status.getMessage();
+                if (messageCount[message]) {
+                    messageCount[message]++;
+                } else {
+                    messageCount[message] = 1;
+                }
+            });
+    
+            const statusItems = Object.keys(messageCount).map(message => `
                 <li class="hlist">
-                    ${status.getMessage()}
+                    ${message} (Total: ${messageCount[message]})
                 </li>
             `).join('');
             const count = groupedStatuses[title].length;
+    
             return `
                 <div class="hlist">
                     <span class="status status--${statusType}"></span>
@@ -158,6 +171,7 @@ function updateImgResults(images) {
             `;
         }).join('');
     };
+    
     
     const groupedErrorsHTML = generateStatusHTML(groupedErrors, 'error');
     const groupedWarningsHTML = generateStatusHTML(groupedWarnings, 'warning');

@@ -1,6 +1,9 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action == 'insertHTML') {
-        getImgAll(document.querySelector('main').shadowRoot).then(list => {
+        const main = document.querySelector('main');
+        const shadowRoot = main.shadowRoot;
+        const iframe = shadowRoot.querySelector('iframe').contentDocument;
+        getImgAll(originalDocumentHTML).then(list => {
             const imgInstances = list.map((img, index) => new Img(
                 img.node, 
                 img.src, 
@@ -38,6 +41,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         ${updateImgResults(resolvedInstances)}
                     </div>
                     <div class="tab tab--analysis">
+                        <h4>Legend</h4>
+                        <p>T = Tag Image, B = Background Image</p>
                         ${resolvedInstances.map(img => img.getHTML()).join('\n')}
                     </div>
                 </div>`;
