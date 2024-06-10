@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const main = document.querySelector('main');
         const shadowRoot = main.shadowRoot;
         const iframe = shadowRoot.querySelector('iframe').contentDocument;
-        getImgAll(originalDocumentHTML).then(list => {
+        getImgAll(iframe).then(list => {
             const imgInstances = list.map((img, index) => new Img(
                 img.node, 
                 img.src, 

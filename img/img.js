@@ -230,14 +230,14 @@ class Img {
                     </ul>
                     <form action="/" class="tag__form">
                         <ul class="hlist form__status-bar">
-                            <li><button type="button" class="status status--warning status--current form__status"><span class="visually-hidden">Warning</span></button></li>
-                            <li><button type="button" class="status status--error form__status"><span class="visually-hidden">Error</span></button></li>
+                            <li><button type="button" class="status status--warning status--current centralize form__status"></button><span>Warning</span></li>
+                            <li><button type="button" class="status status--error centralize form__status"></button><span>Error</span></li>
                         </ul>
                         <label class="form__label" for="title--${this.getId()}">Title</label>
                         <input class="form__input--text" type="text" name="title" id="title--${this.getId()}">
                         <label class="form__label" for="message--${this.getId()}">Message</label>
                         <input class="form__input--text" type="text" name="message" id="message--${this.getId()}">
-                        <button type="button" class="form__input--submit">Submit</button>
+                        <button type="button" class="form__input--submit">Add note</button>
                     </form> 
                 </div>
             </div>`;

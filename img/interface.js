@@ -142,7 +142,6 @@ function updateImgResults(images) {
 
     const generateStatusHTML = (groupedStatuses, statusType) => {
         return Object.keys(groupedStatuses).map(title => {
-            // Create a map to count occurrences of each message
             const messageCount = {};
             groupedStatuses[title].forEach(status => {
                 const message = status.getMessage();
