@@ -19,7 +19,6 @@ window.addEventListener('load', () => {
 });
 
 function injectCustomDOM(documentHTML) {
-  const cssVariablesStyle = extractAndCreateCSSVariablesStyle();
 
   const newHTML = `
     <!DOCTYPE html>
@@ -50,54 +49,20 @@ function injectCustomDOM(documentHTML) {
   iframe.src = window.location.href;
   shadowRoot.appendChild(iframe);
 
-  appendStylesToShadowRoot(shadowRoot, cssVariablesStyle, createCustomStyles()); //RISOLVERE
-
   iframe.onload = () => {
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDoc.head.appendChild(createCustomStyles());
+
     console.log("Iframe loaded successfully.");
     chrome.runtime.sendMessage({ action: "insertHTML" });
   };
 }
 
-function extractAndCreateCSSVariablesStyle() {
-  const res = {};
 
-  if ("computedStyleMap" in document.documentElement) {
-    const styles = document.documentElement.computedStyleMap();
-    Array.from(styles).forEach(([prop, val]) => {
-      if (prop.startsWith("--")) {
-        res[prop] = val.toString();
-      }
-    });
-  } else {
-    const styles = getComputedStyle(document.documentElement);
-    for (let i = 0; i < styles.length; i++) {
-      const propertyName = styles[i];
-      if (propertyName.startsWith("--")) {
-        const value = styles.getPropertyValue(propertyName);
-        res[propertyName] = value;
-      }
-    }
-  }
-
-  let cssVariablesText = ':host {';
-  for (const [key, value] of Object.entries(res)) {
-    cssVariablesText += `${key}: ${value};`;
-  }
-  cssVariablesText += '}';
-
-  const styleElement = document.createElement('style');
-  styleElement.textContent = cssVariablesText;
-
-  return styleElement;
-}
 function createCustomStyles() {
   const styleElement = document.createElement('style');
   styleElement.textContent = `
     .highlight { border: 4px solid red !important; }
   `;
   return styleElement;
-}
-
-function appendStylesToShadowRoot(shadowRoot, ...styles) {
-  styles.forEach(style => shadowRoot.appendChild(style));
 }

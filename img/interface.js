@@ -31,19 +31,34 @@ function toggleActiveState(elements, activeElement) {
 
 function handleTagElementClick(tagElement, button, images) {
     const shadowRoot = document.querySelector('main').shadowRoot;
-    const iframe = shadowRoot.querySelector('iframe').contentDocument;
+    const iframe = shadowRoot.querySelector('iframe');
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
     const imgId = tagElement.getAttribute('id');
     const imgObject = images.find(img => img.id === imgId);
 
     if (!imgObject) return;
 
     const handleEyeClick = () => {
-        const imgTag = iframe.getElementById(imgId);
-        imgTag.scrollIntoView();
-        images.forEach(img => {
-            iframe.getElementById(img.getTagId()).classList.remove('highlight');
-        });
-        imgTag.classList.add('highlight');
+        const imgTag = iframeDocument.getElementById(imgId);
+        if (imgTag) {
+            const imgTagTop = imgTag.getBoundingClientRect().top + iframe.contentWindow.scrollY;
+            iframe.contentWindow.scrollTo({
+                top: imgTagTop,
+                behavior: 'smooth'
+            });
+            images.forEach(img => {
+                try {
+                    const tagId = img.getTagId ? img.getTagId() : img.id;
+                    const imgElement = iframeDocument.getElementById(tagId);
+                    if (imgElement) {
+                        imgElement.classList.remove('highlight');
+                    }
+                } catch (error) {
+                    console.error('Error removing highlight:', error);
+                }
+            });
+            imgTag.classList.add('highlight');
+        }
     };
 
     const handleArrowClick = () => {
