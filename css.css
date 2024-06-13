@@ -104,7 +104,8 @@ main {
   border-left: none;
   border-right: 1px solid #f2f1ff;
 }
-.ri-eye-fill {
+.ri-eye-fill,
+.ri-eye-off-fill {
   font-size: 18px;
 }
 .ri-delete-bin-line {
