@@ -98,11 +98,13 @@ class ImgView {
   }
 
   show(hook) {
-    const imgTag = this.iframe.querySelector(`.${hook}`);
     const iframeWindow = this.iframe.defaultView;
+    let imgTag = this.iframe.querySelector(`.${hook}`);
 
     if (!imgTag)
       return;
+    if (imgTag.tagName === 'PICTURE')
+      imgTag = imgTag.querySelector('img');
 
     const imgTagTop = imgTag.getBoundingClientRect().top + iframeWindow.scrollY - 100;
     iframeWindow.scrollTo({

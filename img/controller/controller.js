@@ -77,11 +77,12 @@ class ImgController {
 
         else if (/^picture$/i.test(node.tagName)) {
           const sources = node.querySelectorAll('source');
+          const img = node.querySelector('img');
           sources.forEach(source => {
             if (source.srcset) {
               const srcset = source.srcset.split(',').map(s => s.trim().split(' ')[0]);
               srcset.forEach(src => {
-                collection.add({ src, node, isBackground: false, isVisible: isVisible(node) });
+                collection.add({ src, node, isBackground: false, isVisible: isVisible(source) && (src === img.currentSrc) });
               });
             }
           });
