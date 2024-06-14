@@ -223,3 +223,16 @@ main {
 .form__input--submit:hover {
   background-color: #d0cee5;
 }
+
+
+.pagination__button {
+  border: 1px solid #d0cee5;
+  padding: .5rem;
+  margin: .5rem;
+  border-radius: 2px;
+}
+
+.pagination__button--active {
+  border: 1px solid #d0cee5;
+  background-color: #d0cee5;
+}

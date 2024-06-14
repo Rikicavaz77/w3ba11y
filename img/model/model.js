@@ -167,4 +167,26 @@ class ImgModel {
   getCustomWarnings() {
     return this.customStatus.filter(status => status.status === 'warning');
   }
+
+  getImageData() {
+    return {
+      src: this.src,
+      id: this.id,
+      hook: this.hook,
+      isVisible: this.isVisible,
+      isBackground: this.isBackground,
+      width: this.width,
+      height: this.height,
+      memorySize: this.memorySize,
+      alt: this.alt,
+      altLength: this.getAltLength(),
+      memorySizeStatus: this.memorySizeStatus,
+      altStatus: this.altStatus,
+      customStatus: this.customStatus,
+      totalWarnings: this.getTotalWarnings(),
+      totalErrors: this.getTotalErrors(),
+      customWarnings: this.getCustomWarnings(),
+      customErrors: this.getCustomErrors()
+    };
+  }
 }

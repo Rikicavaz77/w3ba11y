@@ -1,6 +1,17 @@
 class ImgController {
   constructor(view) {
+    this.BATCH_SIZE = 100;
     this.view = view;
+    this.eventHandlers = {
+      changeTab: this.view.changeTab.bind(this.view),
+      show: this.view.show.bind(this.view),
+      more: this.view.more.bind(this.view),
+      updateDefaultStatus: this.view.updateDefaultStatus.bind(this.view),
+      updateAddNoteStatus: this.view.updateAddNoteStatus.bind(this.view),
+      addCustomStatus: this.view.addCustomStatus.bind(this.view),
+      removeCustomStatus: this.view.removeCustomStatus.bind(this.view),
+    };
+  
     this.findAllImgs(this.view.iframe).then(list => {
       const imgInstances = list.map((img, index) => new ImgModel(
         img.node, 
@@ -14,23 +25,21 @@ class ImgController {
         img.alt, 
         img.id
       ));
-
+  
       Promise.all(imgInstances).then((resolvedInstances) => {
-        this.model = resolvedInstances;            
-        this.view.render(this.model);
+        this.model = resolvedInstances;
+
+        const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+        const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+        const imagesData = [];
+
+        this.model.slice(0, this.BATCH_SIZE).forEach(img => imagesData.push(img.getImageData()));
+        this.view.render(imagesData, this.model.length, customErrors, customWarnings);
         this.setupListeners();
+      }).catch((error) => {
+        console.error("Error processing images:", error);
       });
     });
-
-    this.eventHandlers = {
-      changeTab: this.view.changeTab.bind(this.view),
-      show: this.view.show.bind(this.view),
-      more: this.view.more.bind(this.view),
-      updateDefaultStatus: this.view.updateDefaultStatus.bind(this.view),
-      updateAddNoteStatus: this.view.updateAddNoteStatus.bind(this.view),
-      addCustomStatus: this.view.addCustomStatus.bind(this.view),
-      removeCustomStatus: this.view.removeCustomStatus.bind(this.view),
-    };
   }
 
   findAllImgs(doc) {
@@ -64,6 +73,18 @@ class ImgController {
             collection.add({ src: node.dataset.src, node, isBackground: false, isVisible: isVisible(node) });
           else if (node.src !== '')
             collection.add({ src: node.src, node, isBackground: false, isVisible: isVisible(node) });
+        }
+
+        else if (/^picture$/i.test(node.tagName)) {
+          const sources = node.querySelectorAll('source');
+          sources.forEach(source => {
+            if (source.srcset) {
+              const srcset = source.srcset.split(',').map(s => s.trim().split(' ')[0]);
+              srcset.forEach(src => {
+                collection.add({ src, node, isBackground: false, isVisible: isVisible(node) });
+              });
+            }
+          });
         }
 
         else if (/^frame$/i.test(node.tagName)) {
@@ -108,7 +129,7 @@ class ImgController {
           width: node.naturalWidth,
           height: node.naturalHeight,
           memorySize: memorySize,
-          alt: isBackground ? null : node.alt || '',
+          alt: isBackground ? null : (node.alt || node.querySelector('img')?.alt || ''),
           backgroundImage: isBackground,
           isVisible: isVisible,
           id: node.id || '',
@@ -128,7 +149,7 @@ class ImgController {
                   width: img.naturalWidth,
                   height: img.naturalHeight,
                   memorySize: (message.size / 1024).toFixed(2),
-                  alt: isBackground ? null : node.alt || '',
+                  alt: isBackground ? null : (node.alt || node.querySelector('img')?.alt || ''),
                   backgroundImage: isBackground,
                   isVisible: isVisible,
                   id: node.id || '',
@@ -163,14 +184,21 @@ class ImgController {
       });
     }
   }
-  
 
-   setupListeners() {
+  setupListeners() {
     this.view.container.querySelectorAll('.tab__button').forEach(button => {
       button.addEventListener('click', () => this.eventHandlers.changeTab(button));
     });
 
-    this.model.forEach(img => {
+    this.view.container.querySelectorAll('.pagination__button').forEach(button => {
+      button.addEventListener('click', () => this.changePage(button));
+    });
+
+    this.setupImgListeners(0)
+  }
+
+  setupImgListeners(index) {
+    this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => {
       const imgTag = this.view.container.querySelector(`.${img.hook}`);
 
       const imgShowButton = imgTag.querySelector('.ri-eye-fill');
@@ -199,13 +227,17 @@ class ImgController {
           imgAltStatusButtons.forEach(button => {
             button.addEventListener('click', this.handleAltStatusClick = () => {
               img.altStatus = new Status(button.dataset.status, `Image ${button.dataset.status}`, `Image ${button.dataset.status}`);
-              this.eventHandlers.updateDefaultStatus(this.model, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--alt', button.dataset.status);
+              const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+              const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+              this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--alt', button.dataset.status);
             });
           });
           imgSizeStatusButtons.forEach(button => {
             button.addEventListener('click', this.handleSizeStatusClick = () => {
               img.memorySizeStatus = new Status(button.dataset.status, `Image ${button.dataset.status}`, `Image ${button.dataset.status}`);
-              this.eventHandlers.updateDefaultStatus(this.model, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--size', button.dataset.status);
+              const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+              const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+              this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--size', button.dataset.status);
             });
           });
           imgAddStatusButton.forEach(button => {
@@ -221,9 +253,12 @@ class ImgController {
             }
 
             const newStatus = new Status(viewData.status, viewData.title, viewData.message);
-
             img.addCustomStatus(newStatus);
-            this.eventHandlers.addCustomStatus(this.model, img.hook, img.getTotalErrors(), img.getTotalWarnings(), newStatus);
+
+            const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+            const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+            
+            this.eventHandlers.addCustomStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), newStatus);
             imgMoreButton.click();
             imgMoreButton.click();
           });
@@ -231,7 +266,9 @@ class ImgController {
             imgDeleteButtons.forEach(button => {
               button.addEventListener('click', this.handleDeleteClick = () => {
                 img.deleteCustomStatus(button.dataset.index);
-                this.eventHandlers.removeCustomStatus(this.model, img.hook, img.getTotalErrors(), img.getTotalWarnings(), img.customStatus);
+                const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+                const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+                this.eventHandlers.removeCustomStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), img.customStatus);
                 imgMoreButton.click();
                 imgMoreButton.click();
               });
@@ -244,42 +281,20 @@ class ImgController {
 
       imgMoreButton.addEventListener('click', handleTagDataClick);
     });
+
+    this.view.removeLoading();
   }
 
-  cleanup() {
-    this.view.container.querySelectorAll('.tab__button').forEach(button => {
-      button.removeEventListener('click', () => this.eventHandlers.changeTab(button));
-    });
 
-    this.model.forEach(img => {
-      const imgTag = this.view.container.querySelector(`.${img.hook}`);
-      const imgShowButton = imgTag.querySelector('.ri-eye-fill');
-      const imgMoreButton = imgTag.querySelector('.ri-arrow-drop-down-line');
+  changePage(clickedButton) {
+    if (clickedButton === this.view.currentPageButton)
+      return;
 
-      if (imgShowButton) {
-        imgShowButton.removeEventListener('click', () => this.eventHandlers.show(img.hook));
-      }
+    const imagesData = [];
+    const index = clickedButton.dataset.index;
 
-      const imgAltStatusButtons = imgTag.querySelector('.tag__info--alt')?.querySelectorAll('.status');
-      const imgSizeStatusButtons = imgTag.querySelector('.tag__info--size')?.querySelectorAll('.status');
-      const imgDeleteButtons = imgTag.querySelectorAll('.ri-delete-bin-line');
-      const imgAddStatusButton = imgTag.querySelectorAll('.form__status');
-      const imgAddNoteSubmitButton = imgTag.querySelector('.form__input--submit');
-
-      if (imgMoreButton && imgMoreButton.classList.contains('ri-arrow-drop-down-line--rotate')) {
-        imgAltStatusButtons?.forEach(button => button.removeEventListener('click', this.handleAltStatusClick));
-        imgSizeStatusButtons?.forEach(button => button.removeEventListener('click', this.handleSizeStatusClick));
-        imgAddStatusButton?.forEach(button => button.removeEventListener('click', this.handleAddStatusClick));
-        imgAddNoteSubmitButton?.removeEventListener('click', this.handleAddNoteSubmitClick);
-        imgDeleteButtons?.forEach(button => button.removeEventListener('click', this.handleDeleteClick));
-      }
-
-      if (imgMoreButton) {
-        imgMoreButton.removeEventListener('click', this.handleTagDataClick);
-      }
-    });
-
-    this.model = null;
-    this.view = null;
+    this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => imagesData.push(img.getImageData()));
+    this.view.changePage(imagesData, clickedButton);
+    this.setupImgListeners(index);
   }
 }

@@ -1,31 +1,96 @@
 class ImgViewAnalysis {
   constructor(container) {
     this._container = this.generateImgViewAnalysisSection(container);
+    this._header;
+    this._loadingIcon;
+    this._body;
+    this._pagination;
+    this._currentPageButton;
   }
 
   get container() {
     return this._container;
   }
 
+  get header() {
+    return this._header;
+  }
+
+  get loadingIcon() {
+    return this._loadingIcon;
+  }
+
+  get body() {
+    return this._body;
+  }
+
+  get pagination() {
+    return this._pagination;
+  }
+
+  get currentPageButton() {
+    return this._currentPageButton;
+  }
+
+  set container(container) {
+    this._container = container;
+  }
+
+  set header(header) {
+    this._header = header;
+  }
+
+  set loadingIcon(icon) {
+    this._loadingIcon = icon;
+  }
+
+  set body(body) {
+    this._body = body;
+  }
+
+  set pagination(pagination) {
+    this._pagination = pagination;
+  }
+
+  set currentPageButton(newButton) {
+    this._currentPageButton = newButton;
+  }
+
   generateImgViewAnalysisSection(container) {
     const tabContainer = container.querySelector('.tab--analysis');
 
     tabContainer.innerHTML = `
-      <div class="hlist">
+      <header class="analysis__header">
         <h2>Analysis</h2>
-        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="200px" height="200px" alt="Loading images analysis">
-      </div>`;
+        <h3>Legend</h3>
+        <p>T = Tag Image, B = Background Image</p>
+        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" class="w3ba11y__loading" width="200px" height="200px" alt="Loading images analysis">
+      </header>
+      <div class="analysis__body"></div>
+      <footer class="pagination">
+      <h3>Pages</h3>
+      </footer>`;
+
+    this.header = tabContainer.querySelector('.analysis__header');
+    this.loadingIcon = this.header.querySelector('.w3ba11y__loading');
+    this.body = tabContainer.querySelector('.analysis__body');
+    this.pagination = tabContainer.querySelector('.pagination');
 
     return tabContainer;
   }
 
-  render(model) {
-    this.container.innerHTML = `
-      <h2>Analysis</h2>
-      <h3>Legend</h3>
-      <p>T = Tag Image, B = Background Image</p>
-    `;
-    model.forEach(img => {
+  render(imagesData, totalImg, index = 0) {
+    this.loadingIcon.remove();
+    this.loadingIcon = undefined;
+    this.pagination.innerHTML += Array.from({ length: Math.ceil(totalImg / imagesData.length) }, (_, i) => {
+      return `<button data-index="${i}" class="pagination__button ${i === index ? 'pagination__button--active' : ''}">${i + 1}</button>`;}).join('');
+    this.currentPageButton = this.pagination.querySelector('.pagination__button--active');
+    this.renderImages(imagesData);
+  }
+
+  renderImages(imagesData) {
+    this._body.innerHTML = '';
+    imagesData.forEach(img => {
       function generateStatusHTML(status, index) {
         return `
           <li class="tag__info">
@@ -40,17 +105,17 @@ class ImgViewAnalysis {
           </li>`;
       }
 
-      const customMessages = [...img.getCustomErrors(), ...img.getCustomWarnings()].map((status, index) => generateStatusHTML(status, index)).join('');
+      const customMessages = [...img.customErrors, ...img.customWarnings].map((status, index) => generateStatusHTML(status, index)).join('');
       const size = img.memorySize > 1024 ? `${Math.round(img.memorySize / 1024, 1)}MB` : `${img.memorySize}kB`;
 
-      this.container.innerHTML += `
+      this._body.innerHTML += `
         <div class="tag ${img.hook}">
           <header class="tag__header">
             <img src="${img.src}" alt="" class="tag__img">
             <ul class="hlist tag__status">
               <li class="hlist">${img.isBackground ? "B" : "T"}</li>
-              <li class="hlist"><span class="status status--warning"></span><span class="status--total-warning">${img.getTotalWarnings()}</span></li>
-              <li class="hlist"><span class="status status--error"></span><span class="status--total-error">${img.getTotalErrors()}</span></li>
+              <li class="hlist"><span class="status status--warning"></span><span class="status--total-warning">${img.totalWarnings}</span></li>
+              <li class="hlist"><span class="status status--error"></span><span class="status--total-error">${img.totalErrors}</span></li>
               <li>
                 <button class="${img.isVisible ? "ri-eye-fill" : "ri-eye-off-fill"}"><span class="visually-hidden">${img.isVisible ? "Show image" : "Image not visible"}</span></button>
               </li>
@@ -88,7 +153,7 @@ class ImgViewAnalysis {
               </li>
               <li class="tag__info tag__info--alt">
                 <div>
-                  <h4>Alt (${img.getAltLength()} chars)</h4>
+                  <h4>Alt (${img.altLength} chars)</h4>
                   <p>${img.alt}</p>
                 </div>
                 <ul class="hlist">
@@ -124,6 +189,14 @@ class ImgViewAnalysis {
           </div>
         </div>`;
     });
+  }
+
+  changePage(imagesData, clickedButton) {
+    this.renderImages(imagesData);
+    this.currentPageButton.classList.remove('pagination__button--active');
+    this.currentPageButton = clickedButton;
+    this.currentPageButton.classList.add('pagination__button--active');
+    this.container.scrollTop = 0;
   }
 
   more(hook) {

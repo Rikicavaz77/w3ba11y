@@ -14,20 +14,17 @@ class ImgViewResult {
       <h2>Results</h2>
       <div class="hlist">
         <h3>Errors</h3>
-        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images errors">
+        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="20px" height="20px" alt="Loading images errors">
       </div>
       <div class="hlist">
         <h3>Warnings</h3>
-        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="20px" height="20px" alt="Loading images warnings">
       </div>`;
     
     return tabContainer;
   }
 
-  render(model) {
-    const errors = model.flatMap(img => img.getErrors());
-    const warnings = model.flatMap(img => img.getWarnings());
-
+  render(errors, warnings) {
     const groupByTitle = (statuses) => {
       return statuses.reduce((acc, status) => {
         if (!acc[status.title])

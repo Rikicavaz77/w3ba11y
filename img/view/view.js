@@ -4,6 +4,7 @@ class ImgView {
     this._resultTab = new ImgViewResult(this._container);
     this._analysisTab = new ImgViewAnalysis(this._container);
     this._iframe = iframe;
+    this._tabButton = undefined;
   }
 
   get container() {
@@ -22,34 +23,38 @@ class ImgView {
     return this._iframe;
   }
 
-  render(model) {
-    this.resultTab.render(model);
-    this.analysisTab.render(model);
+  get currentPage() {
+    return this.analysisTab.currentPage;
+  }
+
+  get tabButton() {
+    return this._tabButton;
+  }
+
+  set tabButton(button) {
+    this._tabButton = button;
+  }
+
+  render(imagesData, totalImg, errors, warnings) {
+    this.resultTab.render(errors, warnings);
+    this.analysisTab.render(imagesData, totalImg);
   }
 
   generateImgViewSection() {
     const asideContainer = document.querySelector('aside');
-
-    if (!asideContainer) {
-      console.error('No aside element found in the DOM.');
-      return null;
-    }
-
-    if (asideContainer.querySelector('.w3ba11y__section--img'))
-      asideContainer.removeChild(asideContainer.querySelector('.w3ba11y__section--img'));
-
     const imgViewSection = document.createElement('section');
     imgViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--img');
-
     imgViewSection.innerHTML = `
       <header class="section__header">
         <h2>Images Analysis</h2>
         <div class="header__tabs">
           <button data-tab="results" class="tab__button tab__button--active tab__button--results">
             <h3>Results</h3>
+            <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
           </button>
           <button data-tab="analysis" class="tab__button tab__button--analysis">
             <h3>Analysis</h3>
+            <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
           </button>
         </div>
       </header>
@@ -58,17 +63,34 @@ class ImgView {
         <div data-tab="analysis" class="tab tab--analysis"></div>
       </div>`;
 
+    if (asideContainer.querySelector('.w3ba11y__section--img'))
+      asideContainer.removeChild(asideContainer.querySelector('.w3ba11y__section--img'));
     asideContainer.appendChild(imgViewSection);
+
+    this.tabButton = imgViewSection.querySelector('.tab__button--results');
+
     return asideContainer.querySelector('.w3ba11y__section--img');
   }
 
-  changeTab(buttonClicked) {
-    this.container.querySelectorAll('.tab__button').forEach(button => {
-      button === buttonClicked ? button.classList.add('tab__button--active') : button.classList.remove('tab__button--active');
+  removeLoading() {
+    this.container.querySelectorAll('.tab__button')?.forEach(button => {
+      button.querySelector('img')?.remove();
     });
-    this.container.querySelectorAll('.tab').forEach(tab => {
-      tab.dataset.tab === buttonClicked.dataset.tab ? tab.classList.add('tab--active') : tab.classList.remove('tab--active');
-    })
+  }
+
+  changeTab(buttonClicked) {
+    if (this.tabButton === buttonClicked)
+      return;
+
+    this.tabButton = buttonClicked;
+    this.container.querySelector('.tab__button--active').classList.remove('tab__button--active');
+    this.container.querySelector('.tab--active').classList.remove('tab--active');
+    this.tabButton.classList.add('tab__button--active');
+    this.container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
+  }
+
+  changePage(imagesData, clickedButton) {
+    this.analysisTab.changePage(imagesData, clickedButton);
   }
 
   more(hook) {
@@ -91,19 +113,19 @@ class ImgView {
     imgTag.classList.add('w3ba11y--highlight');
   }
 
-  addCustomStatus(model, hook, totalErrors, totalWarnings, status) {
+  addCustomStatus(customErrors, customWarning, hook, totalErrors, totalWarnings, status) {
     this.analysisTab.addCustomStatus(hook, totalErrors, totalWarnings, status);
-    this.resultTab.render(model);
+    this.resultTab.render(customErrors, customWarning);
   }
 
-  removeCustomStatus(model, hook, totalErrors, totalWarnings, customStatus) {
+  removeCustomStatus(customErrors, customWarning, hook, totalErrors, totalWarnings, customStatus) {
     this.analysisTab.removeCustomStatus(hook, totalErrors, totalWarnings, customStatus);
-    this.resultTab.render(model);
+    this.resultTab.render(customErrors, customWarning);
   }
 
-  updateDefaultStatus(model, hook, totalErrors, totalWarnings, targetClass, newStatus) {
+  updateDefaultStatus(customErrors, customWarning, hook, totalErrors, totalWarnings, targetClass, newStatus) {
     this.analysisTab.updateDefaultStatus(hook, totalErrors, totalWarnings, targetClass, newStatus);
-    this.resultTab.render(model);
+    this.resultTab.render(customErrors, customWarning);
   }
 
   updateAddNoteStatus(hook, newStatus) {

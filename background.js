@@ -31,7 +31,6 @@ function fetchImageSize(src, tabId) {
       method: 'HEAD'
     })
     .then((res) => {
-      console.log("res", res);
       if (!res.ok) {
         fetch(src).then(res2=>{
           if (!res2.ok)
