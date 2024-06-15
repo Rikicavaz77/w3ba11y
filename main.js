@@ -11,7 +11,6 @@ window.addEventListener('load', () => {
             chrome.runtime.sendMessage({ action: "runComponents" });
             try {
               interface.iframeDoc = interface.iframe.contentDocument || interface.iframe.contentWindow.document;
-              interface.createCustomStyles();
             } catch (error) {}
           });
         }

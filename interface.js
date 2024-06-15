@@ -46,14 +46,4 @@ class Interface {
     `;
     document.body.appendChild(this._main);
   }
-
-  createCustomStyles() {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = `
-      .w3ba11y--highlight { border: 4px solid red !important; }
-    `;
-    try {
-      this.iframeDoc.head.appendChild(styleElement);
-    } catch (error) {}
-  }
 }

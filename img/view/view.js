@@ -38,6 +38,7 @@ class ImgView {
   render(imagesData, totalImg, errors, warnings) {
     this.resultTab.render(errors, warnings);
     this.analysisTab.render(imagesData, totalImg);
+    this.createCustomStyles();
   }
 
   generateImgViewSection() {
@@ -98,22 +99,52 @@ class ImgView {
   }
 
   show(hook) {
-    const iframeWindow = this.iframe.defaultView;
+    const centerImgHorizontally = (img) => {
+      let element = img;
+      const screenWidth = window.innerWidth;
+      const elementRect = element.getBoundingClientRect();
+      const elementWidth = elementRect.width;
+      let parent = element.parentElement;
+
+      while (parent && parent !== this.iframe.body) {
+          if (parent.scrollWidth > parent.clientWidth) {
+              const parentRect = parent.getBoundingClientRect();
+              const elementLeftRelativeToParent = elementRect.left - parentRect.left;
+              const scrollLeft = elementLeftRelativeToParent - (screenWidth / 2) + (3 * elementWidth / 4);
+              parent.scrollTo({
+                  left: parent.scrollLeft + scrollLeft,
+                  behavior: 'smooth'
+              });
+          }
+          element = parent;
+          parent = element.parentElement;
+      }
+  };
+
     let imgTag = this.iframe.querySelector(`.${hook}`);
+    const iframeWindow = this.iframe.defaultView;
 
-    if (!imgTag)
-      return;
-    if (imgTag.tagName === 'PICTURE')
-      imgTag = imgTag.querySelector('img');
+    if (!imgTag) return;
 
-    const imgTagTop = imgTag.getBoundingClientRect().top + iframeWindow.scrollY - 100;
+    if (imgTag.tagName === 'PICTURE') {
+        imgTag = imgTag.querySelector('img');
+        if (!imgTag) return;
+    }
+
+    const imgTagRect = imgTag.getBoundingClientRect();
+    const iframeScrollY = iframeWindow.scrollY || iframeWindow.pageYOffset;
+    const imgTagTop = imgTagRect.top + iframeScrollY - 100;
+
     iframeWindow.scrollTo({
-      top: imgTagTop,
-      behavior: 'smooth'
+        top: imgTagTop,
+        behavior: 'smooth'
     });
+
+    centerImgHorizontally(imgTag);
+
     this.iframe.querySelectorAll('.w3ba11y--highlight').forEach(img => img.classList.remove('w3ba11y--highlight'));
     imgTag.classList.add('w3ba11y--highlight');
-  }
+}
 
   addCustomStatus(customErrors, customWarning, hook, totalErrors, totalWarnings, status) {
     this.analysisTab.addCustomStatus(hook, totalErrors, totalWarnings, status);
@@ -136,5 +167,13 @@ class ImgView {
 
   getNewCustomStatus(hook) {
     return this.analysisTab.getNewCustomStatus(hook);
+  }
+
+  createCustomStyles() {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+      .w3ba11y--highlight { border: 4px solid red !important; }
+    `;
+    this.iframe.head.appendChild(styleElement);
   }
 }
