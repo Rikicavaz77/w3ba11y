@@ -1,22 +1,37 @@
-window.addEventListener('load', () => {
-  let interface;
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    switch (message.action) {
-      case 'run':
-        if (!interface) {
-          chrome.runtime.sendMessage({ action: "insertCSS", style: "css.css" });
-          interface = new Interface();
-          interface.render();
-          interface.iframe.addEventListener('load', function() {
-            chrome.runtime.sendMessage({ action: "runComponents" });
-            try {
-              interface.iframeDoc = interface.iframe.contentDocument || interface.iframe.contentWindow.document;
-            } catch (error) {}
-          });
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  let interfaceInstance;
+  let observer;
+
+  if (message.action === 'run') {
+    const initializeInterface = () => {
+      chrome.runtime.sendMessage({ action: "insertCSS", style: "css.css" });
+
+      interfaceInstance = new Interface();
+      interfaceInstance.render();
+      interfaceInstance.iframe.addEventListener('load', function() {
+        interfaceInstance.iframeDoc = interfaceInstance.iframe.contentDocument || interfaceInstance.iframe.contentWindow.document;
+        setTimeout(() => {
+          chrome.runtime.sendMessage({ action: "runComponents" });
+          observeURLChanges();
+        }, 3000);
+      });
+    };
+
+    const observeURLChanges = () => {
+      let lastURL = interfaceInstance.iframe.contentWindow.location.href;
+      new MutationObserver(() => {
+        const currentURL = interfaceInstance.iframe.contentWindow.location.href;
+        if (currentURL !== lastURL) {
+          window.location.href = currentURL;
         }
-        else 
-          window.location.reload();
-        break;
-    }
-  });
+      }).observe(document, { subtree: true, childList: true });
+    };
+
+    if (document.readyState === 'complete')
+      initializeInterface();
+    else
+      window.addEventListener('load', () => {
+        initializeInterface();
+      });
+  }
 });

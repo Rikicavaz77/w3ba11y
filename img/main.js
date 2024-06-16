@@ -3,17 +3,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   let view;
   let controller;
 
-  switch (message.action) {
-    case 'runComponents':
-      if (message.isFirst) {
-        iframe = document.querySelector('main').shadowRoot.querySelector('iframe').contentDocument;
-        view = new ImgView(iframe);
-        controller = new ImgController(view);
-      }
-      else {
-        iframe = document.querySelector('main').shadowRoot.querySelector('iframe');
-        window.location.href = iframe.contentWindow.location;
-      }
-      break; 
+  if (message.action === 'runComponents') {
+    iframe = document.querySelector('main').shadowRoot.querySelector('iframe').contentDocument;
+    view = new ImgView(iframe);
+    controller = new ImgController(view);
+    window.imgController = controller;
+  }
+
+  if (message.action === 'updateComponents') {
+    controller = window.imgController;
+    if (controller)
+      controller.update();
   }
 });

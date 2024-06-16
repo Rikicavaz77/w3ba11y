@@ -20,6 +20,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       chrome.tabs.sendMessage(tabId, { action: 'runComponents', isFirst: isFirst });
       isFirst = !isFirst;
       break;
+    case 'updateComponents':
+        chrome.tabs.sendMessage(tabId, { action: 'updateComponents' });
+        break;
     case 'fetchImageSize':
       fetchImageSize(message.src, tabId);
       break; 

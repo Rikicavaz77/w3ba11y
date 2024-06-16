@@ -5,6 +5,7 @@ class ImgViewAnalysis {
     this._loadingIcon;
     this._body;
     this._pagination;
+    this._paginationButtons;
     this._currentPageButton;
   }
 
@@ -26,6 +27,10 @@ class ImgViewAnalysis {
 
   get pagination() {
     return this._pagination;
+  }
+
+  get paginationButtons() {
+    return this._paginationButtons;
   }
 
   get currentPageButton() {
@@ -50,6 +55,10 @@ class ImgViewAnalysis {
 
   set pagination(pagination) {
     this._pagination = pagination;
+  }
+
+  set paginationButtons(buttons) {
+    this._paginationButtons = buttons;
   }
 
   set currentPageButton(newButton) {
@@ -80,11 +89,13 @@ class ImgViewAnalysis {
   }
 
   render(imagesData, totalImg, index = 0) {
-    this.loadingIcon.remove();
+    this.loadingIcon?.remove();
     this.loadingIcon = undefined;
-    this.pagination.innerHTML += Array.from({ length: Math.ceil(totalImg / imagesData.length) }, (_, i) => {
+    index = Math.ceil(totalImg / imagesData.length) < index ? 0 : index;
+    this.pagination.innerHTML = Array.from({ length: Math.ceil(totalImg / imagesData.length) }, (_, i) => {
       return `<button data-index="${i}" class="pagination__button ${i === index ? 'pagination__button--active' : ''}">${i + 1}</button>`;}).join('');
     this.currentPageButton = this.pagination.querySelector('.pagination__button--active');
+    this.paginationButtons = this.pagination.querySelectorAll('.pagination__button');
     this.renderImages(imagesData);
   }
 
@@ -273,6 +284,20 @@ class ImgViewAnalysis {
     imgTagHeader.querySelector('.status--total-error').textContent = totalErrors;
     imgData.querySelectorAll('.tag__info--customStatus').forEach(status => status.remove());
     imgData.innerHTML += customMessages;
+  }
+
+  getImgTags(hook) {
+    const imgTag = this.container.querySelector(`.${hook}`);
+    return {
+      imgTag: imgTag,
+      imgShowButton: imgTag.querySelector('.ri-eye-fill'),
+      imgMoreButton: imgTag.querySelector('.ri-arrow-drop-down-line'),
+      imgAltStatusButtons: imgTag.querySelector('.tag__info--alt').querySelectorAll('.status'),
+      imgSizeStatusButtons: imgTag.querySelector('.tag__info--size').querySelectorAll('.status'),
+      imgDeleteButtons: imgTag.querySelectorAll('.ri-delete-bin-line'),
+      imgAddStatusButton: imgTag.querySelectorAll('.form__status'),
+      imgAddNoteSubmitButton: imgTag.querySelector('.form__input--submit')
+    }
   }
 
   getNewCustomStatus(hook) {

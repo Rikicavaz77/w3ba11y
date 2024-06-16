@@ -4,7 +4,8 @@ class ImgView {
     this._resultTab = new ImgViewResult(this._container);
     this._analysisTab = new ImgViewAnalysis(this._container);
     this._iframe = iframe;
-    this._tabButton = undefined;
+    this._tabButtons;
+    this._activeTabButton;
   }
 
   get container() {
@@ -27,17 +28,40 @@ class ImgView {
     return this.analysisTab.currentPage;
   }
 
-  get tabButton() {
-    return this._tabButton;
+  get tabButtons() {
+    return this._tabButtons;
   }
 
-  set tabButton(button) {
-    this._tabButton = button;
+  get activeTabButton() {
+    return this._activeTabButton;
   }
 
-  render(imagesData, totalImg, errors, warnings) {
+  get paginationButtons() {
+    return this.analysisTab.paginationButtons;
+  }
+
+  get activePaginationButton() {
+    return this.analysisTab.currentPageButton;
+  }
+
+  set tabButtons(buttons) {
+    this._tabButtons = buttons;
+  }
+
+  set activeTabButton(button) {
+    this._activeTabButton = button;
+  }
+
+  set paginationButtons(buttons) {
+    this._paginationButtons = buttons;
+  }
+
+  render(imagesData, totalImg, errors, warnings, index = 0) {
     this.resultTab.render(errors, warnings);
-    this.analysisTab.render(imagesData, totalImg);
+    this.analysisTab.render(imagesData, totalImg, index);
+
+    this.paginationButtons = this.analysisTab.paginationButtons;
+
     this.createCustomStyles();
   }
 
@@ -68,7 +92,8 @@ class ImgView {
       asideContainer.removeChild(asideContainer.querySelector('.w3ba11y__section--img'));
     asideContainer.appendChild(imgViewSection);
 
-    this.tabButton = imgViewSection.querySelector('.tab__button--results');
+    this.tabButtons = imgViewSection.querySelectorAll('.tab__button');
+    this.activeTabButton = imgViewSection.querySelector('.tab__button--results');
 
     return asideContainer.querySelector('.w3ba11y__section--img');
   }
@@ -80,13 +105,13 @@ class ImgView {
   }
 
   changeTab(buttonClicked) {
-    if (this.tabButton === buttonClicked)
+    if (this.activeTabButton === buttonClicked)
       return;
 
-    this.tabButton = buttonClicked;
+    this.activeTabButton = buttonClicked;
     this.container.querySelector('.tab__button--active').classList.remove('tab__button--active');
     this.container.querySelector('.tab--active').classList.remove('tab--active');
-    this.tabButton.classList.add('tab__button--active');
+    this.activeTabButton.classList.add('tab__button--active');
     this.container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
   }
 
@@ -144,7 +169,7 @@ class ImgView {
 
     this.iframe.querySelectorAll('.w3ba11y--highlight').forEach(img => img.classList.remove('w3ba11y--highlight'));
     imgTag.classList.add('w3ba11y--highlight');
-}
+  }
 
   addCustomStatus(customErrors, customWarning, hook, totalErrors, totalWarnings, status) {
     this.analysisTab.addCustomStatus(hook, totalErrors, totalWarnings, status);
@@ -163,6 +188,10 @@ class ImgView {
 
   updateAddNoteStatus(hook, newStatus) {
     this.analysisTab.updateAddNoteStatus(hook, newStatus);
+  }
+
+  getImgTags(hook) {
+    return this.analysisTab.getImgTags(hook);
   }
 
   getNewCustomStatus(hook) {

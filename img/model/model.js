@@ -17,6 +17,10 @@ class ImgModel {
     tag.classList.add(hook);
   }
 
+  get tag() {
+    return this._tag;
+  }
+
   get src() {
     return this._src;
   }
@@ -120,7 +124,7 @@ class ImgModel {
 
   deleteCustomStatus(index) {
     if (index < 0 || index >= this.customStatus.length) 
-      return console.error('Index out of bounds');
+      return;
     this.customStatus.splice(index, 1);
   }
 
