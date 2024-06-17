@@ -1,10 +1,19 @@
 class ImgViewResult {
   constructor(container) {
     this._container = this.generateImgViewResultSection(container);
+    this._filterButtons;
   }
 
   get container() {
     return this._container;
+  }
+
+  get filterButtons() {
+    return this._filterButtons;
+  }
+
+  set filterButtons(buttons) {
+    this._filterButtons = buttons;
   }
 
   generateImgViewResultSection(container) {
@@ -48,6 +57,8 @@ class ImgViewResult {
         const statusItems = Object.keys(messageCount).map(message => `
           <li class="hlist">
               ${message} (Total: ${messageCount[message]})
+              <button data-status="${statusType}" data-title="${title}" data-message="${message}"
+               class="ri-filter-fill filter__button"><span class="visually-hidden"> Filter by ${message}</span></button>
           </li>
         `).join('');
         const count = groupedStatuses[title].length;
@@ -56,6 +67,8 @@ class ImgViewResult {
           <div class="hlist">
             <span class="status status--${statusType}"></span>
             <span>${title} (Total: ${count})</span>
+            <button data-status="${statusType}" data-title="${title}"
+             class="ri-filter-fill filter__button"><span class="visually-hidden"> Filter by ${title}</span></button>
           </div>
           <ul>
             ${statusItems}
@@ -67,15 +80,23 @@ class ImgViewResult {
     const groupedErrorsHTML = generateStatusHTML(groupedErrors, 'error');
     const groupedWarningsHTML = generateStatusHTML(groupedWarnings, 'warning');
 
-    this._container.innerHTML = `
+    this.container.innerHTML = `
       <h2>Results</h2>
       <div>
-        <h3>Errors</h3>
+        <div class="hlist">
+          <h3>Errors</h3>
+          <button data-status="error" class="ri-filter-fill filter__button"><span class="visually-hidden"> Filter by errors</span></button>
+        </div>
         ${groupedErrorsHTML}
       </div>
       <div>
-        <h3>Warnings</h3>
+        <div class="hlist">
+          <h3>Warnings</h3>
+          <button data-status="warning" class="ri-filter-fill filter__button"><span class="visually-hidden"> Filter by warnings</span></button>
+        </div>
         ${groupedWarningsHTML}
       </div>`;
+    
+    this.filterButtons = this.container.querySelectorAll('.filter__button');
   }
 }

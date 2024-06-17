@@ -16,8 +16,16 @@ class ImgView {
     return this._resultTab;
   }
 
+  get resultTabButton() {
+    return this._container.querySelector('.tab__button--results');
+  }
+
   get analysisTab() {
     return this._analysisTab;
+  }
+
+  get analysisTabButton() {
+    return this._container.querySelector('.tab__button--analysis');
   }
 
   get iframe() {
@@ -44,6 +52,10 @@ class ImgView {
     return this.analysisTab.currentPageButton;
   }
 
+  get filterButtons() {
+    return this.resultTab.filterButtons;
+  }
+
   set tabButtons(buttons) {
     this._tabButtons = buttons;
   }
@@ -54,6 +66,10 @@ class ImgView {
 
   set paginationButtons(buttons) {
     this._paginationButtons = buttons;
+  }
+
+  set filterButtons(buttons) {
+    this.resultTab.filterButtons = buttons;
   }
 
   render(imagesData, totalImg, errors, warnings, index = 0) {

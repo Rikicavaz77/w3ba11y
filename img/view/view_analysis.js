@@ -104,7 +104,7 @@ class ImgViewAnalysis {
     imagesData.forEach(img => {
       function generateStatusHTML(status, index) {
         return `
-          <li class="tag__info">
+          <li class="tag__info tag__info--customStatus">
             <div>
               <h4>${status.title}</h4>
               <p>${status.message}</p>
@@ -116,7 +116,8 @@ class ImgViewAnalysis {
           </li>`;
       }
 
-      const customMessages = [...img.customErrors, ...img.customWarnings].map((status, index) => generateStatusHTML(status, index)).join('');
+      const customStatus = [...img.customErrors, ...img.customWarnings];
+      const customMessages = customStatus.map((status, index) => generateStatusHTML(status, index)).join('');
       const size = img.memorySize > 1024 ? `${Math.round(img.memorySize / 1024, 1)}MB` : `${img.memorySize}kB`;
 
       this._body.innerHTML += `
@@ -279,10 +280,14 @@ class ImgViewAnalysis {
     const imgTagHeader = imgTag.querySelector('.tag__header');
     const imgData = imgTag.querySelector('.tag__data');
     const customMessages = [...customStatus].map((status, index) => generateStatusHTML(status, index)).join('');
-
+    
     imgTagHeader.querySelector('.status--total-warning').textContent = totalWarnings;
     imgTagHeader.querySelector('.status--total-error').textContent = totalErrors;
-    imgData.querySelectorAll('.tag__info--customStatus').forEach(status => status.remove());
+    console.log(imgData)
+    console.log(imgData.querySelectorAll('.tag__info--customStatus'))
+    imgData.querySelectorAll('.tag__info--customStatus').forEach(status => imgData.removeChild(status));
+    console.log(imgData)
+    console.log(customMessages);
     imgData.innerHTML += customMessages;
   }
 
@@ -290,7 +295,7 @@ class ImgViewAnalysis {
     const imgTag = this.container.querySelector(`.${hook}`);
     return {
       imgTag: imgTag,
-      imgShowButton: imgTag.querySelector('.ri-eye-fill'),
+      imgShowButton: imgTag.querySelector('.ri-eye-fill') || imgTag.querySelector('.ri-eye-off-fill'),
       imgMoreButton: imgTag.querySelector('.ri-arrow-drop-down-line'),
       imgAltStatusButtons: imgTag.querySelector('.tag__info--alt').querySelectorAll('.status'),
       imgSizeStatusButtons: imgTag.querySelector('.tag__info--size').querySelectorAll('.status'),

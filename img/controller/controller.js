@@ -11,68 +11,62 @@ class ImgController {
       addCustomStatus: this.view.addCustomStatus.bind(this.view),
       removeCustomStatus: this.view.removeCustomStatus.bind(this.view),
     };
+    this.model;
+    this.filter = {};
   
     this.init();
   }
 
+
+  // INIT FUNCTION
   async init() {
-    try {
-      const imgList = await this.findAllImgs(this.view.iframe);
-      const imgInstances = imgList.map((img, index) => new ImgModel(
-        img.node, 
-        img.src, 
-        `w3ba11y_imgTag_${index}`,
-        img.width, 
-        img.height, 
-        img.memorySize, 
-        img.backgroundImage,
-        img.isVisible, 
-        img.alt, 
-        img.id
-      ));
-  
-      this.model = await Promise.all(imgInstances);
-      const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
-      const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
-      const imagesData = this.model.slice(0, this.BATCH_SIZE).map(img => img.getImageData());
-
-      this.view.render(imagesData, this.model.length, customErrors, customWarnings);
-      this.setupListeners();
-    } catch (error) {
-      console.error("Error processing images:", error);
-    }
+    const imgList = await this.findAllImgs(this.view.iframe);
+    const imgInstances = imgList.map((img, index) => new ImgModel(
+      img.node, 
+      img.src, 
+      `w3ba11y_imgTag_${index}`,
+      img.width, 
+      img.height, 
+      img.memorySize, 
+      img.backgroundImage,
+      img.isVisible, 
+      img.alt, 
+      img.id
+    ));
+    this.model = await Promise.all(imgInstances);
+    this.renderView();
+    this.setupTabListeners();
+    this.setupPaginationListeners();
+    this.setupFilterListeners();
+    this.setupImgListeners();
   }
 
+
+  // UPDATE FUNCTION
   async update() {
-    try {
-      const imgList = await this.findAllImgs(this.view.iframe);
-      const imgInstances = imgList.map((img, index) => new ImgModel(
-        img.node, 
-        img.src, 
-        `w3ba11y_imgTag_${index}`,
-        img.width, 
-        img.height, 
-        img.memorySize, 
-        img.backgroundImage,
-        img.isVisible, 
-        img.alt, 
-        img.id
-      ));
-  
-      this.model = [...this.cleanModel(), ...await Promise.all(imgInstances)];
-      const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
-      const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
-      const imagesData = this.model.slice(0, this.BATCH_SIZE).map(img => img.getImageData());
-      console.log(this.view.activePaginationButton)
-      const activePaginationButtonIndex = this.view.activePaginationButton.dataset.index;
-
-      this.view.render(imagesData, this.model.length, customErrors, customWarnings);
-      this.setupListeners(activePaginationButtonIndex);
-    } catch (error) {
-      console.error("Error processing images:", error);
-    }
+    const imgList = await this.findAllImgs(this.view.iframe);
+    const imgInstances = imgList.map((img, index) => new ImgModel(
+      img.node, 
+      img.src, 
+      `w3ba11y_imgTag_${index}`,
+      img.width, 
+      img.height, 
+      img.memorySize, 
+      img.backgroundImage,
+      img.isVisible, 
+      img.alt, 
+      img.id
+    ));
+    this.model = [...this.cleanModel(), ...await Promise.all(imgInstances)];
+    this.renderView();
+    this.setupTabListeners();
+    this.setupPaginationListeners();
+    this.setupFilterListeners();
+    this.setupImgListeners();
   }
 
+
+  // CLEAN MODEL FUNCTION
   cleanModel() {
     return this.model.filter(img => {
       if (!img.tag || !img.tag.isConnected) 
@@ -81,6 +75,43 @@ class ImgController {
     });
   }
 
+
+  // RENDER FUNCTION
+  renderView() {
+    const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+    const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+    const imagesData = this.model.slice(0, this.BATCH_SIZE).map(img => img.getImageData());
+
+    this.view.render(imagesData, this.model.length, customErrors, customWarnings);
+  }
+
+
+  // CHANGE PAGE FUNCTION
+  changePage(clickedButton) {
+    if (clickedButton === this.view.currentPageButton)
+      return;
+
+    const imagesData = [];
+    const index = clickedButton.dataset.index;
+
+    this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => imagesData.push(img.getImageData()));
+    this.view.changePage(imagesData, clickedButton);
+    this.setupImgListeners(index);
+  }
+
+
+  // FILTER STATUS FUNCTION
+  filterStatus(status) {
+    if (!this.filter.status)
+      return false;
+    const checkStatus = status.status === this.filter.status || !this.filter.status;
+    const checkTitle = status.title === this.filter.title || !this.filter.title;
+    const checkMessage = status.message === this.filter.message || !this.filter.message;
+    return checkStatus && checkTitle && checkMessage;
+  }
+
+
+  // FIND ALL IMAGES FUNCTION
   async findAllImgs(doc) {
     const searchDOM = (doc) => {
       const srcChecker = /url\(\s*?['"]?\s*?(\S+?)\s*?["']?\s*?\)/i;
@@ -225,21 +256,36 @@ class ImgController {
     }
   }
 
-  setupListeners(index = 0) {
+
+  // SETUP LISTENERS
+  setupTabListeners() {
     this.view.tabButtons.forEach(button => {
       button.addEventListener('click', () => this.eventHandlers.changeTab(button));
     });
+  }
 
-    console.log(this.view.paginationButtons);
-
+  setupPaginationListeners() {
     this.view.paginationButtons.forEach(button => {
       button.addEventListener('click', () => this.changePage(button));
     });
-
-    this.setupImgListeners(index);
   }
 
-  setupImgListeners(index) {
+  setupFilterListeners() {
+    this.view.filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        button.dataset.status ? this.filter.status = button.dataset.status : delete this.filter.status;
+        button.dataset.title ? this.filter.title = button.dataset.title : delete this.filter.title;
+        button.dataset.message ? this.filter.message = button.dataset.message : delete this.filter.message;
+        this.renderView();
+        this.setupImgListeners();
+        this.setupFilterListeners();
+        this.setupPaginationListeners();
+        this.view.analysisTabButton.click();
+      });
+    });
+  }
+
+  setupImgListeners(index = 0) {
     this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => {
       const {imgTag, imgShowButton, imgMoreButton} = this.view.getImgTags(img.hook);
 
@@ -265,6 +311,7 @@ class ImgController {
               const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
               const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
               this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--alt', button.dataset.status);
+              this.setupFilterListeners();
             });
           });
           imgSizeStatusButtons.forEach(button => {
@@ -273,6 +320,7 @@ class ImgController {
               const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
               const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
               this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--size', button.dataset.status);
+              this.setupFilterListeners();
             });
           });
           imgAddStatusButton.forEach(button => {
@@ -294,41 +342,29 @@ class ImgController {
             const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
             
             this.eventHandlers.addCustomStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), newStatus);
+            this.setupFilterListeners();
             imgMoreButton.click();
             imgMoreButton.click();
           });
-          if (imgDeleteButtons) {
-            imgDeleteButtons.forEach(button => {
-              button.addEventListener('click', this.handleDeleteClick = () => {
-                img.deleteCustomStatus(button.dataset.index);
-                const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
-                const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
-                this.eventHandlers.removeCustomStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), img.customStatus);
-                imgMoreButton.click();
-                imgMoreButton.click();
-              });
+          imgDeleteButtons?.forEach(button => {
+            button.addEventListener('click', this.handleDeleteClick = () => {
+              img.deleteCustomStatus(button.dataset.index);
+              const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
+              const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
+              this.eventHandlers.removeCustomStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), img.customStatus);
+              this.setupFilterListeners();
+              imgMoreButton.click();
+              imgMoreButton.click();
             });
-          }
+          });
         }
-
         this.eventHandlers.more(img.hook);
       };
-
       imgMoreButton.addEventListener('click', handleTagDataClick);
+      const isFiltered = [img.altStatus, img.memorySizeStatus, ...img.customStatus].map(status => this.filterStatus(status)).find(res => res === true);
+      if (isFiltered)
+        imgMoreButton.click();
     });
-
     this.view.removeLoading();
-  }
-
-  changePage(clickedButton) {
-    if (clickedButton === this.view.currentPageButton)
-      return;
-
-    const imagesData = [];
-    const index = clickedButton.dataset.index;
-
-    this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => imagesData.push(img.getImageData()));
-    this.view.changePage(imagesData, clickedButton);
-    this.setupImgListeners(index);
   }
 }
