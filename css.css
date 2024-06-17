@@ -110,7 +110,8 @@ main {
 }
 .ri-eye-fill,
 .ri-eye-off-fill,
-.ri-filter-fill {
+.ri-filter-fill,
+.ri-filter-off-fill {
   font-size: 18px;
 }
 .ri-delete-bin-line {

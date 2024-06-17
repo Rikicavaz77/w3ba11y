@@ -82,6 +82,10 @@ class ImgViewResult {
 
     this.container.innerHTML = `
       <h2>Results</h2>
+      <div class="hlist">
+        <h3>Remove filter</h3>
+        <button class="ri-filter-off-fill filter__button"><span class="visually-hidden">Remove filter</span></button>
+      </div>
       <div>
         <div class="hlist">
           <h3>Errors</h3>

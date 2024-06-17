@@ -206,6 +206,10 @@ class ImgView {
     this.analysisTab.updateAddNoteStatus(hook, newStatus);
   }
 
+  getAllImg() {
+    return this.analysisTab.getAllImg();
+  }
+
   getImgTags(hook) {
     return this.analysisTab.getImgTags(hook);
   }

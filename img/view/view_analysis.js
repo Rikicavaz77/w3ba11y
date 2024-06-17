@@ -291,6 +291,10 @@ class ImgViewAnalysis {
     imgData.innerHTML += customMessages;
   }
 
+  getAllImg() {
+    return this.container.querySelectorAll('.tag');
+  }
+
   getImgTags(hook) {
     const imgTag = this.container.querySelector(`.${hook}`);
     return {

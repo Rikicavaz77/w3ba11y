@@ -80,9 +80,14 @@ class ImgController {
   renderView() {
     const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
     const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
-    const imagesData = this.model.slice(0, this.BATCH_SIZE).map(img => img.getImageData());
+    const imagesData = [];
+    this.model.forEach(img => {
+      const isFiltered = [img.altStatus, img.memorySizeStatus, ...img.customStatus].map(status => this.filterStatus(status)).find(res => res === true);
+      if (isFiltered)
+        imagesData.push(img.getImageData());
+    });
 
-    this.view.render(imagesData, this.model.length, customErrors, customWarnings);
+    this.view.render(imagesData.slice(0, Math.min(this.BATCH_SIZE, imagesData.length)), imagesData.length, customErrors, customWarnings);
   }
 
 
@@ -92,10 +97,14 @@ class ImgController {
       return;
 
     const imagesData = [];
-    const index = clickedButton.dataset.index;
+    this.model.forEach(img => {
+      const isFiltered = [img.altStatus, img.memorySizeStatus, ...img.customStatus].map(status => this.filterStatus(status)).find(res => res === true);
+      if (isFiltered)
+        imagesData.push(img.getImageData());
+    });
 
-    this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => imagesData.push(img.getImageData()));
-    this.view.changePage(imagesData, clickedButton);
+    const index = clickedButton.dataset.index;
+    this.view.changePage(imagesData.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, imagesData.length)), clickedButton);
     this.setupImgListeners(index);
   }
 
@@ -103,7 +112,7 @@ class ImgController {
   // FILTER STATUS FUNCTION
   filterStatus(status) {
     if (!this.filter.status)
-      return false;
+      return true;
     const checkStatus = status.status === this.filter.status || !this.filter.status;
     const checkTitle = status.title === this.filter.title || !this.filter.title;
     const checkMessage = status.message === this.filter.message || !this.filter.message;
@@ -285,8 +294,20 @@ class ImgController {
     });
   }
 
-  setupImgListeners(index = 0) {
-    this.model.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, this.model.length)).forEach(img => {
+  setupImgListeners() {
+    const imagesData = [];
+
+    const tagsData = this.view.getAllImg();
+    tagsData.forEach(tag => {
+      const check = tag.classList.value.split(' ').find(cls => cls.startsWith('w3ba11y_imgTag_'));
+      if (check) {
+        const matchedImg = this.model.find(img => img.hook === check);
+        if (matchedImg)
+          imagesData.push(matchedImg);
+      }
+    });
+
+    imagesData.forEach(img => {
       const {imgTag, imgShowButton, imgMoreButton} = this.view.getImgTags(img.hook);
 
       if (imgShowButton) {
@@ -361,9 +382,6 @@ class ImgController {
         this.eventHandlers.more(img.hook);
       };
       imgMoreButton.addEventListener('click', handleTagDataClick);
-      const isFiltered = [img.altStatus, img.memorySizeStatus, ...img.customStatus].map(status => this.filterStatus(status)).find(res => res === true);
-      if (isFiltered)
-        imgMoreButton.click();
     });
     this.view.removeLoading();
   }
