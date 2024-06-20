@@ -1,7 +1,7 @@
 class ImgController {
-  constructor(view) {
+  constructor(iframe) {
     this.BATCH_SIZE = 100;
-    this.view = view;
+    this.view = new ImgView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
       show: this.view.show.bind(this.view),
@@ -43,12 +43,13 @@ class ImgController {
 
 
   // UPDATE FUNCTION
-  async update() {
+  async update(iframe) {
+    this.view.update(iframe);
     const imgList = await this.findAllImgs(this.view.iframe);
     const imgInstances = imgList.map((img, index) => new ImgModel(
       img.node, 
       img.src, 
-      `w3ba11y_imgTag_${index}`,
+      `w3ba11y_imgTag_${index + this.model.length}`,
       img.width, 
       img.height, 
       img.memorySize, 
@@ -58,6 +59,7 @@ class ImgController {
       img.id
     ));
     this.model = [...this.cleanModel(), ...await Promise.all(imgInstances)];
+    console.log(this.model);
     this.renderView();
     this.setupTabListeners();
     this.setupPaginationListeners();
@@ -69,7 +71,9 @@ class ImgController {
   // CLEAN MODEL FUNCTION
   cleanModel() {
     return this.model.filter(img => {
-      if (!img.tag || !img.tag.isConnected) 
+      if (!img.tag)
+        return false;
+      if (!this.view.iframe.querySelector(`.${img.hook}`))
         return false;
       return true;
     });
@@ -124,11 +128,6 @@ class ImgController {
   async findAllImgs(doc) {
     const searchDOM = (doc) => {
       const srcChecker = /url\(\s*?['"]?\s*?(\S+?)\s*?["']?\s*?\)/i;
-      const clsChecker = /^w3ba11y_imgTag_\d+$/;
-      
-      const hasMatchingClass = (node, regex) => {
-        return Array.from(node.classList).some(cls => regex.test(cls));
-      };
 
       const isVisible = (node) => {
         while (node) {
@@ -142,7 +141,7 @@ class ImgController {
       };
 
       const collectImagesFromNode = (node, collection) => {
-        if (hasMatchingClass(node, clsChecker)) return;
+        if (node.classList.contains('w3ba11y_imgTag')) return;
 
         const prop = window.getComputedStyle(node).getPropertyValue('background-image');
         let match = srcChecker.exec(prop);
@@ -248,7 +247,6 @@ class ImgController {
           setTimeout(() => reject(new Error('Timeout loading image')), timeout);
         });
       } catch (error) {
-        console.error("Error loading image:", error);
         return null;
       }
     };
@@ -331,7 +329,7 @@ class ImgController {
               img.altStatus = new Status(button.dataset.status, `Image alt`, `Image alt ${button.dataset.status}`);
               const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
               const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
-              this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--alt', button.dataset.status);
+              this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag-img__info--alt', button.dataset.status);
               this.setupFilterListeners();
             });
           });
@@ -340,7 +338,7 @@ class ImgController {
               img.memorySizeStatus = new Status(button.dataset.status, `Image size`, `Image size ${button.dataset.status}`);
               const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
               const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
-              this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag__info--size', button.dataset.status);
+              this.eventHandlers.updateDefaultStatus(customErrors, customWarnings, img.hook, img.getTotalErrors(), img.getTotalWarnings(), '.tag-img__info--size', button.dataset.status);
               this.setupFilterListeners();
             });
           });

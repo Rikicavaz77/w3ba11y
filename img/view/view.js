@@ -6,6 +6,7 @@ class ImgView {
     this._iframe = iframe;
     this._tabButtons;
     this._activeTabButton;
+    this._refreshButton;
   }
 
   get container() {
@@ -44,6 +45,10 @@ class ImgView {
     return this._activeTabButton;
   }
 
+  get refreshButton() {
+    return this._refreshButton;
+  }
+
   get paginationButtons() {
     return this.analysisTab.paginationButtons;
   }
@@ -64,6 +69,10 @@ class ImgView {
     this._activeTabButton = button;
   }
 
+  set refreshButton(button) {
+    this._refreshButton = button;
+  }
+
   set paginationButtons(buttons) {
     this._paginationButtons = buttons;
   }
@@ -81,6 +90,10 @@ class ImgView {
     this.createCustomStyles();
   }
 
+  update(iframe) {
+    this._iframe = iframe;
+  }
+  
   generateImgViewSection() {
     const asideContainer = document.querySelector('aside');
     const imgViewSection = document.createElement('section');
@@ -89,6 +102,9 @@ class ImgView {
       <header class="section__header">
         <h2>Images Analysis</h2>
         <div class="header__tabs">
+          <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
+            <span class="visually-hidden">Back to general</h3>
+          </button>
           <button data-tab="results" class="tab__button tab__button--active tab__button--results">
             <h3>Results</h3>
             <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
@@ -110,6 +126,8 @@ class ImgView {
 
     this.tabButtons = imgViewSection.querySelectorAll('.tab__button');
     this.activeTabButton = imgViewSection.querySelector('.tab__button--results');
+
+    this.refreshButton = imgViewSection.querySelector('.ri-restart-line');
 
     return asideContainer.querySelector('.w3ba11y__section--img');
   }
@@ -223,6 +241,8 @@ class ImgView {
     styleElement.textContent = `
       .w3ba11y--highlight { border: 4px solid red !important; }
     `;
-    this.iframe.head.appendChild(styleElement);
+    try {
+      this.iframe.head.appendChild(styleElement);
+    } catch (error) {}
   }
 }

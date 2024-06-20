@@ -104,7 +104,7 @@ class ImgViewAnalysis {
     imagesData.forEach(img => {
       function generateStatusHTML(status, index) {
         return `
-          <li class="tag__info tag__info--customStatus">
+          <li class="tag-img__info tag-img__info--customStatus">
             <div>
               <h4>${status.title}</h4>
               <p>${status.message}</p>
@@ -121,51 +121,59 @@ class ImgViewAnalysis {
       const size = img.memorySize > 1024 ? `${Math.round(img.memorySize / 1024, 1)}MB` : `${img.memorySize}kB`;
 
       this._body.innerHTML += `
-        <div class="tag ${img.hook}">
-          <header class="tag__header">
-            <img src="${img.src}" alt="" class="tag__img">
-            <ul class="hlist tag__status">
+        <div class="tag-img ${img.hook}">
+          <header class="tag-img__header">
+            <img src="${img.src}" alt="" class="tag-img__img">
+            <ul class="hlist tag-img__status">
               <li class="hlist">${img.isBackground ? "B" : "T"}</li>
               <li class="hlist"><span class="status status--warning"></span><span class="status--total-warning">${img.totalWarnings}</span></li>
               <li class="hlist"><span class="status status--error"></span><span class="status--total-error">${img.totalErrors}</span></li>
               <li>
-                <button class="${img.isVisible ? "ri-eye-fill" : "ri-eye-off-fill"}"><span class="visually-hidden">${img.isVisible ? "Show image" : "Image not visible"}</span></button>
+                <button ${img.isVisible ? 'class="ri-eye-fill"' : 'disabled class="ri-eye-off-fill"'}><span class="visually-hidden">${img.isVisible ? "Show image" : "Image not visible"}</span></button>
               </li>
               <li>
                 <button class="ri-arrow-drop-down-line"><span class="visually-hidden">More informations</span></button>
               </li>
             </ul>
           </header>
-          <div class="tag__body">
-            <ul class="tag__data">
+          <div class="tag-img__body">
+            <ul class="tag-img__data">
               ${img.id ? `
-                <li class="tag__info">
+                <li class="tag-img__info">
                   <div>
                     <h4>Id</h4>
                     <p>${img.id}</p>
                   </div>
-                </li>` : ''}
-              <li class="tag__info">
+                </li>` : (img.isVisible ? '' : `
+                <li class="tag-img__info">
+                  <div>
+                    <h4>Code snippet</h4>
+                    <p class="code-block">
+                      ${img.node}
+                    </p>
+                  </div>
+                </li>`)}
+              <li class="tag-img__info">
                 <div>
                   <h4>Width</h4>
                   <p>${img.width}px</p>
                 </div>
               </li>
-              <li class="tag__info">
+              <li class="tag-img__info">
                 <div>
                   <h4>Height</h4>
                   <p>${img.height}px</p>
                 </div>
               </li>
-              <li class="tag__info">
+              <li class="tag-img__info">
                 <div>
                   <h4>Type</h4>
                   <p>${img.isBackground ? "Background image" : "Tag image"}</p>
                 </div>
               </li>
-              <li class="tag__info tag__info--alt">
+              <li class="tag-img__info tag-img__info--alt">
                 <div>
-                  <h4>Alt (${img.altLength} chars)</h4>
+                  <h4>Alt (${img.altLength})</h4>
                   <p>${img.alt}</p>
                 </div>
                 <ul class="hlist">
@@ -174,7 +182,7 @@ class ImgViewAnalysis {
                   <li class="hlist"><button data-status="error" class="status status--error ${img.altStatus.status === 'error' ? 'status--current' : ''}"><span class="visually-hidden">Error</span></button></li>
                 </ul>
               </li>
-              <li class="tag__info tag__info--size">
+              <li class="tag-img__info tag-img__info--size">
                 <div>
                   <h4>Size</h4>
                   <p>${size}</p>
@@ -187,7 +195,7 @@ class ImgViewAnalysis {
               </li>
               ${customMessages}
             </ul>
-            <form action="/" class="tag__form">
+            <form action="/" class="tag-img__form">
               <ul class="hlist form__status-bar">
                 <li><button type="button" data-status="warning" class="status status--warning status--current centralize form__status"></button><span>Warning</span></li>
                 <li><button type="button" data-status="error" class="status status--error centralize form__status"></button><span>Error</span></li>
@@ -214,7 +222,7 @@ class ImgViewAnalysis {
   more(hook) {
     const imgTag = this.container.querySelector(`.${hook}`);
     const imgArrow = imgTag.querySelector('.ri-arrow-drop-down-line');
-    const imgBody = imgTag.querySelector('.tag__body');
+    const imgBody = imgTag.querySelector('.tag-img__body');
 
     imgArrow.classList.toggle('ri-arrow-drop-down-line--rotate');
     imgBody.classList.toggle('more');
@@ -222,7 +230,7 @@ class ImgViewAnalysis {
 
   updateDefaultStatus(hook, totalErrors, totalWarnings, targetClass, newStatus) {
     const imgTag = this.container.querySelector(`.${hook}`);
-    const imgTagHeader = imgTag.querySelector('.tag__header');
+    const imgTagHeader = imgTag.querySelector('.tag-img__header');
     const imgClassStatus = imgTag.querySelector(targetClass);
 
     imgTagHeader.querySelector('.status--total-warning').textContent = totalWarnings;
@@ -234,7 +242,7 @@ class ImgViewAnalysis {
 
   updateAddNoteStatus(hook, status) {
     const imgTag = this.container.querySelector(`.${hook}`);
-    const imgForm = imgTag.querySelector('.tag__form');
+    const imgForm = imgTag.querySelector('.tag-img__form');
 
     imgForm.querySelector('.status--current').classList.remove('status--current');
     imgForm.querySelector(`.status--${status}`).classList.add('status--current');
@@ -242,11 +250,11 @@ class ImgViewAnalysis {
 
   addCustomStatus(hook, totalErrors, totalWarnings, status) {
     const imgTag = this.container.querySelector(`.${hook}`);
-    const imgTagHeader = imgTag.querySelector('.tag__header');
-    const imgData = imgTag.querySelector('.tag__data');
-    const statusIndex = imgData.querySelectorAll('.tag__info--customStatus').length;
+    const imgTagHeader = imgTag.querySelector('.tag-img__header');
+    const imgData = imgTag.querySelector('.tag-img__data');
+    const statusIndex = imgData.querySelectorAll('.tag-img__info--customStatus').length;
     imgData.innerHTML += `
-      <li class="tag__info tag__info--customStatus">
+      <li class="tag-img__info tag-img__info--customStatus">
         <div>
           <h4>${status.title}</h4>
           <p>${status.message}</p>
@@ -264,7 +272,7 @@ class ImgViewAnalysis {
   removeCustomStatus(hook, totalErrors, totalWarnings, customStatus) {
     function generateStatusHTML(status, index) {
       return `
-        <li class="tag__info tag__info--customStatus">
+        <li class="tag-img__info tag-img__info--customStatus">
           <div>
             <h4>${status.title}</h4>
             <p>${status.message}</p>
@@ -277,22 +285,18 @@ class ImgViewAnalysis {
     }
 
     const imgTag = this.container.querySelector(`.${hook}`);
-    const imgTagHeader = imgTag.querySelector('.tag__header');
-    const imgData = imgTag.querySelector('.tag__data');
+    const imgTagHeader = imgTag.querySelector('.tag-img__header');
+    const imgData = imgTag.querySelector('.tag-img__data');
     const customMessages = [...customStatus].map((status, index) => generateStatusHTML(status, index)).join('');
     
     imgTagHeader.querySelector('.status--total-warning').textContent = totalWarnings;
     imgTagHeader.querySelector('.status--total-error').textContent = totalErrors;
-    console.log(imgData)
-    console.log(imgData.querySelectorAll('.tag__info--customStatus'))
-    imgData.querySelectorAll('.tag__info--customStatus').forEach(status => imgData.removeChild(status));
-    console.log(imgData)
-    console.log(customMessages);
+    imgData.querySelectorAll('.tag-img__info--customStatus').forEach(status => imgData.removeChild(status));
     imgData.innerHTML += customMessages;
   }
 
   getAllImg() {
-    return this.container.querySelectorAll('.tag');
+    return this.container.querySelectorAll('.tag-img');
   }
 
   getImgTags(hook) {
@@ -301,8 +305,8 @@ class ImgViewAnalysis {
       imgTag: imgTag,
       imgShowButton: imgTag.querySelector('.ri-eye-fill') || imgTag.querySelector('.ri-eye-off-fill'),
       imgMoreButton: imgTag.querySelector('.ri-arrow-drop-down-line'),
-      imgAltStatusButtons: imgTag.querySelector('.tag__info--alt').querySelectorAll('.status'),
-      imgSizeStatusButtons: imgTag.querySelector('.tag__info--size').querySelectorAll('.status'),
+      imgAltStatusButtons: imgTag.querySelector('.tag-img__info--alt').querySelectorAll('.status'),
+      imgSizeStatusButtons: imgTag.querySelector('.tag-img__info--size').querySelectorAll('.status'),
       imgDeleteButtons: imgTag.querySelectorAll('.ri-delete-bin-line'),
       imgAddStatusButton: imgTag.querySelectorAll('.form__status'),
       imgAddNoteSubmitButton: imgTag.querySelector('.form__input--submit')
@@ -311,7 +315,7 @@ class ImgViewAnalysis {
 
   getNewCustomStatus(hook) {
     const imgTag = this.container.querySelector(`.${hook}`);
-    const imgForm = imgTag.querySelector('.tag__form');
+    const imgForm = imgTag.querySelector('.tag-img__form');
     const status = imgForm.querySelector('.status--current').classList.contains('status--warning') ? 'warning' : 'error';
     const title = imgForm.querySelector('input[name="title"]').value;
     const message = imgForm.querySelector('input[name="message"]').value;

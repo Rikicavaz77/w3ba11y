@@ -14,7 +14,7 @@ class ImgModel {
     this._altStatus = this.altStatusMessage(alt, isBackground);
     this._customStatus = [];
 
-    tag.classList.add(hook);
+    tag.classList.add(hook, "w3ba11y_imgTag");
   }
 
   get tag() {
@@ -173,7 +173,45 @@ class ImgModel {
   }
 
   getImageData() {
+    const replaceSpecialChars = (node) => {
+      let inQuotes = false;
+      let result = '';
+    
+      for (let i = 0; i < node.length; i++) {
+        const char = node[i];
+    
+        if (char === '"') {
+          inQuotes = !inQuotes;
+          result += char;
+        } else if (!inQuotes && char === ' ') {
+          result += '\n';
+        } else {
+          switch (char) {
+            case '&':
+              result += '&amp;';
+              break;
+            case '<':
+              result += '&lt;';
+              break;
+            case '>':
+              result += '&gt;';
+              break;
+            case "'":
+              result += '&#039;';
+              break;
+            case '"':
+              result += '&quot;';
+              break;
+            default:
+              result += char;
+          }
+        }
+      }
+      return result;
+    }
+
     return {
+      node: replaceSpecialChars(this.tag.outerHTML),
       src: this.src,
       id: this.id,
       hook: this.hook,

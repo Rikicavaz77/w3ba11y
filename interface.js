@@ -1,5 +1,5 @@
 class Interface {
-  constructor() {
+  constructor(location) {
     this._originalDocumentHTML = document.documentElement.outerHTML;
     this._main = document.createElement('main');
     this._shadowRoot = this._main.attachShadow({ mode: 'open' });
@@ -7,12 +7,16 @@ class Interface {
     this._iframe.style.width = '100%';
     this._iframe.style.height = '100%';
     this._iframe.style.border = 'none';
-    this._iframe.src = window.location.href;
+    this._iframe.src = location;
     this._shadowRoot.appendChild(this._iframe);
   }
 
   get originalDocumentHTML() {
     return this._originalDocumentHTML;
+  }
+
+  get aside() {
+    return document.querySelector('aside');
   }
 
   get iframe() {
@@ -40,10 +44,49 @@ class Interface {
               <img src="${chrome.runtime.getURL('/static/img/logo.png')}" alt="Logo" width="100px">
               <h1>w3ba11y</h1>
             </header>
+            <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
+              <div>
+                <button data-section="img" data-loading="true" class="section__button section__button--img">
+                  <h3>Images</h3>
+                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                </button>
+                <button data-section="h" data-loading="true" class="section__button section__button--h">
+                  <h3>Headings</h3>
+                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                </button>
+              </div>
+            </section>
           </aside>
         </body>
       </html>
     `;
     document.body.appendChild(this._main);
+  }
+
+  getAllSection() {
+    return document.querySelectorAll('.w3ba11y__section');
+  }
+
+  getSection(section) {
+    return document.querySelector(`.w3ba11y__section--${section}`);
+  }
+
+  getAllSectionLoading() {
+    const sections = [];
+    document.querySelectorAll('.section__button').forEach(button => {
+      if (button.dataset.loading == 'true')
+        sections.push(button.dataset.section);
+    });
+    return sections;
+  }
+
+  removeSectionLoading(component) {
+    document.querySelector(`.section__button--${component}`).dataset.loading = "false";
+  }
+
+  removeLoading() {
+    document.querySelectorAll('.section__button')?.forEach(button => {
+      button.querySelector('img')?.remove();
+    });
   }
 }
