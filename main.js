@@ -40,15 +40,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           observer.disconnect();
           document.removeEventListener('click', handleSectionClick);
           if (new URL(target.href).hostname !== window.location.hostname) {
-            window.top.location.href = target.href; // Redirect to the new URL
+            window.top.location.href = target.href; 
           } else {
             chrome.runtime.sendMessage({ action: "run", location: target.href });
           }
         }
         else {
           let urlCheck = false;
-          let counter = 0;
-          const intervalId = setInterval(() => { // Changed to setInterval to run 10 times
+          const intervalId = setInterval(() => {
             const newUrl = interfaceInstance.iframe.contentWindow.location.href.split('#')[0];
             console.log(currentUrl, newUrl);
             if (currentUrl !== newUrl && newUrl !== 'about:blank') {
@@ -56,13 +55,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               chrome.runtime.sendMessage({ action: "run", location: newUrl });
               currentUrl = newUrl;
               urlCheck = true;
-              counter++;
             }
 
-            if (urlCheck || counter >= 10) {
+            if (urlCheck) {
               clearInterval(intervalId);
             }
-          }, 100);
+          }, 300);
         }
       });
 
