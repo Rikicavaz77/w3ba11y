@@ -128,11 +128,17 @@ class ImgController {
   async findAllImgs(doc) {
     const searchDOM = (doc) => {
       const srcChecker = /url\(\s*?['"]?\s*?(\S+?)\s*?["']?\s*?\)/i;
+      const imgSrcChecker = /\.(jpeg|jpg|gif|png|svg|webp)$/i;
 
       const isVisible = (node) => {
         while (node) {
           const style = window.getComputedStyle(node);
-          if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+          if (style.display === 'none') {
+            console.log('display none');
+            return false;
+          }
+          if (style.visibility === 'hidden') {
+            console.log('visibility hidden');
             return false;
           }
           node = node.parentElement;
@@ -141,6 +147,7 @@ class ImgController {
       };
 
       const collectImagesFromNode = (node, collection) => {
+        console.log('doing shit');
         if (node.classList.contains('w3ba11y_imgTag')) return;
 
         const prop = window.getComputedStyle(node).getPropertyValue('background-image');
@@ -155,9 +162,16 @@ class ImgController {
         }
 
         if (/^img$/i.test(node.tagName)) {
-          if (node.dataset.src)
-            collection.add({ src: node.dataset.src, node, isBackground: false, isVisible: isVisible(node) });
-          else if (node.src !== '')
+          console.log(node);
+          let imgUrlCheck = false; 
+          for (let attr of node.attributes) {
+            if (imgSrcChecker.test(attr.value) && !imgUrlCheck) {
+              imgUrlCheck = true;
+              collection.add({ src: attr.value, node, isBackground: false, isVisible: isVisible(node) });
+              break;
+            }
+          }
+          if (node.src !== '' && !imgUrlCheck)
             collection.add({ src: node.src, node, isBackground: false, isVisible: isVisible(node) });
         }
 

@@ -11,7 +11,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.action === 'updateComponents') {
     iframe = document.querySelector('main').shadowRoot.querySelector('iframe').contentDocument;
-    console.log('iframe', iframe)
     controller = window.imgController;
     if (controller)
       controller.update(iframe);

@@ -42,22 +42,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (new URL(target.href).hostname !== window.location.hostname) {
             window.top.location.href = target.href; 
           } else {
-            chrome.runtime.sendMessage({ action: "run", location: target.href });
+            //chrome.runtime.sendMessage({ action: "run", location: target.href });
+            window.top.location.href = target.href; 
           }
         }
         else {
           let urlCheck = false;
+          let urlCounter = 0;
+          const maxAttempts = 5;
           const intervalId = setInterval(() => {
             const newUrl = interfaceInstance.iframe.contentWindow.location.href.split('#')[0];
+            urlCounter++;
             console.log(currentUrl, newUrl);
+        
             if (currentUrl !== newUrl && newUrl !== 'about:blank') {
               document.removeEventListener('click', handleSectionClick);
               chrome.runtime.sendMessage({ action: "run", location: newUrl });
               currentUrl = newUrl;
               urlCheck = true;
             }
-
-            if (urlCheck) {
+        
+            if (urlCheck || urlCounter >= maxAttempts) {
               clearInterval(intervalId);
             }
           }, 300);
@@ -66,7 +71,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       setTimeout(() => {
         chrome.runtime.sendMessage({ action: "runComponents" });
-      }, 2000);
+      }, 3000);
     });
   };
 
