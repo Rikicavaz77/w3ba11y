@@ -213,7 +213,7 @@ class ImgViewAnalysis {
 
   changePage(imagesData, clickedButton) {
     this.renderImages(imagesData);
-    this.currentPageButton.classList.remove('pagination__button--active');
+    this.currentPageButton?.classList.remove('pagination__button--active');
     this.currentPageButton = clickedButton;
     this.currentPageButton.classList.add('pagination__button--active');
     this.container.scrollTop = 0;
