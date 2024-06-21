@@ -44,6 +44,7 @@ class ImgController {
 
   // UPDATE FUNCTION
   async update(iframe) {
+    const index = this.view.activePaginationButton.dataset.index;
     this.view.update(iframe);
     const imgList = await this.findAllImgs(this.view.iframe);
     const imgInstances = imgList.map((img, index) => new ImgModel(
@@ -59,8 +60,7 @@ class ImgController {
       img.id
     ));
     this.model = [...this.cleanModel(), ...await Promise.all(imgInstances)];
-    console.log(this.model);
-    this.renderView();
+    this.renderView(index);
     this.setupTabListeners();
     this.setupPaginationListeners();
     this.setupFilterListeners();
@@ -81,7 +81,7 @@ class ImgController {
 
 
   // RENDER FUNCTION
-  renderView() {
+  renderView(index = 0) {
     const customErrors = this.model.flatMap(img => img.getErrors ? img.getErrors() : []);
     const customWarnings = this.model.flatMap(img => img.getWarnings ? img.getWarnings() : []);
     const imagesData = [];
@@ -91,7 +91,7 @@ class ImgController {
         imagesData.push(img.getImageData());
     });
 
-    this.view.render(imagesData.slice(0, Math.min(this.BATCH_SIZE, imagesData.length)), imagesData.length, customErrors, customWarnings);
+    this.view.render(imagesData.slice(0, Math.min(this.BATCH_SIZE, imagesData.length)), imagesData.length, customErrors, customWarnings, index);
   }
 
 
@@ -147,7 +147,6 @@ class ImgController {
       };
 
       const collectImagesFromNode = (node, collection) => {
-        console.log('doing shit');
         if (node.classList.contains('w3ba11y_imgTag')) return;
 
         const prop = window.getComputedStyle(node).getPropertyValue('background-image');
@@ -324,6 +323,7 @@ class ImgController {
 
       if (imgShowButton) {
         imgShowButton.addEventListener('click', () => this.eventHandlers.show(img.hook));
+        img.open = !img.open;
       }
       
       const handleTagDataClick = () => {

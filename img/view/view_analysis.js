@@ -136,7 +136,7 @@ class ImgViewAnalysis {
               </li>
             </ul>
           </header>
-          <div class="tag-img__body">
+          <div class="tag-img__body ${img.open ? 'more' : ''}">
             <ul class="tag-img__data">
               ${img.id ? `
                 <li class="tag-img__info">

@@ -13,6 +13,7 @@ class ImgModel {
     this._memorySizeStatus = this.imageSizeStatusMessage();
     this._altStatus = this.altStatusMessage(alt, isBackground);
     this._customStatus = [];
+    this._open = false;
 
     tag.classList.add(hook, "w3ba11y_imgTag");
   }
@@ -69,12 +70,20 @@ class ImgModel {
     return this._customStatus;
   }
 
+  get open() {
+    return this._open;
+  }
+
   set memorySizeStatus(status) {
     this._memorySizeStatus = status;
   }
 
   set altStatus(status) {
     this._altStatus = status;
+  }
+
+  set open(open) {
+    this._open = open;
   }
 
   altStatusMessage() {
