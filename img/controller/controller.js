@@ -44,7 +44,7 @@ class ImgController {
 
   // UPDATE FUNCTION
   async update(iframe) {
-    const index = this.view.activePaginationButton.dataset.index;
+    const index = this.view.activePaginationButton ? this.view.activePaginationButton.dataset.index : 0; 
     this.view.update(iframe);
     const imgList = await this.findAllImgs(this.view.iframe);
     const imgInstances = imgList.map((img, index) => new ImgModel(
