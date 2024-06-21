@@ -34,7 +34,7 @@ class ImgController {
       img.id
     ));
     this.model = await Promise.all(imgInstances);
-    this.renderView();
+    this.renderView(0);
     this.setupTabListeners();
     this.setupPaginationListeners();
     this.setupFilterListeners();

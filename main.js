@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let target = e.target.closest('a');
         if (target) {
           e.preventDefault();
-          observer.disconnect();
+          //observer.disconnect();
           document.removeEventListener('click', handleSectionClick);
           if (new URL(target.href).hostname !== window.location.hostname) {
             window.top.location.href = target.href; 
@@ -96,7 +96,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               document.addEventListener('click', handleSectionClick); // Pass function reference, not execution
               clickListenerAdded = true;
             }
-            observer.observe(interfaceInstance.iframe.contentDocument.body, { attributes: true, childList: true, subtree: true });
+            //observer.observe(interfaceInstance.iframe.contentDocument.body, { attributes: true, childList: true, subtree: true });
           }
           break;
       }
