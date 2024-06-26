@@ -99,7 +99,7 @@ class ImgModel {
   }
 
   imageSizeStatusMessage() {
-    if (this.memorySize >= 1536)
+    if (this.memorySize >= 1024)
       return new Status('error', 'Image size', 'Image size too big');
     else if (this.memorySize > this.estimatedMemorySize())
       return new Status('warning', 'Image size', 'Image size too big');

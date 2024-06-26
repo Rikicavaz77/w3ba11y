@@ -54,7 +54,6 @@ pre {
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
   color: #333;
-  white-space: pre-line;
   word-wrap: break-word;
   word-break: break-all;
 }

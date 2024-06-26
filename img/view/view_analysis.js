@@ -144,15 +144,15 @@ class ImgViewAnalysis {
                     <h4>Id</h4>
                     <p>${img.id}</p>
                   </div>
-                </li>` : (img.isVisible ? '' : `
-                <li class="tag-img__info">
-                  <div>
-                    <h4>Code snippet</h4>
-                    <p class="code-block">
-                      ${img.node}
-                    </p>
-                  </div>
-                </li>`)}
+                </li>` : ''}
+              <li class="tag-img__info">
+                <div>
+                  <h4>Code snippet</h4>
+                  <p class="code-block">
+                    ${img.node}
+                  </p>
+                </div>
+              </li>
               <li class="tag-img__info">
                 <div>
                   <h4>Width</h4>

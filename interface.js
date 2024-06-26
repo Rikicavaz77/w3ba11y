@@ -36,6 +36,7 @@ class Interface {
       <!DOCTYPE html>
       <html lang="en">
         <head>
+          <title>${document.title}</title>
           <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
         </head>
         <body>
