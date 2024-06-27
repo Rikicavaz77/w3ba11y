@@ -1,28 +1,5 @@
 let interfaceInstance;
 
-const debounce = (func, delay) => {
-  let debounceTimer;
-  return function() {
-    const context = this;
-    const args = arguments;
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => func.apply(context, args), delay);
-  };
-};
-
-const observer = new MutationObserver(debounce((mutationsList) => {
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'childList') {
-      console.log('MODIFIED');
-      try {
-        chrome.runtime.sendMessage({ action: "update" });
-      }
-      catch {}
-      break;
-    }
-  }
-}, 500));
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const initializeInterface = (location) => {
     chrome.runtime.sendMessage({ action: "insertCSS", style: "css.css" });
@@ -37,14 +14,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let target = e.target.closest('a');
         if (target) {
           e.preventDefault();
-          //observer.disconnect();
           document.removeEventListener('click', handleSectionClick);
-          if (new URL(target.href).hostname !== window.location.hostname) {
-            window.top.location.href = target.href; 
-          } else {
-            //chrome.runtime.sendMessage({ action: "run", location: target.href });
-            window.top.location.href = target.href; 
-          }
+          window.top.location.href = target.href; 
         }
         else {
           let urlCheck = false;
@@ -53,7 +24,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           const intervalId = setInterval(() => {
             const newUrl = interfaceInstance.iframe.contentWindow.location.href.split('#')[0];
             urlCounter++;
-            console.log(currentUrl, newUrl);
         
             if (currentUrl !== newUrl && newUrl !== 'about:blank') {
               document.removeEventListener('click', handleSectionClick);
@@ -93,10 +63,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (interfaceInstance.getAllSectionLoading().length === 0) {
             interfaceInstance.removeLoading();
             if (!clickListenerAdded) {
-              document.addEventListener('click', handleSectionClick); // Pass function reference, not execution
+              document.addEventListener('click', handleSectionClick);
               clickListenerAdded = true;
             }
-            //observer.observe(interfaceInstance.iframe.contentDocument.body, { attributes: true, childList: true, subtree: true });
           }
           break;
       }

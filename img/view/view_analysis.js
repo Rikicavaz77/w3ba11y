@@ -116,10 +116,27 @@ class ImgViewAnalysis {
           </li>`;
       }
 
+      function isVisible(node) {
+        console.log(typeof node, node);
+        if (node.tagName === 'PICTURE' && node.querySelector('img').currentSrc != img.src) return false;
+        while (node) {
+          const style = window.getComputedStyle(node);
+          if (style.display === 'none') {
+            console.log(node, 'display none');
+            return false;
+          }
+          else if (style.visibility === 'hidden') {
+            console.log(node, 'visibility hidden');
+            return false;
+          }
+          node = node.parentElement;
+        }
+        return true;
+      };
+
       const customStatus = [...img.customErrors, ...img.customWarnings];
       const customMessages = customStatus.map((status, index) => generateStatusHTML(status, index)).join('');
       const size = img.memorySize > 1024 ? `${Math.round(img.memorySize / 1024, 1)}MB` : `${img.memorySize}kB`;
-
       this._body.innerHTML += `
         <div class="tag-img ${img.hook}">
           <header class="tag-img__header">
@@ -129,7 +146,7 @@ class ImgViewAnalysis {
               <li class="hlist"><span class="status status--warning"></span><span class="status--total-warning">${img.totalWarnings}</span></li>
               <li class="hlist"><span class="status status--error"></span><span class="status--total-error">${img.totalErrors}</span></li>
               <li>
-                <button ${img.isVisible ? 'class="ri-eye-fill"' : 'disabled class="ri-eye-off-fill"'}><span class="visually-hidden">${img.isVisible ? "Show image" : "Image not visible"}</span></button>
+                <button ${isVisible(img.tag) ? 'class="ri-eye-fill"' : 'disabled class="ri-eye-off-fill"'}><span class="visually-hidden">${isVisible(img.tag) ? "Show image" : "Image not visible"}</span></button>
               </li>
               <li>
                 <button class="ri-arrow-drop-down-line"><span class="visually-hidden">More informations</span></button>

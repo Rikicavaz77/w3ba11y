@@ -220,6 +220,7 @@ class ImgModel {
     }
 
     return {
+      tag: this.tag,
       node: replaceSpecialChars(this.tag.outerHTML),
       src: this.src,
       id: this.id,

@@ -134,11 +134,11 @@ class ImgController {
         while (node) {
           const style = window.getComputedStyle(node);
           if (style.display === 'none') {
-            console.log('display none');
+            console.log(node, 'display none');
             return false;
           }
-          if (style.visibility === 'hidden') {
-            console.log('visibility hidden');
+          else if (style.visibility === 'hidden') {
+            console.log(node, 'visibility hidden');
             return false;
           }
           node = node.parentElement;
@@ -161,7 +161,6 @@ class ImgController {
         }
 
         if (/^img$/i.test(node.tagName)) {
-          console.log(node);
           let imgUrlCheck = false; 
           for (let attr of node.attributes) {
             if (imgSrcChecker.test(attr.value) && !imgUrlCheck) {
@@ -180,7 +179,7 @@ class ImgController {
           sources.forEach(source => {
             if (source.srcset) {
               source.srcset.split(',').map(s => s.trim().split(' ')[0]).forEach(src => {
-                collection.add({ src, node, isBackground: false, isVisible: isVisible(source) && (src === img.currentSrc) });
+                collection.add({ src, node, isBackground: false, isVisible: isVisible(node) && (src === img.currentSrc) });
               });
             }
           });
