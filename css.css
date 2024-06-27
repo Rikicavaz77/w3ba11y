@@ -59,7 +59,7 @@ pre {
   word-break: break-word;
   overflow-wrap: break-word;
   overflow-x: auto;
-  white-space: pre-wrap;
+  white-space: normal;
 }
 
 .visually-hidden {

@@ -205,6 +205,13 @@ class ImgController {
     };
 
     const loadImg = async ({ src, node, isBackground, isVisible }, timeout = 60000) => {
+      function checkSrc(src) {
+        const baseUrl = window.location.href;
+        const absoluteUrl = new URL(src, baseUrl);
+        console.log(absoluteUrl.href);
+        return absoluteUrl.href;
+      }
+      src = checkSrc(src);
       const getMemorySize = async (src) => {
         const resources = performance.getEntriesByType('resource');
         const resource = resources.find(res => {
