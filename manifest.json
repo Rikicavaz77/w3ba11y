@@ -21,5 +21,8 @@
       "resources": ["static/img/logo.png", "static/img/loading.gif"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "icons": {
+    "128": "static/img/icon.png"
+  }
 }
