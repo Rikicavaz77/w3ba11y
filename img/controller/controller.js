@@ -151,7 +151,10 @@ class ImgController {
 
         const prop = window.getComputedStyle(node).getPropertyValue('background-image');
         let match = srcChecker.exec(prop);
-        if (match) collection.add({ src: match[1], node, isBackground: true, isVisible: isVisible(node) });
+        if (match) {
+          collection.add({ src: match[1], node, isBackground: true, isVisible: isVisible(node) });
+        console.log(match);
+        }
 
         else if (!match && node.style && node.style.backgroundImage) {
           match = srcChecker.exec(node.style.backgroundImage);
@@ -205,10 +208,15 @@ class ImgController {
     };
 
     const loadImg = async ({ src, node, isBackground, isVisible }, timeout = 60000) => {
-      function checkSrc(src) {
+      const checkSrc = (src) => {
+        if (!src.includes('http') && this.view.iframe.querySelector('base')) {
+          const href = this.view.iframe.querySelector('base').href;
+          const baseUrl = new URL(href);
+          console.log(baseUrl.href + src);
+          return baseUrl.href + src;
+        }
         const baseUrl = window.location.href;
         const absoluteUrl = new URL(src, baseUrl);
-        console.log(absoluteUrl.href);
         return absoluteUrl.href;
       }
       src = checkSrc(src);
@@ -216,8 +224,7 @@ class ImgController {
         const resources = performance.getEntriesByType('resource');
         const resource = resources.find(res => {
           const resUrl = new URL(res.name, window.location.href);
-          const srcUrl = new URL(src, window.location.href);
-          return resUrl.href === srcUrl.href;
+          return resUrl.href === src;
         });
     
         if (resource && resource.decodedBodySize) {
