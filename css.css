@@ -76,6 +76,10 @@ pre {
 .centralize {
   margin: auto !important;
 }
+.warning-message {
+  padding: .5rem;
+  font-size: 13px;
+}
 
 
 .w3ba11y__header {
