@@ -99,6 +99,9 @@ pre {
 .section__header {
   text-align: center;
 }
+.section__title {
+  text-align: center;
+}
 .section__body {
   background-color: #f2f1ff;
 }
@@ -127,6 +130,7 @@ pre {
   background-color: #f2f1ff;
 }
 .button__title {
+  text-align: center;
   font-size: 1rem;
   font-weight: 700;
 }

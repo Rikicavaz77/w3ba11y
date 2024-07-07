@@ -46,6 +46,7 @@ class Interface {
               <h1>w3ba11y</h1>
             </header>
             <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
+              <h2 class="section__title">Analysis</h2>
               <p class="warning-message"> **Warning: The extension might not correctly identify all the dynamic inserted images. </p>
               <div>
                 <button data-section="img" data-loading="true" class="section__button section__button--img">
