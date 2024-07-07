@@ -42,7 +42,7 @@ class Interface {
         <body>
           <aside>
             <header class="w3ba11y__header">
-              <img src="${chrome.runtime.getURL('/static/img/logo.png')}" alt="Logo" width="100px">
+              <img class="logo" src="${chrome.runtime.getURL('/static/img/logo.png')}" alt="Logo">
               <h1>w3ba11y</h1>
             </header>
             <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
