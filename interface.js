@@ -49,11 +49,11 @@ class Interface {
               <p class="warning-message"> **Warning: The extension might not correctly identify all the dynamic inserted images. </p>
               <div>
                 <button data-section="img" data-loading="true" class="section__button section__button--img">
-                  <h3>Images</h3>
+                  <span class="button__title">Images</span>
                   <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
                 </button>
                 <button data-section="h" data-loading="true" class="section__button section__button--h">
-                  <h3>Headings</h3>
+                  <span class="button__title">Headings</span>
                   <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
                 </button>
               </div>
