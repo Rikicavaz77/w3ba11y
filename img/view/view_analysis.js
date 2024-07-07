@@ -217,10 +217,10 @@ class ImgViewAnalysis {
                 <li><button type="button" data-status="warning" class="status status--warning status--current centralize form__status"></button><span>Warning</span></li>
                 <li><button type="button" data-status="error" class="status status--error centralize form__status"></button><span>Error</span></li>
               </ul>
-              <label class="form__label" for="title--${img.id}">Title</label>
-              <input class="form__input--text" type="text" name="title" id="title--${img.id}">
-              <label class="form__label" for="message--${img.id}">Message</label>
-              <input class="form__input--text" type="text" name="message" id="message--${img.id}">
+              <label class="form__label" for="title--${img.hook}">Title</label>
+              <input class="form__input--text" type="text" name="title" id="title--${img.hook}">
+              <label class="form__label" for="message--${img.hook}">Message</label>
+              <input class="form__input--text" type="text" name="message" id="message--${img.hook}">
               <button type="button" class="form__input--submit">Add note</button>
             </form> 
           </div>
