@@ -105,6 +105,7 @@ pre {
 .section__button {
   width: calc(100% - 1.5rem);
   margin: .75rem;
+  padding: 1rem 0;
   background-color: #f2f1ff;
   text-align: center;
 }
