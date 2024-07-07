@@ -39,7 +39,7 @@ class HView {
         <h2>Heading Analysis</h2>
         <div class="header__tabs">
           <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
-            <span class="visually-hidden">Back to general</h3>
+            <span class="visually-hidden">Back to general</span>
           </button>
         </div>
       </header>

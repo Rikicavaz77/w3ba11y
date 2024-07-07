@@ -118,11 +118,16 @@ pre {
   display: flex;
 }
 .tab__button {
+  padding: 1rem 0;
   width: 45%;
   background-color: #d0cee5;
 }
 .tab__button--active {
   background-color: #f2f1ff;
+}
+.button__title {
+  font-size: 1rem;
+  font-weight: 700;
 }
 .tab {
   display: none;

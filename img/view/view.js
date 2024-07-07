@@ -103,14 +103,14 @@ class ImgView {
         <h2>Images Analysis</h2>
         <div class="header__tabs">
           <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
-            <span class="visually-hidden">Back to general</h3>
+            <span class="visually-hidden">Back to general</span>
           </button>
           <button data-tab="results" class="tab__button tab__button--active tab__button--results">
-            <h3>Results</h3>
+            <span class="button__title">Results</span>
             <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
           </button>
           <button data-tab="analysis" class="tab__button tab__button--analysis">
-            <h3>Analysis</h3>
+            <span class="button__title">Analysis</span>
             <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
           </button>
         </div>
