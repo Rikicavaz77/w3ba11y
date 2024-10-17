@@ -1,11 +1,8 @@
 {
-  "name": "w3ba11y",
+  "name": "w3b1y",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions": ["activeTab", "scripting", "tabs", "storage", "webNavigation"],
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "background": {
     "service_worker": "background.js"
   },
