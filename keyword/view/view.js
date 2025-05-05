@@ -32,6 +32,10 @@ class KeywordView {
 
   generateKeywordViewSection() {
     const asideContainer = document.querySelector('aside');
+    if (!asideContainer) {
+      console.error('Error: <aside> element not found in the DOM.');
+      return null;
+    }
     const keywordViewSection = document.createElement('section');
     keywordViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--keyword');
     keywordViewSection.innerHTML = `
