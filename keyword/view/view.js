@@ -31,6 +31,9 @@ class KeywordView {
   }
 
   generateKeywordViewSection() {
-
+    // Create a container element for the keyword view
+    const container = document.createElement('div');
+    container.className = 'keyword-view-container';
+    return container;
   }
 }
