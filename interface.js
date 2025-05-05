@@ -55,7 +55,11 @@ class Interface {
                 </button>
                 <button data-section="h" data-loading="true" class="section__button section__button--h">
                   <span class="button__title">Headings</span>
-                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
+                </button>
+                <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
+                  <span class="button__title">Keywords</span>
+                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
                 </button>
               </div>
             </section>
