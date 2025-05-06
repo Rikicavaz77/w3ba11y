@@ -171,7 +171,7 @@ class KeywordView {
           </span>
           <input type="text" id="keyword-input" class="keywords__input-wrapper__field" name="keyword-input" placeholder="Insert keyword...">
         </div>
-        <button class="keywords__analyze-button">Analyze</button>
+        <button type="button" class="keywords__analyze-button">Analyze</button>
       </div>
       <div class="keywords__highlight-box">
         <input type="checkbox" id="highlight-input-keyword" class="keywords__highlight-input" name="keyword-highlight">
