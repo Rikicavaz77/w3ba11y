@@ -79,7 +79,7 @@ class Interface {
               </section>
             </div>
             <footer class="w3ba11y__footer">
-              <p class="footer__text">© Copyright w3ba11y 2025. All rights reserved</p>
+              <p class="footer__text">© Copyright w3ba11y ${new Date().getFullYear()}. All rights reserved</p>
             </footer>
           </aside>
         </body>
