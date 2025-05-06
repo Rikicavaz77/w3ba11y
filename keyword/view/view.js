@@ -172,6 +172,9 @@ class KeywordView {
 
   toggleTooltip(event) {
     const tooltipText = event.target.closest(".keywords__tooltip")?.querySelector("span");
+    if (!tooltipText) {
+      return; // Exit early if tooltipText is null
+    }
     tooltipText.classList.toggle("keywords--visible");
     tooltipText.classList.toggle("keywords--not-visible");
   }
