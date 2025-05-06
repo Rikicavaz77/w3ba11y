@@ -154,14 +154,18 @@ class KeywordView {
       </ul>
     `;
     this.body.appendChild(keywordsAnalysisOverviewContainer);
-    this.addTooltipListeners();
   }
 
   addTooltipListeners() {
-    const tooltipElements = this.body.querySelectorAll(".keywords__tooltip-content");
-    tooltipElements.forEach((tooltip) => {
-      tooltip.addEventListener("mouseover", this.toggleTooltip);
-      tooltip.addEventListener("mouseout", this.toggleTooltip);
+    this.body.addEventListener("mouseover", (event) => {
+      if (event.target.closest(".keywords__tooltip-content")) {
+        this.toggleTooltip(event);
+      }
+    });
+    this.body.addEventListener("mouseout", (event) => {
+      if (event.target.closest(".keywords__tooltip-content")) {
+        this.toggleTooltip(event);
+      }
     });
   }
 
@@ -169,5 +173,10 @@ class KeywordView {
     const tooltipText = event.target.closest(".keywords__tooltip")?.querySelector("span");
     tooltipText.classList.toggle("keywords--visible");
     tooltipText.classList.toggle("keywords--not-visible");
+  }
+
+  render(overviewInfo) {
+    this.renderKeywordsAnalysisOverview(overviewInfo);
+    this.addTooltipListeners();
   }
 }

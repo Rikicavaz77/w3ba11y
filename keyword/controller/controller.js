@@ -14,7 +14,7 @@ class KeywordController {
       metaTagKeywordsContent: metaTagKeywordsContent,
       lang: lang
     };
-    this.view.renderKeywordsAnalysisOverview(overviewInfo);
+    this.view.render(overviewInfo);
   }
 
   getMetaTagKeywordsContent(doc) {
