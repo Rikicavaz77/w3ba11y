@@ -120,8 +120,9 @@ class ImgView {
         <div data-tab="analysis" class="tab tab--analysis"></div>
       </div>`;
 
-    if (asideBody.querySelector('.w3ba11y__section--img'))
-      asideBody.removeChild(asideBody.querySelector('.w3ba11y__section--img'));
+    const existingImgSection = asideBody.querySelector('.w3ba11y__section--img');
+    if (existingImgSection)
+      asideBody.removeChild(existingImgSection);
     asideBody.appendChild(imgViewSection);
 
     this.tabButtons = imgViewSection.querySelectorAll('.tab__button');
