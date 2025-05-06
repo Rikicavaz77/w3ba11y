@@ -52,6 +52,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         case 'fetchImageSize':
           fetchImageSize(message.src, tabId);
           break;
+        case 'stop':
+          chrome.storage.local.remove(tabId.toString(), () => {
+            console.log(`Tab ${tabId} is now inactive`);
+          });
+          
+          chrome.tabs.sendMessage(tabId, { action: 'stop' });
+          break;
       }
     }
   });
