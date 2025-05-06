@@ -51,7 +51,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       interfaceInstance.getAllSection().forEach(section => section.classList.remove('w3ba11y__section--active'));
       interfaceInstance.getSection(target.dataset.section)?.classList.add('w3ba11y__section--active');
     }
-  }
+  };
+
+  const handleCloseClick = (e) => {
+    const closeBtn = e.target.closest('.w3ba11y__close-button');
+    if (closeBtn) {
+      chrome.runtime.sendMessage({ action: 'stop' });
+    }
+  };
   
   const setupListeners = () => {
     let clickListenerAdded = false;
@@ -64,6 +71,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             interfaceInstance.removeLoading();
             if (!clickListenerAdded) {
               document.addEventListener('click', handleSectionClick);
+              document.addEventListener('click', handleCloseClick);
               clickListenerAdded = true;
             }
           }
