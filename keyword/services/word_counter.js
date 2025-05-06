@@ -4,25 +4,19 @@ class WordCounter {
     this.invalidTags = ['script', 'style', 'noscript', 'iframe', 'object', 'textarea', 'button', 'svg'];
     this.createTreeWalker();
   }
-
-  isAllParentsValid(node) {
-    let current = node.parentNode;
-    while (current && current !== this.root) {
-      if (this.invalidTags.includes(current.nodeName.toLowerCase())) {
-        return false;
-      }
-      current = current.parentNode;
-    }
-    return true;
-  }
-
+  
   createTreeWalker() {
     this.walker = document.createTreeWalker(
       this.root,
-      NodeFilter.SHOW_TEXT,
+      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
       {
         acceptNode: (node) => {
-          if (!this.isAllParentsValid(node)) return NodeFilter.FILTER_REJECT;
+          if (node.nodeType !== Node.TEXT_NODE) {
+            if (this.invalidTags.includes(node.nodeName.toLowerCase())) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            return NodeFilter.FILTER_SKIP;
+          }
           if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_ACCEPT;
         }
