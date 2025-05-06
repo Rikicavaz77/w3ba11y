@@ -47,8 +47,9 @@ class HView {
       </div>
     `;
 
-    if (asideBody.querySelector('.w3ba11y__section--h'))
-      asideBody.removeChild(asideBody.querySelector('.w3ba11y__section--h'));
+    const existingSection = asideBody.querySelector('.w3ba11y__section--h');
+    if (existingSection)
+      asideBody.removeChild(existingSection);
     asideBody.appendChild(hViewSection);
 
     this.header = hViewSection.querySelector('.section__header');
