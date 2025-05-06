@@ -31,7 +31,7 @@ class HView {
   }
 
   generateHViewSection() {
-    const asideContainer = document.querySelector('aside');
+    const asideBody = document.querySelector('aside .w3ba11y__body');
     const hViewSection = document.createElement('section');
     hViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--h');
     hViewSection.innerHTML = `
@@ -47,14 +47,14 @@ class HView {
       </div>
     `;
 
-    if (asideContainer.querySelector('.w3ba11y__section--h'))
-      asideContainer.removeChild(asideContainer.querySelector('.w3ba11y__section--h'));
-    asideContainer.appendChild(hViewSection);
+    if (asideBody.querySelector('.w3ba11y__section--h'))
+      asideBody.removeChild(asideBody.querySelector('.w3ba11y__section--h'));
+    asideBody.appendChild(hViewSection);
 
     this.header = hViewSection.querySelector('.section__header');
     this.body = hViewSection.querySelector('.section__body');
 
-    return asideContainer.querySelector('.w3ba11y__section--h');
+    return asideBody.querySelector('.w3ba11y__section--h');
   }
 
   render(model) {

@@ -58,24 +58,29 @@ class Interface {
                 </button>
               </div>
             </header>
-            <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
-              <h2 class="section__title">Analysis</h2>
-              <p class="warning-message"> **Warning: The extension might not correctly identify all the dynamic inserted images. </p>
-              <div>
-                <button data-section="img" data-loading="true" class="section__button section__button--img">
-                  <span class="button__title">Images</span>
-                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
-                </button>
-                <button data-section="h" data-loading="true" class="section__button section__button--h">
-                  <span class="button__title">Headings</span>
-                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
-                </button>
-                <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
-                  <span class="button__title">Keywords</span>
-                  <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
-                </button>
-              </div>
-            </section>
+            <div class="w3ba11y__body">
+              <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
+                <h2 class="section__title">Analysis</h2>
+                <p class="warning-message"> **Warning: The extension might not correctly identify all the dynamic inserted images. </p>
+                <div>
+                  <button data-section="img" data-loading="true" class="section__button section__button--img">
+                    <span class="button__title">Images</span>
+                    <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                  </button>
+                  <button data-section="h" data-loading="true" class="section__button section__button--h">
+                    <span class="button__title">Headings</span>
+                    <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
+                  </button>
+                  <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
+                    <span class="button__title">Keywords</span>
+                    <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
+                  </button>
+                </div>
+              </section>
+            </div>
+            <footer class="w3ba11y__footer">
+              <p class="footer__text">© Copyright w3ba11y 2025. All rights reserved</p>
+            </footer>
           </aside>
         </body>
       </html>
