@@ -1,6 +1,7 @@
 class KeywordController {
   constructor(iframe) {
     this.view = new KeywordView(iframe);
+    this.wordCounter = new WordCounter(this.view.iframe.body);
     this.model = null; // Placeholder for the model, to be assigned later
     this.init();
   }
@@ -8,9 +9,10 @@ class KeywordController {
   init() {
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
+    const wordCountResult = this.wordCounter.countWords();
     const overviewInfo = {
-      wordCount: 2300,
-      uniqueWordCount: 1000,
+      wordCount: wordCountResult.totalWords,
+      uniqueWordCount: wordCountResult.uniqueWords,
       metaTagKeywordsContent: metaTagKeywordsContent,
       lang: lang
     };
