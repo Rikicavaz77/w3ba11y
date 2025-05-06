@@ -40,7 +40,7 @@ class KeywordView {
     keywordViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--keyword');
     keywordViewSection.innerHTML = `
       <header class="section__header">
-        <h2>Keywords Analysis</h2>
+        <h2 class="section__title">Keywords Analysis</h2>
         <div class="header__tabs">
           <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
             <span class="visually-hidden">Back to general</span>

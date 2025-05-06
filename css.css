@@ -29,6 +29,8 @@ aside {
   width: max(25%, 30rem);
   overflow-y: auto;
   background-color: #d0cee5;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
 }
 
 main {
@@ -82,12 +84,32 @@ pre {
 }
 
 .w3ba11y__logo {
-  width: 100px;
+  width: 80px;
 }
 .w3ba11y__header {
+  background-color: #fff;
   display: flex;
   justify-content: left;
   align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.w3ba11y__sidebar-actions {
+  display: flex;
+  margin-left: auto;
+}
+.w3ba11y__settings-button,
+.w3ba11y__close-button {
+  background-color: transparent;
+  display: flex;
+  margin: 0 0.3em;
+  padding: 0.3em;
+  border: none;
+}
+.w3ba11y__settings-button-icon,
+.w3ba11y__close-button-icon {
+  color: #565252;
+  width: 2em;
+  height: 2em;
 }
 
 .w3ba11y__section {
@@ -368,6 +390,10 @@ pre {
 .keywords__icon--micro {
   width: 1em;
   height: 1em;
+}
+
+.w3ba11y__section--keyword .section__title {
+  margin-top: 0.83em;
 }
 
 .w3ba11y__section--keyword .section__button--back {
