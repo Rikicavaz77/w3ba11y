@@ -157,6 +157,30 @@ class KeywordView {
     this.body.appendChild(keywordsAnalysisOverviewContainer);
   }
 
+  renderKeywordInputBox() { 
+    const keywordInputContainer = document.createElement("div");
+    keywordInputContainer.classList.add("keywords__input-container");
+    keywordInputContainer.innerHTML = `
+      <label for="keyword-input"><strong>Insert keyword:</strong></label>
+      <div class="keywords__analyze-box">
+        <div class="keywords__input-wrapper">
+          <span class="keywords__input-wrapper__prefix">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__input-wrapper__icon keywords__icon--small">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
+            </svg>                
+          </span>
+          <input type="text" id="keyword-input" class="keywords__input-wrapper__field" name="keyword-input" placeholder="Insert keyword...">
+        </div>
+        <button type="button" class="keywords__analyze-button">Analyze</button>
+      </div>
+      <div class="keywords__highlight-box">
+        <input type="checkbox" id="highlight-input-keyword" class="keywords__highlight-input" name="keyword-highlight">
+        <label for="highlight-input-keyword">Highlight keyword</label>
+      </div>
+    `;
+    this.body.appendChild(keywordInputContainer);
+  }
+
   addTooltipListeners() {
     this.body.addEventListener("mouseover", (event) => {
       if (event.target.closest(".keywords__tooltip-content")) {
@@ -181,6 +205,7 @@ class KeywordView {
 
   render(overviewInfo) {
     this.renderKeywordsAnalysisOverview(overviewInfo);
+    this.renderKeywordInputBox();
     this.addTooltipListeners();
   }
 }
