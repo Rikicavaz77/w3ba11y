@@ -31,9 +31,9 @@ class KeywordView {
   }
 
   generateKeywordViewSection() {
-    const asideContainer = document.querySelector('aside');
-    if (!asideContainer) {
-      console.error('Error: <aside> element not found in the DOM.');
+    const asideBody = document.querySelector('aside .w3ba11y__body');
+    if (!asideBody) {
+      console.error('Error: <aside> body not found in the DOM.');
       return null;
     }
     const keywordViewSection = document.createElement('section');
@@ -51,15 +51,15 @@ class KeywordView {
       </div>
     `;
 
-    const existingKeywordSection = asideContainer.querySelector('.w3ba11y__section--keyword');
+    const existingKeywordSection = asideBody.querySelector('.w3ba11y__section--keyword');
     if (existingKeywordSection)
-      asideContainer.removeChild(existingKeywordSection);
-    asideContainer.appendChild(keywordViewSection);
+      asideBody.removeChild(existingKeywordSection);
+    asideBody.appendChild(keywordViewSection);
 
     this.header = keywordViewSection.querySelector('.section__header');
     this.body = keywordViewSection.querySelector('.section__body');
 
-    return asideContainer.querySelector('.w3ba11y__section--keyword');
+    return asideBody.querySelector('.w3ba11y__section--keyword');
   }
 
   renderKeywordsAnalysisOverview(overviewInfo) {

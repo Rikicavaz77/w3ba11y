@@ -95,7 +95,7 @@ class ImgView {
   }
   
   generateImgViewSection() {
-    const asideContainer = document.querySelector('aside');
+    const asideBody = document.querySelector('aside .w3ba11y__body');
     const imgViewSection = document.createElement('section');
     imgViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--img');
     imgViewSection.innerHTML = `
@@ -120,16 +120,17 @@ class ImgView {
         <div data-tab="analysis" class="tab tab--analysis"></div>
       </div>`;
 
-    if (asideContainer.querySelector('.w3ba11y__section--img'))
-      asideContainer.removeChild(asideContainer.querySelector('.w3ba11y__section--img'));
-    asideContainer.appendChild(imgViewSection);
+    const existingImgSection = asideBody.querySelector('.w3ba11y__section--img');
+    if (existingImgSection)
+      asideBody.removeChild(existingImgSection);
+    asideBody.appendChild(imgViewSection);
 
     this.tabButtons = imgViewSection.querySelectorAll('.tab__button');
     this.activeTabButton = imgViewSection.querySelector('.tab__button--results');
 
     this.refreshButton = imgViewSection.querySelector('.ri-restart-line');
 
-    return asideContainer.querySelector('.w3ba11y__section--img');
+    return asideBody.querySelector('.w3ba11y__section--img');
   }
 
   removeLoading() {
