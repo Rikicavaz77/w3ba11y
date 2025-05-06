@@ -51,8 +51,9 @@ class KeywordView {
       </div>
     `;
 
-    if (asideContainer.querySelector('.w3ba11y__section--keyword'))
-      asideContainer.removeChild(asideContainer.querySelector('.w3ba11y__section--keyword'));
+    const existingKeywordSection = asideContainer.querySelector('.w3ba11y__section--keyword');
+    if (existingKeywordSection)
+      asideContainer.removeChild(existingKeywordSection);
     asideContainer.appendChild(keywordViewSection);
 
     this.header = keywordViewSection.querySelector('.section__header');
