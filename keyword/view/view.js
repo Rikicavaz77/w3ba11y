@@ -4,10 +4,19 @@ class KeywordView {
     this._iframe = iframe;
     this._header;
     this._body;
+    this._tabButtons;
+    this._activeTabButton;
   }
 
   get container() {
     return this._container;
+  }
+  get overviewTabButton() {
+    return this._container.querySelector('.tab__button--overview');
+  }
+
+  get settingsTabButton() {
+    return this._container.querySelector('.tab__button--settings');
   }
 
   get iframe() {
@@ -22,12 +31,36 @@ class KeywordView {
     return this._body;
   }
 
+  get tabButtons() {
+    return this._tabButtons;
+  }
+
+  get activeTabButton() {
+    return this._activeTabButton;
+  }
+
   set header(header) {
     this._header = header;
   }
 
   set body(body) {
     this._body = body;
+  }
+
+  set tabButtons(buttons) {
+    this._tabButtons = buttons;
+  }
+
+  set activeTabButton(button) {
+    this._activeTabButton = button;
+  }
+
+  get keywordHighlightCheckbox() {
+    return this.container.querySelector("#highlight-input-keyword");
+  }
+
+  get customKeywordInput() {
+    return this.container.querySelector("#custom-keyword-input");
   }
 
   generateKeywordViewSection() {
@@ -45,9 +78,16 @@ class KeywordView {
           <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
             <span class="visually-hidden">Back to general</span>
           </button>
+          <button data-tab="overview" class="tab__button tab__button--active tab__button--overview">
+            <span class="button__title">Overview</span>
+          </button>
+          <button data-tab="settings" class="tab__button tab__button--settings">
+            <span class="button__title">Settings</span>
+          </button>
         </div>
       </header>
       <div class="section__body">
+        
       </div>
     `;
 
@@ -64,7 +104,8 @@ class KeywordView {
 
   renderKeywordsAnalysisOverview(overviewInfo) {
     const keywordsAnalysisOverviewContainer = document.createElement("div");
-    keywordsAnalysisOverviewContainer.classList.add("keywords__overview-container");
+    keywordsAnalysisOverviewContainer.classList.add("keywords__overview-container", "tab", "tab--active", "tab--overview");
+    keywordsAnalysisOverviewContainer.dataset.tab = "overview";
     keywordsAnalysisOverviewContainer.innerHTML = `
       <ul class="keywords__overview-list">
         <li class="keywords__overview-item">
@@ -161,7 +202,7 @@ class KeywordView {
     const keywordInputContainer = document.createElement("div");
     keywordInputContainer.classList.add("keywords__input-container");
     keywordInputContainer.innerHTML = `
-      <label for="keyword-input"><strong>Insert keyword:</strong></label>
+      <label for="custom-keyword-input"><strong>Insert keyword:</strong></label>
       <div class="keywords__analyze-box">
         <div class="keywords__input-wrapper">
           <span class="keywords__input-wrapper__prefix">
@@ -169,7 +210,7 @@ class KeywordView {
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
             </svg>                
           </span>
-          <input type="text" id="keyword-input" class="keywords__input-wrapper__field" name="keyword-input" placeholder="Insert keyword...">
+          <input type="text" id="custom-keyword-input" class="keywords__input-wrapper__field" name="keyword-input" placeholder="Insert keyword...">
         </div>
         <button type="button" class="keywords__analyze-button">Analyze</button>
       </div>
@@ -179,6 +220,50 @@ class KeywordView {
       </div>
     `;
     this.body.appendChild(keywordInputContainer);
+  }
+
+  renderKeywordsSettings(colorMap) {
+    const keywordsSettingsContainer = document.createElement("div");
+    keywordsSettingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
+    keywordsSettingsContainer.dataset.tab = "settings";
+    keywordsSettingsContainer.innerHTML = `
+      <h2 class="keywords__settings-title">Highlight keywords</h2>
+      <div class="keywords__settings-item">
+        <h3 class="keywords__settings-item__title">Customize tags color</h3>
+        <div class="keywords__tooltip" tabindex="0" aria-describedby="tooltip-text">
+          <div class="keywords__tooltip-content">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon keywords__icon--micro">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+            </svg>
+            <span id="tooltip-text" class="keywords__tooltip-text keywords--not-visible">Customize the colors used to highlight keywords based on the parent tag.</span>        
+          </div>                        
+        </div>
+      </div>
+      <ul class="keyword__tag-color-options">
+      ${Object.entries(colorMap)
+        .map(([key, value]) => {
+          return `
+            <li class="keywords__tag-color-options__item">
+              <h3 class="keywords__settings-item__title">${key}</h3>
+              <div class="keywords__color-selector">
+                <label for="highlight-bg-${key}">Background color</label>
+                <input type="color" id="highlight-bg-${key}" name="highlight-bg" value="${value.bg}">
+              </div>
+              <div class="keywords__color-selector">
+                <label for="highlight-color-${key}">Text Color</label>
+                <input type="color" id="highlight-color-${key}" name="highlight-color" value="${value.color}">
+              </div>
+              <div class="keywords__color-selector">
+                <label for="highlight-border-${key}">Border color</label>
+                <input type="color" id="highlight-border-${key}" name="highlight-border" value="${value.border}">
+              </div>
+            </li>
+          `; 
+        })
+        .join('')}
+      </ul>
+    `;
+    this.body.appendChild(keywordsSettingsContainer);
   }
 
   addTooltipListeners() {
@@ -203,9 +288,23 @@ class KeywordView {
     tooltipText.classList.toggle("keywords--not-visible");
   }
 
-  render(overviewInfo) {
+  render(overviewInfo, colorMap) {
     this.renderKeywordsAnalysisOverview(overviewInfo);
+    this.renderKeywordsSettings(colorMap);
+    this.tabButtons = this.container.querySelectorAll('.tab__button');
+    this.activeTabButton = this.container.querySelector('.tab__button--overview');
     this.renderKeywordInputBox();
     this.addTooltipListeners();
+  }
+
+  changeTab(buttonClicked) {
+    if (this.activeTabButton === buttonClicked)
+      return;
+
+    this.activeTabButton = buttonClicked;
+    this.container.querySelector('.tab__button--active').classList.remove('tab__button--active');
+    this.container.querySelector('.tab--active').classList.remove('tab--active');
+    this.activeTabButton.classList.add('tab__button--active');
+    this.container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
   }
 }
