@@ -3,7 +3,9 @@ class KeywordController {
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
-      toggleHighlight: this.toggleHighlight.bind(this)
+      toggleTooltip: this.view.toggleTooltip.bind(this.view),
+      toggleHighlight: this.toggleHighlight.bind(this),
+      updateHighlightColors: this.updateHighlightColors.bind(this)
     };
     this.treeWalker = new TreeWalker(iframe.body);
     this.wordCounter = new WordCounter(iframe, this.treeWalker);
@@ -37,6 +39,14 @@ class KeywordController {
     }
   }
 
+  updateHighlightColors(event) {
+    const input = event.target;
+    const tag = input.dataset.tag;
+    const prop = input.dataset.prop;
+    const value = input.value;
+    this.keywordHighlighter.updateTagColors(tag, prop, value);
+  }
+
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     return metaTagKeywordsContent ?? "Missing";
@@ -56,8 +66,20 @@ class KeywordController {
 
   buildUIEvents() {
     this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
-    document.getElementById(`highlight-bg-${element}`).addEventListener("change", updateHighlightBg);
-    document.getElementById(`highlight-color-${element}`).addEventListener("change", updateHighlightColor);
-    document.getElementById(`highlight-border-${element}`).addEventListener("change", updateHighlightBorder);
+    this.view.container.addEventListener('change', (event) => {
+      if (event.target.matches('input[type="color"][data-highlight]')) {
+        this.updateHighlightColors(event);
+      }
+    });
+    this.view.container.addEventListener("mouseover", (event) => {
+      if (event.target.closest(".keywords__tooltip-content")) {
+        this.view.toggleTooltip(event);
+      }
+    });
+    this.view.container.addEventListener("mouseout", (event) => {
+      if (event.target.closest(".keywords__tooltip-content")) {
+        this.view.toggleTooltip(event);
+      }
+    });
   }
 }

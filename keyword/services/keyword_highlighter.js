@@ -25,6 +25,13 @@ class KeywordHighlighter extends TextProcessor {
     return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][\-_.])(${this.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[\-_.][\\p{L}\\p{N}])`, flags);
   }
 
+  updateTagColors(tag, prop, value) {
+    if (!this._colorMap[tag]) return;
+    if (!['bg', 'color', 'border'].includes(prop)) return;
+    this._colorMap[tag][prop] = value;
+    this.injectHighlightBlock();
+  }
+
   injectHighlightBlock() {
     const css = `
       .w3ba11y__highlight-keyword {

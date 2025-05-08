@@ -431,7 +431,14 @@ pre {
   z-index: 2;
 }
 
-.tab__button--active {
+.w3ba11y__section--keyword .tab__button--settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.3em;
+} 
+
+.w3ba11y__section--keyword .tab__button--active {
   background-color: #fff;
 }
 
