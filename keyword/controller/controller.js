@@ -107,7 +107,9 @@ class KeywordController {
         const keywordsListContainer = event.target.closest(".keyword-list__container");
         if (!listItem || !keywordsListContainer) return;
         const keywordsList = this.getListBasedOnType(keywordsListContainer.dataset.listType);
-        this.keywordHighlighter.highlightKeyword(keywordsList[listItem.dataset.keywordIndex].name);
+        const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
+        if (isNaN(keywordIndex)) return; // Handle invalid index gracefully
+        this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
       }
     });
     /* this.view.container.addEventListener("mouseover", (event) => {
