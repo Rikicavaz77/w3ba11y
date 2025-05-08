@@ -10,7 +10,7 @@ class KeywordController {
     this.treeWalker = new TreeWalker(iframe.body);
     this.wordCounter = new WordCounter(iframe, this.treeWalker);
     this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
-    this.model = null; // Placeholder for the model, to be assigned later
+    this.metaKeywords = [];
     this.init();
   }
 
@@ -24,7 +24,7 @@ class KeywordController {
       metaTagKeywordsContent: metaTagKeywordsContent,
       lang: lang
     };
-    this.view.render(overviewInfo, this.keywordHighlighter.colorMap);
+    this.view.render(overviewInfo, this.keywordHighlighter.colorMap, this.metaKeywords);
     this.buildUIEvents();
     this.setupTabListeners();
   }
@@ -49,6 +49,12 @@ class KeywordController {
 
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
+    if (metaTagKeywordsContent) {
+      const keywords = metaTagKeywordsContent.split(',');
+      this.metaKeywords = keywords.map(keyword => {
+        return new Keyword(keyword.trim());
+      });
+    }
     return metaTagKeywordsContent ?? "Missing";
   }
 
@@ -71,7 +77,7 @@ class KeywordController {
         this.updateHighlightColors(event);
       }
     });
-    this.view.container.addEventListener("mouseover", (event) => {
+    /* this.view.container.addEventListener("mouseover", (event) => {
       if (event.target.closest(".keywords__tooltip-content")) {
         this.view.toggleTooltip(event);
       }
@@ -80,6 +86,13 @@ class KeywordController {
       if (event.target.closest(".keywords__tooltip-content")) {
         this.view.toggleTooltip(event);
       }
+    }); */
+    const tooltips = this.view.tooltips;
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
+    });
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
     });
   }
 }
