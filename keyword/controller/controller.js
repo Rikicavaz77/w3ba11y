@@ -51,9 +51,10 @@ class KeywordController {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     if (metaTagKeywordsContent) {
       const keywords = metaTagKeywordsContent.split(',');
-      this.metaKeywords = keywords.map(keyword => {
-        return new Keyword(keyword.trim());
-      });
+      this.metaKeywords = keywords
+        .map(keyword => keyword.trim())
+        .filter(keyword => keyword.length > 0)
+        .map(keyword => new Keyword(keyword));
     }
     return metaTagKeywordsContent ?? "Missing";
   }
