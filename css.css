@@ -758,3 +758,28 @@ pre {
   border: none;
   cursor: pointer;
 }
+
+.keywords__pagination {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5em;
+  row-gap: 0.2em;
+  flex-wrap: wrap;
+  list-style-type: none;
+}
+
+.keywords__pagination__button {
+  background-color: rgba(235, 159, 197, 0.4);
+  padding: 0.5em;
+  vertical-align: middle;
+  border: 2px solid #af0bcc;
+}
+
+.keywords__pagination__button--active {
+  background-color: #af0bcc;
+  color: #fff;
+}
+
+/* .keywords-container .pages-container li.placeholder-page {
+  font-size: 1.5em;
+} */

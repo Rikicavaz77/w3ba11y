@@ -47,6 +47,13 @@ class KeywordController {
     this.keywordHighlighter.updateTagColors(tag, prop, value);
   }
 
+  getListBasedOnType(listType) {
+    switch (listType) {
+      case 'meta':
+        return this.metaKeywords;
+    }
+  }
+
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     if (metaTagKeywordsContent) {
@@ -76,6 +83,16 @@ class KeywordController {
     this.view.container.addEventListener('change', (event) => {
       if (event.target.matches('input[type="color"][data-highlight]')) {
         this.updateHighlightColors(event);
+      }
+    });
+    this.view.container.addEventListener('click', (event) => {
+      const button = event.target.closest(".keyword-button--highlight");
+      if (button) {
+        const listItem = event.target.closest(".keyword-list-item");
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!listItem || !keywordsListContainer) return;
+        const keywordsList = this.getListBasedOnType(keywordsListContainer.dataset.listType);
+        this.keywordHighlighter.highlightKeyword(keywordsList[listItem.dataset.keywordIndex].name);
       }
     });
     /* this.view.container.addEventListener("mouseover", (event) => {

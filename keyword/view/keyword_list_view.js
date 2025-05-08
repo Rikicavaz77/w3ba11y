@@ -1,17 +1,41 @@
 class KeywordListView {
-  constructor(title, pageSize = 5) {
+  constructor(title, listType, pageSize = 5) {
     this._title = title;
+    this._listType = listType;
     this._pageSize = pageSize;
     this._container = this.generateKeywordListViewSection();
+    this._pagination;
+    this._paginationButtons;
   }
 
   get container() {
     return this._container;
   }
 
+  get pagination() {
+    return this._pagination;
+  }
+
+  get paginationButtons() {
+    return this._paginationButtons;
+  }
+
+  set container(container) {
+    this._container = container;
+  }
+
+  set pagination(pagination) {
+    this._pagination = pagination;
+  }
+
+  set paginationButtons(buttons) {
+    this._paginationButtons = buttons;
+  }
+
   generateKeywordListViewSection() {
     const keywordsListContainer = document.createElement("div");
     keywordsListContainer.classList.add("keyword-list__container");
+    keywordsListContainer.dataset.listType = this._listType;
     keywordsListContainer.innerHTML = `
       <h3>${this._title}</h3>
       <div class="keywords__filters-container">
@@ -48,13 +72,16 @@ class KeywordListView {
         </div>
       </div>
       <ul class="keyword-list"></ul>
+      <ol class="keywords__pagination"></ol>
     `;
+
+    this.pagination = keywordsListContainer.querySelector('.keywords__pagination');
     return keywordsListContainer;
   }
 
   render(keywords) {
     this.renderKeywords(keywords);
-    //renderPages(metaKeywordsContainer, displayMetaKeywords, currentMetaPage);
+    this.renderPages(keywords);
   }
 
   renderKeywords(keywords, currentPage = 1) {
@@ -83,8 +110,24 @@ class KeywordListView {
     });
   }
 
-  renderPages() {
-    // To-Do
+  renderPages(keywords, currentPage = 1) {
+    const totalPages = Math.ceil(keywords.length / this._pageSize);
+    const range = Array.from({ length: this._pageSize }, (_, i) => currentPage - 2 + i);
+    const pages = [...new Set([1, ...range, totalPages].filter(p => p >= 1 && p <= totalPages))];
+    this.pagination.innerHTML = "";
+    pages.forEach((page, index) => {
+      const item = document.createElement("li");
+      item.innerHTML = `
+        <button class="keywords__pagination__button ${page === currentPage ? 'keywords__pagination__button--active' : ''}" data-page="${page}">${page}</button>
+      `;
+      this.pagination.appendChild(item);
+      const nextPage = pages[index + 1] ?? null;
+      if (nextPage && nextPage !== page + 1) {
+        const item = document.createElement("li");
+        item.textContent = "...";
+        this.pagination.appendChild(item);
+        }
+      });
   }
 
   changePage() {

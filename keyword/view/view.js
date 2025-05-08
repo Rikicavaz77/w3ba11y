@@ -236,7 +236,7 @@ class KeywordView {
   renderMetaTagKeywordsContainer(metaKeywords) {
     if (metaKeywords.length === 0) return;
 
-    this._metaKeywordsListView = new KeywordListView("Meta keywords");
+    this._metaKeywordsListView = new KeywordListView("Meta keywords", "meta");
     this._body.appendChild(this._metaKeywordsListView.container);
     this._metaKeywordsListView.render(metaKeywords);
   }
