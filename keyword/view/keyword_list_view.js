@@ -20,6 +20,10 @@ class KeywordListView {
     return this._paginationButtons;
   }
 
+  get currentPageButton() {
+    return this._currentPageButton;
+  }
+
   set container(container) {
     this._container = container;
   }
@@ -30,6 +34,10 @@ class KeywordListView {
 
   set paginationButtons(buttons) {
     this._paginationButtons = buttons;
+  }
+
+  set currentPageButton(newButton) {
+    this._currentPageButton = newButton;
   }
 
   generateKeywordListViewSection() {
@@ -79,19 +87,16 @@ class KeywordListView {
     return keywordsListContainer;
   }
 
-  render(keywords) {
-    this.renderKeywords(keywords);
-    this.renderPages(keywords);
+  render(metaKeywords, totalPages, currentPage = 1) {
+    currentPage = currentPage > totalPages ? 1: currentPage;
+    this.renderKeywords(metaKeywords);
+    this.renderPages(totalPages, currentPage);
   }
 
-  renderKeywords(keywords, currentPage = 1) {
-    let page = currentPage - 1;
-    let start = page * this._pageSize;
-    let end = start + this._pageSize;
-    const visibleKeywords = keywords.slice(start, end);
+  renderKeywords(keywords) {
     const keywordsList = this._container.querySelector(".keyword-list");
     keywordsList.innerHTML = "";
-    visibleKeywords.forEach(keywordItem => {
+    keywords.forEach(keywordItem => {
       let item = document.createElement("li");
       item.classList.add('keyword-list-item');
       item.dataset.keywordIndex = keywords.indexOf(keywordItem);
@@ -110,9 +115,8 @@ class KeywordListView {
     });
   }
 
-  renderPages(keywords, currentPage = 1) {
-    const totalPages = Math.ceil(keywords.length / this._pageSize);
-    const range = Array.from({ length: this._pageSize }, (_, i) => currentPage - 2 + i);
+  renderPages(totalPages, currentPage = 1) {
+    const range = Array.from({ length: 5 }, (_, i) => currentPage - 2 + i);
     const pages = [...new Set([1, ...range, totalPages].filter(p => p >= 1 && p <= totalPages))];
     this.pagination.innerHTML = "";
     pages.forEach((page, index) => {
@@ -126,8 +130,10 @@ class KeywordListView {
         const item = document.createElement("li");
         item.textContent = "...";
         this.pagination.appendChild(item);
-        }
-      });
+      }
+    });
+    this.currentPageButton = this.pagination.querySelector('.pagination__button--active');
+    this.paginationButtons = this.pagination.querySelectorAll('.pagination__button');
   }
 
   changePage() {

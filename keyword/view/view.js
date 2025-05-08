@@ -109,6 +109,8 @@ class KeywordView {
 
     this.header = keywordViewSection.querySelector('.section__header');
     this.body = keywordViewSection.querySelector('.section__body');
+    this.tabButtons = this.container.querySelectorAll('.tab__button');
+    this.activeTabButton = this.container.querySelector('.tab__button--overview');
 
     return asideBody.querySelector('.w3ba11y__section--keyword');
   }
@@ -233,12 +235,10 @@ class KeywordView {
     this.body.appendChild(keywordInputContainer);
   }
 
-  renderMetaTagKeywordsContainer(metaKeywords) {
-    if (metaKeywords.length === 0) return;
-
+  renderMetaTagKeywordsContainer(metaKeywords, totalKeywords, currentPage) {
     this._metaKeywordsListView = new KeywordListView("Meta keywords", "meta");
     this._body.appendChild(this._metaKeywordsListView.container);
-    this._metaKeywordsListView.render(metaKeywords);
+    this._metaKeywordsListView.render(metaKeywords, totalKeywords, currentPage);
   }
 
   renderKeywordsSettings(colorMap) {
@@ -285,13 +285,10 @@ class KeywordView {
     this.body.appendChild(keywordsSettingsContainer);
   }
 
-  render(overviewInfo, colorMap, metaKeywords) {
+  render(overviewInfo, colorMap) {
     this.renderKeywordsAnalysisOverview(overviewInfo);
     this.renderKeywordsSettings(colorMap);
-    this.tabButtons = this.container.querySelectorAll('.tab__button');
-    this.activeTabButton = this.container.querySelector('.tab__button--overview');
     this.renderKeywordInputBox();
-    this.renderMetaTagKeywordsContainer(metaKeywords);
   }
 
   toggleTooltip(event) {

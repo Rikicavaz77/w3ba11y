@@ -1,5 +1,8 @@
 class KeywordController {
   constructor(iframe) {
+    this.batchSizes = {
+      meta: 5
+    };
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
@@ -24,9 +27,15 @@ class KeywordController {
       metaTagKeywordsContent: metaTagKeywordsContent,
       lang: lang
     };
-    this.view.render(overviewInfo, this.keywordHighlighter.colorMap, this.metaKeywords);
+    this.view.render(overviewInfo, this.keywordHighlighter.colorMap);
+    if (this.metaKeywords.length > 0) {
+      const metaKeywordsData = this.metaKeywords.slice(0, this.batchSizes.meta);
+      const totalPages = Math.ceil(this.metaKeywords.length / this.batchSizes.meta);
+      this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
+    }
     this.buildUIEvents();
     this.setupTabListeners();
+    this.setupPaginationListeners();
   }
 
   toggleHighlight(event) {
@@ -75,6 +84,12 @@ class KeywordController {
   setupTabListeners() {
     this.view.tabButtons.forEach(button => {
       button.addEventListener('click', () => this.eventHandlers.changeTab(button));
+    });
+  }
+
+  setupPaginationListeners() {
+    this.view.paginationButtons.forEach(button => {
+      button.addEventListener('click', () => this.changePage(button));
     });
   }
 
