@@ -35,7 +35,7 @@ class KeywordController {
     if (event.target.checked) {
       this.keywordHighlighter.highlightKeyword(keyword);
     } else {
-      this.keywordHighlighter.removeHighlight(keyword);
+      this.keywordHighlighter.removeHighlight();
     }
   }
 
