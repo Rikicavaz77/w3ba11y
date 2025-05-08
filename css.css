@@ -3,6 +3,14 @@
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
 }
+
+/*///////////////////////////////////////////////////////// KEYWORDS /////////////////////////////////////////////////////////*/
+.w3ba11y__section--keyword * {
+  padding: 0;
+  margin: 0;
+}
+
+/*///////////////////////////////////////////////////////// GENERAL /////////////////////////////////////////////////////////*/
 html {
   height: 100%;
   margin: 0;
@@ -384,11 +392,6 @@ pre {
 
 
 /*///////////////////////////////////////////////////////// KEYWORDS /////////////////////////////////////////////////////////*/
-.w3ba11y__section--keyword * {
-  padding: 0;
-  margin: 0;
-}
-
 .keywords--visible {
   visibility: visible !important;
 }
@@ -407,21 +410,36 @@ pre {
   height: 1em;
 }
 
+.w3ba11y__section--keyword .section__header {
+  padding: 0 0.5rem;
+}
+
 .w3ba11y__section--keyword .section__title {
   margin-top: 0.83em;
+}
+
+.w3ba11y__section--keyword .header__tabs {
+  margin-top: 0.5em;
 }
 
 .w3ba11y__section--keyword .section__button--back {
   background-color: #fff;
   width: auto;
   padding: 0.6em;
-  margin-left: 0.5rem;
-  margin-top: 0.5rem;
-  border-radius: 10px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+  border-top-left-radius: 10px;
   border: none;
   z-index: 2;
+}
+
+.w3ba11y__section--keyword .tab__button--settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.3em;
+} 
+
+.w3ba11y__section--keyword .tab__button--active {
+  background-color: #fff;
 }
 
 .w3ba11y__section--keyword .section__body {
@@ -480,6 +498,60 @@ pre {
 .keywords__overview-item-body__text {
   font-size: 0.7em;
   font-weight: 500;
+}
+
+.keywords__settings-container {
+  background-color: #fff;
+  padding: 0.5em;
+  border-radius: 0.625em;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+}
+
+.keywords__settings-title {
+  font-size: 1.2em;
+}
+
+.keywords__settings-item {
+  position: relative;
+  display: flex;
+  column-gap: 0.3em;
+  margin-top: 0.8em;
+}
+
+.keywords__settings-item__title {
+  font-size: 1em;
+}
+
+.keywords__tag-color-options {
+  list-style-type: none;
+}
+
+.keywords__tag-color-options__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5em 0; 
+}
+
+.keywords__color-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3em;
+  text-align: center;
+  padding: 0.2em;
+}
+
+.keywords__color-selector__label {
+  font-size: 0.8rem;
+}
+
+.keywords__color-selector__input {
+  background-color: transparent;
+  border-radius: 6px;
+  border: 2px solid #79747a;
 }
 
 .keywords__tooltip {
