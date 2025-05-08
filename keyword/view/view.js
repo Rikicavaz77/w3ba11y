@@ -241,7 +241,7 @@ class KeywordView {
     metaKeywordsContainer.innerHTML = `
       <h3>Meta keywords</h3>
       <div class="keywords__filters-container">
-        <div class=""keywords__search-container">
+        <div class="keywords__search-container">
           <div class="keywords__input-wrapper">
             <span class="keywords__input-wrapper__prefix">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="keywords__input-wrapper__icon keywords__icon--small">
