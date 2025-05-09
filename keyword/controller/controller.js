@@ -31,7 +31,6 @@ class KeywordController {
     if (this.metaKeywords.length > 0) {
       const metaKeywordsData = this.metaKeywords.slice(0, this.batchSizes.meta);
       const totalPages = Math.ceil(this.metaKeywords.length / this.batchSizes.meta);
-      console.log(totalPages);
       this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
     }
     this.buildUIEvents();
@@ -72,6 +71,8 @@ class KeywordController {
     switch (listType) {
       case 'meta':
         return this.metaKeywords;
+      default:
+        return null;
     }
   }
 
