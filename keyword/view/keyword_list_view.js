@@ -152,7 +152,7 @@ class KeywordListView {
       }
     });
     this.currentPageButton = this.pagination.querySelector('.keywords__pagination__button--active');
-    this.paginationButtons = this.pagination.querySelectorAll('.pagination__button');
+    this.paginationButtons = this.pagination.querySelectorAll('.keywords__pagination__button');
     this.currentPage = currentPage;
   }
 }
