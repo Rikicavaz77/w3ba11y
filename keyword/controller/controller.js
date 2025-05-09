@@ -1,20 +1,24 @@
 class KeywordController {
   constructor(iframe) {
     this.batchSizes = {
-      meta: 5
+      meta: 5,
+      userAdded: 5
     };
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
       toggleTooltip: this.view.toggleTooltip.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
-      updateHighlightColors: this.updateHighlightColors.bind(this)
+      updateHighlightColors: this.updateHighlightColors.bind(this),
+      analyzeKeyword: this.analyzeKeyword.bind(this)
     };
     this.treeWalker = new TreeWalker(iframe.body);
     this.wordCounter = new WordCounter(iframe, this.treeWalker);
     this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
+    this.userKeywords = [];
+    this.displayUserKeywords = [];
     this.init();
   }
 
@@ -32,7 +36,12 @@ class KeywordController {
     if (this.displayMetaKeywords.length > 0) {
       const metaKeywordsData = this.displayMetaKeywords.slice(0, this.batchSizes.meta);
       const totalPages = Math.ceil(this.displayMetaKeywords.length / this.batchSizes.meta);
-      this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
+      this.view.renderKeywordListContainer(new KeywordListInfo(
+        "Meta keywords",
+        "meta",
+        metaKeywordsData,
+        totalPages
+      ));
     }
     this.buildUIEvents();
     this.setupTabListeners();
@@ -133,6 +142,11 @@ class KeywordController {
           original: this.metaKeywords,
           display: this.displayMetaKeywords
         };
+      case 'userAdded':
+          return {
+            original: this.userKeywords,
+            display: this.displayUserKeywords
+          };
       default:
         return null;
     }
@@ -154,6 +168,27 @@ class KeywordController {
   getLang(doc) {
     const lang = doc.documentElement.lang;
     return lang || 'Missing';
+  }
+
+  analyzeKeyword() {
+    const keyword = this.view.customKeywordInput?.value.trim();
+    if (!keyword || keyword.length === 0) return; 
+    const keywordItem = new Keyword(keyword);
+    this.userKeywords.push(keywordItem);
+    if (this.userKeywords.slice(0, -1).length === 0) {
+      this.displayUserKeywords.push(keywordItem);
+      const userKeywordsData = this.displayUserKeywords.slice(0, this.batchSizes.userAdded);
+      const totalPages = Math.ceil(this.displayUserKeywords.length / this.batchSizes.userAdded);
+      this.view.renderKeywordListContainer(new KeywordListInfo(
+        "User added keywords",
+        "userAdded",
+        userKeywordsData,
+        totalPages
+      ));
+    } else {
+      const filterQuery = this.view.getListViewByType('userAdded').searchKeywordField.value;
+      this.updateVisibleKeywords('userAdded', filterQuery);
+    }
   }
 
   // SETUP LISTENERS
@@ -237,5 +272,6 @@ class KeywordController {
     tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
     });
+    this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
   }
 }

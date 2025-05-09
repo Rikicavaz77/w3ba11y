@@ -6,6 +6,7 @@ class KeywordView {
     this._body;
     this._tabButtons;
     this._activeTabButton;
+    this._analyzeButton;
   }
 
   get container() {
@@ -48,6 +49,10 @@ class KeywordView {
     return this._activeTabButton;
   }
 
+  get analyzeButton() {
+    return this._analyzeButton;
+  }
+
   set header(header) {
     this._header = header;
   }
@@ -64,6 +69,10 @@ class KeywordView {
     this._activeTabButton = button;
   }
 
+  set analyzeButton(analyzeButton) {
+    this._analyzeButton = analyzeButton;
+  }
+
   get keywordHighlightCheckbox() {
     return this.container.querySelector("#highlight-input-keyword");
   }
@@ -76,6 +85,25 @@ class KeywordView {
     switch (listType) {
       case 'meta':
         return this._metaKeywordsListView;
+      case 'userAdded':
+        return this._userKeywordsListView;
+      default:
+        return null;
+    }
+  }
+
+  createListView(keywordListInfo) {
+    switch (keywordListInfo.type) {
+      case 'meta':
+        if (!this._metaKeywordsListView) {
+          this._metaKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+        }
+        return this._metaKeywordsListView;
+      case 'userAdded':
+          if (!this._userKeywordsListView) {
+            this._userKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+          }
+          return this._userKeywordsListView;
       default:
         return null;
     }
@@ -241,13 +269,16 @@ class KeywordView {
         <label for="highlight-input-keyword">Highlight keyword</label>
       </div>
     `;
+
+    this.analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
     this.body.appendChild(keywordInputContainer);
   }
 
-  renderMetaTagKeywordsContainer(metaKeywords, totalKeywords, currentPage) {
-    this._metaKeywordsListView = new KeywordListView("Meta keywords", "meta");
-    this.body.appendChild(this._metaKeywordsListView.container);
-    this._metaKeywordsListView.render(metaKeywords, totalKeywords, currentPage);
+  renderKeywordListContainer(keywordListInfo) {
+    const keywordListView = this.createListView(keywordListInfo);
+    if (!keywordListView) return;
+    this.body.appendChild(keywordListView.container);
+    keywordListView.render(keywordListInfo.keywords, keywordListInfo.totalPages);
   }
 
   renderKeywordsSettings(colorMap) {
