@@ -719,7 +719,7 @@ pre {
   color: rgb(175, 11, 204);
   font-weight: bold;
   border-radius: 6px;
-  border: none;
+  border: 2px solid rgb(175, 11, 204);
   outline: none;
 }
 

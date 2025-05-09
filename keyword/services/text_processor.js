@@ -17,16 +17,12 @@ class TextProcessor {
     return this.root.nodeName;
   }
 
-  escapeRegExp(text) {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
-
   getWordsPattern() {
     return /[\p{L}\p{N}]+(?:['’\-_.][\p{L}\p{N}]+)*['’]?/gu;
   }
 
   getKeywordPattern(keyword, flags = 'giu') {
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][\-_.])${this.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[\-_.][\\p{L}\\p{N}])`, flags);
+    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][\-_.])${Utils.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[\-_.][\\p{L}\\p{N}])`, flags);
   }
 
   getTextNodes() {
