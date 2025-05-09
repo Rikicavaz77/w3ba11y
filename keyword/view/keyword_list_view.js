@@ -4,13 +4,13 @@ class KeywordListView {
     this._listType = listType;
     this._pageSize = pageSize;
     this._container = this.generateKeywordListViewSection();
-    this._searchKeywordField;
+    this._searchKeywordField = null;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
     this._currentPage = 1;
-    this._sortDirection;
-    this._currentSortButton;
+    this._sortDirection = null;
+    this._currentSortButton = null;
   }
 
   get container() {
