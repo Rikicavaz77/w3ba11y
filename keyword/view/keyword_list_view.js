@@ -109,10 +109,6 @@ class KeywordListView {
               <path fill-rule="evenodd" d="M2 2.75A.75.75 0 0 1 2.75 2h9.5a.75.75 0 0 1 0 1.5h-9.5A.75.75 0 0 1 2 2.75ZM2 6.25a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 0 1.5h-5.5A.75.75 0 0 1 2 6.25Zm0 3.5A.75.75 0 0 1 2.75 9h3.5a.75.75 0 0 1 0 1.5h-3.5A.75.75 0 0 1 2 9.75ZM9.22 9.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V8.56l-.97.97a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
             </svg>
           </button>
-          <select name="sort-dropdown" class="keywords__sort-dropdown">
-            <option class="keywords__sort-dropdown__option" value="sort-by-name">Sort by name</option>
-            <option class="keywords__sort-dropdown__option" value="sort-by-score">Sort by score</option>
-          </select>
           <button class="keywords__remove-filters">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="keywords__icon--medium">
               <path d="M16.284,14.87l5.716-5.881v-3.989c0-1.654-1.346-3-3-3H4c-.179,0-.355,.025-.529,.057L1.457,.043,.043,1.457,22.543,23.957l1.414-1.414-7.673-7.673Zm-1.284,4.386v4.744l-6-4.5v-3.309L2,8.989v-2.813l13,13.079Z"/>
@@ -123,6 +119,12 @@ class KeywordListView {
       <ul class="keyword-list"></ul>
       <ol class="keywords__pagination"></ol>
     `;
+    /* To-Do:
+      <select name="sort-dropdown" class="keywords__sort-dropdown">
+        <option class="keywords__sort-dropdown__option" value="sort-by-name">Sort by name</option>
+        <option class="keywords__sort-dropdown__option" value="sort-by-score">Sort by score</option>
+      </select>
+    */
 
     this.searchKeywordField = keywordsListContainer.querySelector('.keywords__input-wrapper__field');
     this.pagination = keywordsListContainer.querySelector('.keywords__pagination');
