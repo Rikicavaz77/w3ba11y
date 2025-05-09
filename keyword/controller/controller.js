@@ -152,7 +152,7 @@ class KeywordController {
         if (!listItem || !keywordsListContainer) return;
         const keywordsList = this.getListByType(keywordsListContainer.dataset.listType).display;
         const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
-        if (isNaN(keywordIndex)) return; // Handle invalid index gracefully
+        if (isNaN(keywordIndex)) return;
         this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
         return;
       }
@@ -173,6 +173,7 @@ class KeywordController {
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
         this.sortKeywords(listType, button);
+        return;
       }
 
       button = event.target.closest(".keywords__remove-filters");
@@ -181,6 +182,7 @@ class KeywordController {
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
         this.removeFilters(listType, button);
+        return;
       }
     });
     /* this.view.container.addEventListener("mouseover", (event) => {
