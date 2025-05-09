@@ -14,6 +14,7 @@ class KeywordController {
     };
     this.treeWalker = new TreeWalker(iframe.body);
     this.wordCounter = new WordCounter(iframe, this.treeWalker);
+    this.keywordAnalyzer = new KeywordAnalyzer(iframe, this.treeWalker);
     this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
@@ -155,11 +156,16 @@ class KeywordController {
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     if (metaTagKeywordsContent) {
-      const keywords = metaTagKeywordsContent.split(',');
-      this.metaKeywords = keywords
+      let keywords = metaTagKeywordsContent.split(',');
+      /* this.metaKeywords = keywords
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0)
-        .map(keyword => new Keyword(keyword));
+        .map(keyword => new Keyword(keyword)); */
+      keywords = keywords
+        .map(keyword => keyword.trim())
+        .filter(keyword => keyword.length > 0);
+      this.metaKeywords = this.keywordAnalyzer.analyzeKeywords(keywords);
+      console.log(this.metaKeywords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
     return metaTagKeywordsContent ?? "Missing";
