@@ -76,6 +76,8 @@ class KeywordView {
     switch (listType) {
       case 'meta':
         return this._metaKeywordsListView;
+      default:
+        return null;
     }
   }
 
