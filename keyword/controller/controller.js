@@ -56,32 +56,47 @@ class KeywordController {
   }
 
   // SORT FUNCTION 
-  sortKeywords(listType, clickedButton) {
+  sortKeywords(keywords, sortDirection) {
+    keywords.sort((a, b) => {
+      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      return (sortDirection === "asc") ? compare : -compare;
+    });
+  }
+
+  // HANDLE SORTING FUNCTION
+  handleKeywordSorting(listType, clickedButton) {
     const sortDirection = clickedButton.dataset.sort;
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
     const { display } = this.getListByType(listType);
-    display.sort((a, b) => {
-      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-      return (sortDirection === "asc") ? compare : -compare;
-    });
+    this.sortKeywords(display, sortDirection);
     listView.updateSortButtons(clickedButton);
     this.renderPage(listType, listView, display, listView.currentPage);
   }
 
   // SEARCH FUNCTION
-  filterKeywords(listType, filterQuery) {
-    const listView = this.view.getListViewByType(listType);
-    if (!listView) return;
-    const { display } = this.getListByType(listType);
+  filterKeywords(keywords, filterQuery) {
     const pattern = new RegExp(`${Utils.escapeRegExp(filterQuery)}`, "i");
-    const filteredKeywords = display.filter((keywordItem) => {
+    const filteredKeywords = keywords.filter((keywordItem) => {
       return pattern.test(keywordItem.name);
     });
-    display.splice(0, display.length, ...filteredKeywords);
-    this.renderPage(listType, listView, display, listView.currentPage);
+    return filteredKeywords;
   }
 
+  // UPDATE VISIBLE KEYWORDS FUNCTION
+  updateVisibleKeywords(listType, filterQuery) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView) return;
+    const { original, display } = this.getListByType(listType);
+    const result = filterQuery ? this.filterKeywords(original, filterQuery) : [...original];
+
+    if (listView.sortDirection) {
+      this.sortKeywords(result, listView.sortDirection);
+    }
+
+    display.splice(0, display.length, ...result);
+    this.renderPage(listType, listView, display, listView.currentPage);
+  }
 
   // REMOVE FILTERS
   removeFilters(listType) {
@@ -183,7 +198,7 @@ class KeywordController {
         const keywordsListContainer = event.target.closest(".keyword-list__container");
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
-        this.sortKeywords(listType, button);
+        this.handleKeywordSorting(listType, button);
         return;
       }
 
@@ -201,7 +216,7 @@ class KeywordController {
         const keywordsListContainer = event.target.closest(".keyword-list__container");
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
-        this.filterKeywords(listType, event.target.value);
+        this.updateVisibleKeywords(listType, event.target.value);
         return;
       }
     });
