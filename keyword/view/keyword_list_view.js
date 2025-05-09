@@ -8,6 +8,8 @@ class KeywordListView {
     this._paginationButtons;
     this._currentPageButton;
     this._currentPage = 1;
+    this._sortMode;
+    this._currentSortButton;
   }
 
   get container() {
@@ -30,6 +32,10 @@ class KeywordListView {
     return this._currentPage;
   }
 
+  get currentSortButton() {
+    return this._currentSortButton;
+  }
+
   set container(container) {
     this._container = container;
   }
@@ -48,6 +54,10 @@ class KeywordListView {
 
   set currentPage(currentPage) {
     this._currentPage = currentPage;
+  }
+
+  set currentSortButton(newButton) {
+    this._currentSortButton = newButton;
   }
 
   isCurrentPage(page) {
@@ -110,6 +120,12 @@ class KeywordListView {
   changePage(keywords, totalPages, currentPage, startIndex) {
     this.render(keywords, totalPages, currentPage,startIndex);
     this.pagination.scrollIntoView();
+  }
+
+  updateSortButtons(clickedButton) {
+    this.currentSortButton?.classList.remove('keywords__sort-button--active');
+    this.currentSortButton = clickedButton;
+    this.currentSortButton.classList.add('keywords__sort-button--active');
   }
 
   renderKeywords(keywords, startIndex) {
