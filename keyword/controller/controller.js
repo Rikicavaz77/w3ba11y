@@ -69,6 +69,20 @@ class KeywordController {
     this.renderPage(listType, listView, display, listView.currentPage);
   }
 
+  // SEARCH FUNCTION
+  filterKeywords(listType, filterQuery) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView) return;
+    const { display } = this.getListByType(listType);
+    const pattern = new RegExp(`${filterQuery}`, "i");
+    const filteredKeywords = display.filter((keywordItem) => {
+      return pattern.test(keywordItem.name);
+    });
+    display.splice(0, display.length, ...filteredKeywords);
+    this.renderPage(listType, listView, display, listView.currentPage);
+  }
+
+
   // REMOVE FILTERS
   removeFilters(listType) {
     const listView = this.view.getListViewByType(listType);
@@ -179,6 +193,15 @@ class KeywordController {
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
         this.removeFilters(listType);
+        return;
+      }
+    });
+    this.view.container.addEventListener('input', (event) => {
+      if (event.target.matches('input[type="text"][data-search]')) {
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!keywordsListContainer) return;
+        const listType = keywordsListContainer.dataset.listType;
+        this.filterKeywords(listType, event.target.value);
         return;
       }
     });

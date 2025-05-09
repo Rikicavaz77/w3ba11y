@@ -95,7 +95,7 @@ class KeywordListView {
                 <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
               </svg>
             </span>
-            <input type="text" name="search-keyword" class="keywords__input-wrapper__field" placeholder="Search keyword...">
+            <input type="text" name="search-keyword" class="keywords__input-wrapper__field" data-search placeholder="Search keyword...">
           </div>
         </div>
         <div class="keywords__sort-container">
