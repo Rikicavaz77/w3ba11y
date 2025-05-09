@@ -4,6 +4,7 @@ class KeywordListView {
     this._listType = listType;
     this._pageSize = pageSize;
     this._container = this.generateKeywordListViewSection();
+    this._searchKeywordField;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
@@ -14,6 +15,10 @@ class KeywordListView {
 
   get container() {
     return this._container;
+  }
+
+  get searchKeywordField() {
+    return this._searchKeywordField;
   }
 
   get pagination() {
@@ -42,6 +47,10 @@ class KeywordListView {
 
   set container(container) {
     this._container = container;
+  }
+
+  set searchKeywordField(searchKeywordField) {
+    this._searchKeywordField = searchKeywordField;
   }
 
   set pagination(pagination) {
@@ -115,6 +124,7 @@ class KeywordListView {
       <ol class="keywords__pagination"></ol>
     `;
 
+    this._searchKeywordField = keywordsListContainer.querySelector('.keywords__input-wrapper__field');
     this.pagination = keywordsListContainer.querySelector('.keywords__pagination');
     return keywordsListContainer;
   }
@@ -135,6 +145,13 @@ class KeywordListView {
     this.currentSortButton = clickedButton;
     this.currentSortButton.classList.add('keywords__sort-button--active');
     this.sortDirection = clickedButton.dataset.sort;
+  }
+
+  removeFilters() {
+    this.currentSortButton?.classList.remove('keywords__sort-button--active');
+    this.currentSortButton = null;
+    this.sortDirection = "";
+    this.searchKeywordField.value = "";
   }
 
   renderKeywords(keywords, startIndex) {

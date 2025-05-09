@@ -14,6 +14,7 @@ class KeywordController {
     this.wordCounter = new WordCounter(iframe, this.treeWalker);
     this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
     this.metaKeywords = [];
+    this.displayMetaKeywords = [];
     this.init();
   }
 
@@ -28,9 +29,9 @@ class KeywordController {
       lang: lang
     };
     this.view.render(overviewInfo, this.keywordHighlighter.colorMap);
-    if (this.metaKeywords.length > 0) {
-      const metaKeywordsData = this.metaKeywords.slice(0, this.batchSizes.meta);
-      const totalPages = Math.ceil(this.metaKeywords.length / this.batchSizes.meta);
+    if (this.displayMetaKeywords.length > 0) {
+      const metaKeywordsData = this.displayMetaKeywords.slice(0, this.batchSizes.meta);
+      const totalPages = Math.ceil(this.displayMetaKeywords.length / this.batchSizes.meta);
       this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
     }
     this.buildUIEvents();
@@ -41,7 +42,7 @@ class KeywordController {
   changePage(listType, page) {
     const listView = this.view.getListViewByType(listType);
     if (!listView || listView.isCurrentPage(page)) return;
-    const keywordsList = this.getListByType(listType);
+    const keywordsList = this.getListByType(listType).display;
     let start = (page - 1) * this.batchSizes[listType];
     let end = start + this.batchSizes[listType];
     const keywordsData = keywordsList.slice(start, end);
@@ -55,7 +56,7 @@ class KeywordController {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
     listView.updateSortButtons(clickedButton);
-    const keywordsList = this.getListByType(listType);
+    const keywordsList = this.getListByType(listType).display;
     keywordsList.sort((a, b) => {
       const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
       return (sortDirection === "asc") ? compare : -compare;
@@ -64,6 +65,20 @@ class KeywordController {
     let end = start + this.batchSizes[listType];
     const keywordsData = keywordsList.slice(start, end);
     const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
+    listView.render(keywordsData, totalPages, listView.currentPage, start);
+  }
+
+  // REMOVE FILTERS
+  removeFilters(listType) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView) return;
+    const { original, display } = this.getListByType(listType);
+    display.splice(0, display.length, ...original);
+    listView.removeFilters();
+    let start = (listView.currentPage - 1) * this.batchSizes[listType];
+    let end = start + this.batchSizes[listType];
+    const keywordsData = display.slice(start, end);
+    const totalPages = Math.ceil(display.length / this.batchSizes[listType]);
     listView.render(keywordsData, totalPages, listView.currentPage, start);
   }
 
@@ -88,7 +103,10 @@ class KeywordController {
   getListByType(listType) {
     switch (listType) {
       case 'meta':
-        return this.metaKeywords;
+        return {
+          original: this.metaKeywords,
+          display: this.displayMetaKeywords
+        };
       default:
         return null;
     }
@@ -102,6 +120,7 @@ class KeywordController {
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0)
         .map(keyword => new Keyword(keyword));
+      this.displayMetaKeywords = [...this.metaKeywords];
     }
     return metaTagKeywordsContent ?? "Missing";
   }
@@ -131,7 +150,7 @@ class KeywordController {
         const listItem = event.target.closest(".keyword-list-item");
         const keywordsListContainer = event.target.closest(".keyword-list__container");
         if (!listItem || !keywordsListContainer) return;
-        const keywordsList = this.getListByType(keywordsListContainer.dataset.listType);
+        const keywordsList = this.getListByType(keywordsListContainer.dataset.listType).display;
         const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
         if (isNaN(keywordIndex)) return; // Handle invalid index gracefully
         this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
@@ -154,6 +173,14 @@ class KeywordController {
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
         this.sortKeywords(listType, button);
+      }
+
+      button = event.target.closest(".keywords__remove-filters");
+      if (button) {
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!keywordsListContainer) return;
+        const listType = keywordsListContainer.dataset.listType;
+        this.removeFilters(listType, button);
       }
     });
     /* this.view.container.addEventListener("mouseover", (event) => {
