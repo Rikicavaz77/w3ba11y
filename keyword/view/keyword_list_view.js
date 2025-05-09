@@ -6,6 +6,8 @@ class KeywordListView {
     this._container = this.generateKeywordListViewSection();
     this._pagination;
     this._paginationButtons;
+    this._currentPageButton;
+    this._currentPage = 1;
   }
 
   get container() {
@@ -24,6 +26,10 @@ class KeywordListView {
     return this._currentPageButton;
   }
 
+  get currentPage() {
+    return this._currentPage;
+  }
+
   set container(container) {
     this._container = container;
   }
@@ -38,6 +44,14 @@ class KeywordListView {
 
   set currentPageButton(newButton) {
     this._currentPageButton = newButton;
+  }
+
+  set currentPage(currentPage) {
+    this._currentPage = currentPage;
+  }
+
+  isCurrentPage(page) {
+    return this.currentPage === page;
   }
 
   generateKeywordListViewSection() {
@@ -87,19 +101,24 @@ class KeywordListView {
     return keywordsListContainer;
   }
 
-  render(metaKeywords, totalPages, currentPage = 1) {
+  render(keywords, totalPages, currentPage = 1, startIndex = 0) {
     currentPage = currentPage > totalPages ? 1: currentPage;
-    this.renderKeywords(metaKeywords);
+    this.renderKeywords(keywords, startIndex);
     this.renderPages(totalPages, currentPage);
   }
 
-  renderKeywords(keywords) {
+  changePage(keywords, totalPages, currentPage, startIndex) {
+    this.render(keywords, totalPages, currentPage,startIndex);
+    this.pagination.scrollIntoView();
+  }
+
+  renderKeywords(keywords, startIndex) {
     const keywordsList = this._container.querySelector(".keyword-list");
     keywordsList.innerHTML = "";
     keywords.forEach(keywordItem => {
       let item = document.createElement("li");
       item.classList.add('keyword-list-item');
-      item.dataset.keywordIndex = keywords.indexOf(keywordItem);
+      item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
       item.innerHTML = `
         <h3 class="keyword-item__title">${keywordItem.name}</h3>
         <div class="keyword-item__actions">
@@ -134,10 +153,6 @@ class KeywordListView {
     });
     this.currentPageButton = this.pagination.querySelector('.pagination__button--active');
     this.paginationButtons = this.pagination.querySelectorAll('.pagination__button');
+    this.currentPage = currentPage;
   }
-
-  changePage() {
-    // To-Do
-  }
-
 }

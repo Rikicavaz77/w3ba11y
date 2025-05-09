@@ -72,6 +72,13 @@ class KeywordView {
     return this.container.querySelector("#custom-keyword-input");
   }
 
+  getListViewByType(listType) {
+    switch (listType) {
+      case 'meta':
+        return this._metaKeywordsListView;
+    }
+  }
+
   generateKeywordViewSection() {
     const asideBody = document.querySelector('aside .w3ba11y__body');
     if (!asideBody) {
@@ -109,8 +116,8 @@ class KeywordView {
 
     this.header = keywordViewSection.querySelector('.section__header');
     this.body = keywordViewSection.querySelector('.section__body');
-    this.tabButtons = this.container.querySelectorAll('.tab__button');
-    this.activeTabButton = this.container.querySelector('.tab__button--overview');
+    this.tabButtons = keywordViewSection.querySelectorAll('.tab__button');
+    this.activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
 
     return asideBody.querySelector('.w3ba11y__section--keyword');
   }

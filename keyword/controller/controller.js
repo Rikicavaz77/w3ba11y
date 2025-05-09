@@ -31,11 +31,23 @@ class KeywordController {
     if (this.metaKeywords.length > 0) {
       const metaKeywordsData = this.metaKeywords.slice(0, this.batchSizes.meta);
       const totalPages = Math.ceil(this.metaKeywords.length / this.batchSizes.meta);
+      console.log(totalPages);
       this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
     }
     this.buildUIEvents();
     this.setupTabListeners();
-    this.setupPaginationListeners();
+  }
+
+  // CHANGE PAGE FUNCTION
+  changePage(listType, page) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView || listView.isCurrentPage(page)) return;
+    const keywordsList = this.getListByType(listType);
+    let start = (page - 1) * this.batchSizes[listType];
+    let end = start + this.batchSizes[listType];
+    const keywordsData = keywordsList.slice(start, end);
+    const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
+    listView.changePage(keywordsData, totalPages, page, start);
   }
 
   toggleHighlight(event) {
@@ -56,7 +68,7 @@ class KeywordController {
     this.keywordHighlighter.updateTagColors(tag, prop, value);
   }
 
-  getListBasedOnType(listType) {
+  getListByType(listType) {
     switch (listType) {
       case 'meta':
         return this.metaKeywords;
@@ -87,12 +99,6 @@ class KeywordController {
     });
   }
 
-  setupPaginationListeners() {
-    this.view.paginationButtons.forEach(button => {
-      button.addEventListener('click', () => this.changePage(button));
-    });
-  }
-
   buildUIEvents() {
     this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
     this.view.container.addEventListener('change', (event) => {
@@ -101,15 +107,24 @@ class KeywordController {
       }
     });
     this.view.container.addEventListener('click', (event) => {
-      const button = event.target.closest(".keyword-button--highlight");
+      let button = event.target.closest(".keyword-button--highlight");
       if (button) {
         const listItem = event.target.closest(".keyword-list-item");
         const keywordsListContainer = event.target.closest(".keyword-list__container");
         if (!listItem || !keywordsListContainer) return;
-        const keywordsList = this.getListBasedOnType(keywordsListContainer.dataset.listType);
+        const keywordsList = this.getListByType(keywordsListContainer.dataset.listType);
         const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
         if (isNaN(keywordIndex)) return; // Handle invalid index gracefully
         this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
+      }
+
+      button = event.target.closest(".keywords__pagination__button");
+      if (button) {
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!keywordsListContainer) return;
+        const listType = keywordsListContainer.dataset.listType;
+        const page = parseInt(button.dataset.page, 10);
+        this.changePage(listType, page);
       }
     });
     /* this.view.container.addEventListener("mouseover", (event) => {
