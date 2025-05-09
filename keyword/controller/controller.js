@@ -38,16 +38,21 @@ class KeywordController {
     this.setupTabListeners();
   }
 
-  // CHANGE PAGE FUNCTION
-  changePage(listType, page) {
-    const listView = this.view.getListViewByType(listType);
-    if (!listView || listView.isCurrentPage(page)) return;
-    const keywordsList = this.getListByType(listType).display;
-    let start = (page - 1) * this.batchSizes[listType];
+  renderPage(listType, listView, keywordsList, currentPage) {
+    let start = (currentPage - 1) * this.batchSizes[listType];
     let end = start + this.batchSizes[listType];
     const keywordsData = keywordsList.slice(start, end);
     const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
-    listView.changePage(keywordsData, totalPages, page, start);
+    listView.render(keywordsData, totalPages, listView.currentPage, start);
+  }
+
+  // CHANGE PAGE FUNCTION
+  changePage(listType, currentPage) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView || listView.isCurrentPage(currentPage)) return;
+    const { display } = this.getListByType(listType);
+    this.renderPage(listType, listView, display, currentPage);
+    listView.scrollToPagination();
   }
 
   // SORT FUNCTION 
@@ -55,17 +60,13 @@ class KeywordController {
     const sortDirection = clickedButton.dataset.sort;
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    listView.updateSortButtons(clickedButton);
-    const keywordsList = this.getListByType(listType).display;
-    keywordsList.sort((a, b) => {
+    const { display } = this.getListByType(listType);
+    display.sort((a, b) => {
       const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
       return (sortDirection === "asc") ? compare : -compare;
     });
-    let start = (listView.currentPage - 1) * this.batchSizes[listType];
-    let end = start + this.batchSizes[listType];
-    const keywordsData = keywordsList.slice(start, end);
-    const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
-    listView.render(keywordsData, totalPages, listView.currentPage, start);
+    listView.updateSortButtons(clickedButton);
+    this.renderPage(listType, listView, display, listView.currentPage);
   }
 
   // REMOVE FILTERS
@@ -75,11 +76,7 @@ class KeywordController {
     const { original, display } = this.getListByType(listType);
     display.splice(0, display.length, ...original);
     listView.removeFilters();
-    let start = (listView.currentPage - 1) * this.batchSizes[listType];
-    let end = start + this.batchSizes[listType];
-    const keywordsData = display.slice(start, end);
-    const totalPages = Math.ceil(display.length / this.batchSizes[listType]);
-    listView.render(keywordsData, totalPages, listView.currentPage, start);
+    this.renderPage(listType, listView, display, listView.currentPage);
   }
 
   toggleHighlight(event) {
