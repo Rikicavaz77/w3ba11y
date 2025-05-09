@@ -400,6 +400,11 @@ pre {
   visibility: hidden !important;
 }
 
+.keywords__icon--medium {
+  width: 1.5em;
+  height: 1.5em;
+}
+
 .keywords__icon--small {
   width: 1.2em;
   height: 1.2em;
@@ -429,6 +434,10 @@ pre {
   border-top-left-radius: 10px;
   border: none;
   z-index: 2;
+}
+
+.w3ba11y__section--keyword .tab__button {
+  width: 100%;
 }
 
 .w3ba11y__section--keyword .tab__button--settings {
@@ -575,6 +584,7 @@ pre {
   position: absolute;
   top: 18px;
   left: 0;
+  width: 100%;
   text-align: center;
   padding: 0.4em;
   border-radius: 6px;
@@ -669,3 +679,107 @@ pre {
 .keywords__highlight-input:checked::before {
   transform: scale(2);
 }
+
+.keyword-list__container {
+  margin: 1.5em 0;
+}
+
+.keywords__filters-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.8em;
+  margin-top: 0.5em;
+}
+
+.keywords__sort-container {
+  display: flex;
+  flex-wrap: nowrap;
+  column-gap: 0.5em;
+}
+
+.keywords__sort-button {
+  background-color: rgba(235, 159, 197, 0.4);
+  color: rgb(175, 11, 204);
+  padding: 0.5em;
+  border-radius: 6px;
+  border: none;
+}
+
+.keywords__sort-button--active {
+  background-color: rgb(175, 11, 204);
+  color: #fff;
+}
+
+.keywords__sort-dropdown {
+  background-color: rgba(235, 159, 197, 0.4);
+  color: rgb(175, 11, 204);
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+.keywords__sort-dropdown__option {
+  font-weight: bold;
+}
+
+.keywords__remove-filters {
+  background-color: transparent;
+  color: #000;
+} 
+
+.keyword-list {
+  list-style-type: none;
+}
+
+.keyword-list-item {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  border-radius: 0.625em;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+}
+
+.keyword-item__title {
+  font-size: 1em;
+}
+
+.keyword-item__actions {
+  display: flex;
+  margin-left: auto;
+}
+
+.keyword-item__actions__button {
+  background-color: transparent;
+  margin: 0 0.3em;
+  padding: 0.3em;
+  border: none;
+  cursor: pointer;
+}
+
+.keywords__pagination {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5em;
+  row-gap: 0.2em;
+  flex-wrap: wrap;
+  list-style-type: none;
+}
+
+.keywords__pagination__button {
+  background-color: rgba(235, 159, 197, 0.4);
+  padding: 0.5em;
+  vertical-align: middle;
+  border: 2px solid #af0bcc;
+}
+
+.keywords__pagination__button--active {
+  background-color: #af0bcc;
+  color: #fff;
+}
+
+/* .keywords-container .pages-container li.placeholder-page {
+  font-size: 1.5em;
+} */

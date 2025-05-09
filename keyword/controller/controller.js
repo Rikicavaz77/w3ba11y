@@ -1,5 +1,8 @@
 class KeywordController {
   constructor(iframe) {
+    this.batchSizes = {
+      meta: 5
+    };
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
@@ -10,7 +13,7 @@ class KeywordController {
     this.treeWalker = new TreeWalker(iframe.body);
     this.wordCounter = new WordCounter(iframe, this.treeWalker);
     this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
-    this.model = null; // Placeholder for the model, to be assigned later
+    this.metaKeywords = [];
     this.init();
   }
 
@@ -25,8 +28,25 @@ class KeywordController {
       lang: lang
     };
     this.view.render(overviewInfo, this.keywordHighlighter.colorMap);
+    if (this.metaKeywords.length > 0) {
+      const metaKeywordsData = this.metaKeywords.slice(0, this.batchSizes.meta);
+      const totalPages = Math.ceil(this.metaKeywords.length / this.batchSizes.meta);
+      this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
+    }
     this.buildUIEvents();
     this.setupTabListeners();
+  }
+
+  // CHANGE PAGE FUNCTION
+  changePage(listType, page) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView || listView.isCurrentPage(page)) return;
+    const keywordsList = this.getListByType(listType);
+    let start = (page - 1) * this.batchSizes[listType];
+    let end = start + this.batchSizes[listType];
+    const keywordsData = keywordsList.slice(start, end);
+    const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
+    listView.changePage(keywordsData, totalPages, page, start);
   }
 
   toggleHighlight(event) {
@@ -47,8 +67,24 @@ class KeywordController {
     this.keywordHighlighter.updateTagColors(tag, prop, value);
   }
 
+  getListByType(listType) {
+    switch (listType) {
+      case 'meta':
+        return this.metaKeywords;
+      default:
+        return null;
+    }
+  }
+
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
+    if (metaTagKeywordsContent) {
+      const keywords = metaTagKeywordsContent.split(',');
+      this.metaKeywords = keywords
+        .map(keyword => keyword.trim())
+        .filter(keyword => keyword.length > 0)
+        .map(keyword => new Keyword(keyword));
+    }
     return metaTagKeywordsContent ?? "Missing";
   }
 
@@ -71,7 +107,28 @@ class KeywordController {
         this.updateHighlightColors(event);
       }
     });
-    this.view.container.addEventListener("mouseover", (event) => {
+    this.view.container.addEventListener('click', (event) => {
+      let button = event.target.closest(".keyword-button--highlight");
+      if (button) {
+        const listItem = event.target.closest(".keyword-list-item");
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!listItem || !keywordsListContainer) return;
+        const keywordsList = this.getListByType(keywordsListContainer.dataset.listType);
+        const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
+        if (isNaN(keywordIndex)) return; // Handle invalid index gracefully
+        this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
+      }
+
+      button = event.target.closest(".keywords__pagination__button");
+      if (button) {
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!keywordsListContainer) return;
+        const listType = keywordsListContainer.dataset.listType;
+        const page = parseInt(button.dataset.page, 10);
+        this.changePage(listType, page);
+      }
+    });
+    /* this.view.container.addEventListener("mouseover", (event) => {
       if (event.target.closest(".keywords__tooltip-content")) {
         this.view.toggleTooltip(event);
       }
@@ -80,6 +137,13 @@ class KeywordController {
       if (event.target.closest(".keywords__tooltip-content")) {
         this.view.toggleTooltip(event);
       }
+    }); */
+    const tooltips = this.view.tooltips;
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
+    });
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
     });
   }
 }

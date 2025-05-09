@@ -24,6 +24,10 @@ class KeywordView {
     return this._container.querySelectorAll('.keywords__color-selector__input');
   }
 
+  get tooltips() {
+    return this._container.querySelectorAll('.keywords__tooltip-content');
+  }
+
   get iframe() {
     return this._iframe;
   }
@@ -68,6 +72,15 @@ class KeywordView {
     return this.container.querySelector("#custom-keyword-input");
   }
 
+  getListViewByType(listType) {
+    switch (listType) {
+      case 'meta':
+        return this._metaKeywordsListView;
+      default:
+        return null;
+    }
+  }
+
   generateKeywordViewSection() {
     const asideBody = document.querySelector('aside .w3ba11y__body');
     if (!asideBody) {
@@ -105,6 +118,8 @@ class KeywordView {
 
     this.header = keywordViewSection.querySelector('.section__header');
     this.body = keywordViewSection.querySelector('.section__body');
+    this.tabButtons = keywordViewSection.querySelectorAll('.tab__button');
+    this.activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
 
     return asideBody.querySelector('.w3ba11y__section--keyword');
   }
@@ -229,6 +244,12 @@ class KeywordView {
     this.body.appendChild(keywordInputContainer);
   }
 
+  renderMetaTagKeywordsContainer(metaKeywords, totalKeywords, currentPage) {
+    this._metaKeywordsListView = new KeywordListView("Meta keywords", "meta");
+    this.body.appendChild(this._metaKeywordsListView.container);
+    this._metaKeywordsListView.render(metaKeywords, totalKeywords, currentPage);
+  }
+
   renderKeywordsSettings(colorMap) {
     const keywordsSettingsContainer = document.createElement("div");
     keywordsSettingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
@@ -276,8 +297,6 @@ class KeywordView {
   render(overviewInfo, colorMap) {
     this.renderKeywordsAnalysisOverview(overviewInfo);
     this.renderKeywordsSettings(colorMap);
-    this.tabButtons = this.container.querySelectorAll('.tab__button');
-    this.activeTabButton = this.container.querySelector('.tab__button--overview');
     this.renderKeywordInputBox();
   }
 
