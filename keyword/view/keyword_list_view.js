@@ -151,7 +151,7 @@ class KeywordListView {
   removeFilters() {
     this.currentSortButton?.classList.remove('keywords__sort-button--active');
     this.currentSortButton = null;
-    this.sortDirection = "";
+    this.sortDirection = null;
     this.searchKeywordField.value = "";
   }
 
