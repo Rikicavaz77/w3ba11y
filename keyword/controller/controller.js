@@ -43,7 +43,7 @@ class KeywordController {
     let end = start + this.batchSizes[listType];
     const keywordsData = keywordsList.slice(start, end);
     const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
-    listView.render(keywordsData, totalPages, listView.currentPage, start);
+    listView.render(keywordsData, totalPages, currentPage, start);
   }
 
   // CHANGE PAGE FUNCTION
