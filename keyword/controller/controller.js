@@ -74,7 +74,7 @@ class KeywordController {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
     const { display } = this.getListByType(listType);
-    const pattern = new RegExp(`${filterQuery}`, "i");
+    const pattern = new RegExp(`${Utils.escapeRegExp(filterQuery)}`, "i");
     const filteredKeywords = display.filter((keywordItem) => {
       return pattern.test(keywordItem.name);
     });
