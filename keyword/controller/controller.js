@@ -181,7 +181,7 @@ class KeywordController {
         const keywordsListContainer = event.target.closest(".keyword-list__container");
         if (!keywordsListContainer) return;
         const listType = keywordsListContainer.dataset.listType;
-        this.removeFilters(listType, button);
+        this.removeFilters(listType);
         return;
       }
     });
