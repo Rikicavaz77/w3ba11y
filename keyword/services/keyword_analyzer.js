@@ -11,9 +11,9 @@ class KeywordAnalyzer extends TextProcessor {
       const matches = node.nodeValue.match(pattern) || [];
       frequency += matches.length;
     });
-    return new Keyword(keyword, frequency);
+    return new Keyword(keyword, { frequency });
   }
-  
+
   analyzeKeywords(keywords) {
     const textNodes = this.getTextNodes();
     return keywords.map(keyword => {
@@ -23,7 +23,7 @@ class KeywordAnalyzer extends TextProcessor {
         const matches = node.nodeValue.match(pattern) || [];
         frequency += matches.length;
       });
-      return new Keyword(keyword, frequency);
+      return new Keyword(keyword, { frequency });
     });
   }
 }
