@@ -34,4 +34,8 @@ class TextProcessor {
     }
     return textNodes;
   }
+
+  countTagOccurrences() {
+    
+  }
 }

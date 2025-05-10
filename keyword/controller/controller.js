@@ -27,8 +27,9 @@ class KeywordController {
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
     const wordCountResult = this.wordCounter.countWords();
+    this.totalWords = wordCountResult.totalWords;
     const overviewInfo = {
-      wordCount: wordCountResult.totalWords,
+      wordCount: this.totalWords,
       uniqueWordCount: wordCountResult.uniqueWords,
       metaTagKeywordsContent: metaTagKeywordsContent,
       lang: lang
@@ -164,7 +165,7 @@ class KeywordController {
       keywords = keywords
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0);
-      this.metaKeywords = this.keywordAnalyzer.analyzeKeywords(keywords);
+      this.metaKeywords = this.keywordAnalyzer.analyzeKeywords(keywords, this.totalWords);
       console.log(this.metaKeywords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
