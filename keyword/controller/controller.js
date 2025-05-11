@@ -12,10 +12,11 @@ class KeywordController {
       updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
-    this.treeWalker = new TreeWalker(iframe.body);
-    this.wordCounter = new WordCounter(iframe, this.treeWalker);
-    this.keywordAnalyzer = new KeywordAnalyzer(iframe, this.treeWalker);
-    this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
+    const treeWalker = new TreeWalker(iframe.body);
+    const tagAccessor = new TagAccessor(iframe.body);
+    this.wordCounter = new WordCounter(iframe, treeWalker, tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(iframe, treeWalker, tagAccessor, new CompactKeywordAnalysis());
+    this.keywordHighlighter = new KeywordHighlighter(iframe, treeWalker);
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];

@@ -1,26 +1,26 @@
 class Keyword {
-  constructor(name, { status = "analyzing", frequency = 0, density = 0, tagData = null, relevanceScore = 0 } = {}) {
+  constructor(name, { status = "analyzing", frequency = 0, density = 0, keywordOccurences = null, relevanceScore = 0 } = {}) {
     this._name = name;
     this._status = status;
     this._frequency = frequency;
     this._density = density;
-    this._tagData = tagData || this.defaultTagData();
+    this._keywordOccurences = keywordOccurences || this.defaultKeywordOccurences();
     this._relevanceScore = relevanceScore;
   }
 
-  defaultTagData() {
+  defaultKeywordOccurences() {
     return {
-      title:      { keywordOccurrences: 0, weight: 10, tagOccurrences: 0 },
-      description:{ keywordOccurrences: 0, weight: 6, tagOccurrences: 0 },
-      h1:         { keywordOccurrences: 0, weight: 5, tagOccurrences: 0 },
-      h2:         { keywordOccurrences: 0, weight: 4, tagOccurrences: 0 },
-      h3:         { keywordOccurrences: 0, weight: 3, tagOccurrences: 0 },
-      h4:         { keywordOccurrences: 0, weight: 2, tagOccurrences: 0 },
-      h5:         { keywordOccurrences: 0, weight: 2, tagOccurrences: 0 },
-      h6:         { keywordOccurrences: 0, weight: 2, tagOccurrences: 0 },
-      p:          { keywordOccurrences: 0, weight: 0, tagOccurrences: 0 },
-      a:          { keywordOccurrences: 0, weight: 1.5, tagOccurrences: 0 },
-      alt:        { keywordOccurrences: 0, weight: 2.5, tagOccurrences: 0 }
+      title:      0,
+      description:0,
+      h1:         0,
+      h2:         0,
+      h3:         0,
+      h4:         0,
+      h5:         0,
+      h6:         0,
+      p:          0,
+      a:          0,
+      alt:        0,
     }
   }
 
@@ -40,8 +40,8 @@ class Keyword {
     return this._density;
   }
 
-  get tagData() {
-    return this._tagData;
+  get keywordOccurences() {
+    return this._keywordOccurences;
   }
 
   get relevanceScore() {
@@ -60,17 +60,17 @@ class Keyword {
     this._density = density;
   }
 
-  set tagData(tagData) {
-    this._tagData = tagData;
+  set keywordOccurences(keywordOccurences) {
+    this._keywordOccurences = keywordOccurences;
   }
 
-  calculateRelevanceScore() {
+  calculateRelevanceScore(tagData) {
     let score = 0;
     let maxScore = 0;
-    Object.entries(this.tagData).forEach(([_, data]) => {
-      if (data.weight && data.tagOccurrences > 0) {
-        score += (data.keywordOccurrences / data.tagOccurrences) * data.weight;
-        maxScore += data.weight;
+    Object.entries(this.keywordOccurences).forEach(([tag, occurrences]) => {
+      if (tagData[tag].weight && tagData[tag].tagOccurrences > 0) {
+        score += (occurrences / tagData[tag].tagOccurrences) * tagData[tag].weight;
+        maxScore += tagData[tag].weight;
       }
     });
     this.relevanceScore = Math.ceil((score / maxScore) * 100);

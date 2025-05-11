@@ -1,6 +1,16 @@
 class WordCounter extends TextProcessor {
-  constructor(doc, treeWalker) {
+  constructor(doc, treeWalker, tagAccessor) {
     super(doc, treeWalker);
+    this.tagAccessor = tagAccessor;
+  }
+
+  countWordsInTitleTag() {
+    const tag = this.tagAccessor.getTag("title");
+    
+  }
+
+  countWordsInMetaTag() {
+
   }
 
   countWords() {

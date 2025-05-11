@@ -1,75 +1,61 @@
 class KeywordAnalyzer extends TextProcessor {
   constructor(doc, treeWalker) {
-    super(doc, treeWalker);
+    super(doc, treeWalker, strategy);
+    this._strategy = strategy;
+    this._tagData = {
+      title:      { weight: 10, selector: "title", type: "single" },
+      description:{ weight: 6, selector: "meta[name='description' i]", type: "single" },
+      h1:         { weight: 5, selector: "h1", type: "multi" },
+      h2:         { weight: 4, selector: "h2", type: "multi" },
+      h3:         { weight: 3, selector: "h3", type: "multi" },
+      h4:         { weight: 2, selector: "h4", type: "multi" },
+      h5:         { weight: 2, selector: "h5", type: "multi" },
+      h6:         { weight: 2, selector: "h6", type: "multi" },
+      p:          { weight: 0, selector: "p", type: "multi" },
+      a:          { weight: 1.5, selector: "a", type: "multi" },
+      alt:        { weight: 2.5, selector: "img[alt]", type: "multi" }
+    };
   }
 
   saveTextNodes() {
     this.textNodes = this.getTextNodes();
   }
 
-  calculateFrequency(textNodes, pattern) {
-    let frequency = 0;
-    textNodes.forEach(node => {
-      const matches = node.nodeValue.match(pattern) || [];
-      frequency += matches.length;
-    });
-    return frequency;
+  setStrategy(strategy) {
+    this._strategy = strategy;
+  }
+
+  saveTags() {
+    this.tagCache = {};
+    for (const [tagName, data] of Object.entries(this._tagData)) {
+      if (data.type === "multi") {
+        this.tagCache[tagName] = this.doc.querySelectorAll(data.selector);
+      } else {
+        this.tagCache[tagName] = this.doc.querySelector(data.selector);
+      }
+    }
+  }
+
+  countTagsOccurrences() {
+    for (const [_, data] of Object.entries(this._tagData)) {
+      if (data.type === "multi") {
+        data.tagOccurrences = this.doc.querySelectorAll(data.selector).length;
+      } else {
+        data.tagOccurrences = this.doc.querySelector(data.selector) ? 1 : 0;
+      }
+    }
   }
 
   calculateDensity(frequency, totalWords) {
     return ((frequency / Math.max(1, totalWords)) * 100).toFixed(2);
   }
 
-  countOccurrencesInTag(tagName, pattern) {
-    const result = {};
-    const tags = this.doc.querySelectorAll(`${tagName}`);
-    result[tagName] = { tagOccurrences: tags.length };
-    tags.forEach(tag => {
-      const tagContent = tag.innerText;
-      const matches = tagContent.match(pattern) || [];
-      result[tagName].keywordOccurrences += matches.length;
-    });
-    return result;
-  }
-
-  countOccurrencesInMetaTag(tagName, pattern) {
-    const result = {};
-    const tag = this.doc.querySelector(`meta[name='${tagName}' i]`);
-    result[tagName] = { tagOccurrences: tag ? 1 : 0 };
-    const tagContent = tag?.content;
-    if (tagContent) {
-      const matches = tagContent.match(this.pattern) || [];
-      result[tagName].keywordOccurrences = matches.length;
-    }
-    return result;
-  } 
-
-  countOccurrencesInAltAttributes() {
-    const result = {};
-    const tags = this.doc.querySelectorAll("img[alt]");
-    result.alt = { tagOccurrences : tags.length };
-    tags.forEach((tag) => {
-      const tagContent = tag.alt;
-      const matches = tagContent.match(this.pattern) || [];
-      result.alt.keywordOccurrences += matches.length;
-    });
-    return result;
-  } 
-
-  getAnalysisResult(textNodes, pattern, totalWords) {
-    const result = {};
-    const frequency = this.calculateFrequency(textNodes, pattern);
-    result.frequency = frequency;
-    const density = this.calculateDensity(frequency, totalWords);
-    console.log(totalWords);
-    result.density = density;
+  performAnalysis(textNodes) {
+    const pattern = this.getKeywordPattern(keyword);
+    const result = this._strategy.analyze(textNodes, pattern);
+    result.density = this.calculateDensity(result.frequency, totalWords);
     Object.assign(result, this.countOccurrencesInTag("title"));
     Object.assign(result, this.countOccurrencesInMetaTag("description"));
-    for (let i = 1; i <= 6; i++) {
-      Object.assign(result, this.countOccurrencesInTag(`h${i}`));
-    }
-    Object.assign(result, this.countOccurrencesInTag("p"));
-    Object.assign(result, this.countOccurrencesInTag("a"));
     Object.assign(result, this.countOccurrencesInAltAttributes());
     result.status = "done";
     return result;
@@ -77,8 +63,7 @@ class KeywordAnalyzer extends TextProcessor {
   
   analyzeKeyword(keyword, totalWords) {
     const textNodes = this.getTextNodes();
-    const pattern = this.getKeywordPattern(keyword);
-    const result = this.getAnalysisResult(textNodes, pattern, totalWords);
+    const result = this.performAnalysis(keyword, textNodes, totalWords);
     return new Keyword(keyword, result);
   }
 
@@ -86,7 +71,12 @@ class KeywordAnalyzer extends TextProcessor {
     const textNodes = this.getTextNodes();
     return keywords.map(keyword => {
       const pattern = this.getKeywordPattern(keyword);
-      const result = this.getAnalysisResult(textNodes, pattern, totalWords);
+      const result = this._strategy.analyze(textNodes, pattern);
+      result.density = this.calculateDensity(result.frequency, totalWords);
+      Object.assign(result, this.countOccurrencesInTag("title"));
+      Object.assign(result, this.countOccurrencesInMetaTag("description"));
+      Object.assign(result, this.countOccurrencesInAltAttributes());
+      result.status = "done";
       return new Keyword(keyword, result);
     });
   }
