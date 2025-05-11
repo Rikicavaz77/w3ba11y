@@ -1,6 +1,7 @@
 class KeywordAnalyzer extends TextProcessor {
-  constructor(doc, treeWalker) {
-    super(doc, treeWalker, strategy);
+  constructor(doc, treeWalker, tagAccessor, strategy) {
+    super(doc, treeWalker);
+    this._tagAccessor = tagAccessor;
     this._strategy = strategy;
     this._tagData = {
       title:      { weight: 10 },
@@ -17,37 +18,18 @@ class KeywordAnalyzer extends TextProcessor {
     };
   }
 
-  saveTextNodes() {
-    this.textNodes = this.getTextNodes();
-  }
-
   setStrategy(strategy) {
     this._strategy = strategy;
   }
 
-  saveTags() {
-    this.tagCache = {};
-    for (const [tagName, data] of Object.entries(this._tagData)) {
-      if (data.type === "multi") {
-        this.tagCache[tagName] = this.doc.querySelectorAll(data.selector);
-      } else {
-        this.tagCache[tagName] = this.doc.querySelector(data.selector);
-      }
-    }
+  saveTextNodes() {
+    this.textNodes = this.getTextNodes();
   }
 
   countTagsOccurrences() {
-    for (const [_, data] of Object.entries(this._tagData)) {
-      if (data.type === "multi") {
-        data.tagOccurrences = this.doc.querySelectorAll(data.selector).length;
-      } else {
-        data.tagOccurrences = this.doc.querySelector(data.selector) ? 1 : 0;
-      }
+    for (const tagName of Object.keys(this._tagData)) {
+      this._tagData[tagName] = this._tagAccessor.getTagOccurences(tagName);
     }
-  }
-
-  calculateDensity(frequency, totalWords) {
-    return ((frequency / Math.max(1, totalWords)) * 100).toFixed(2);
   }
 
   performAnalysis(textNodes) {
@@ -62,6 +44,7 @@ class KeywordAnalyzer extends TextProcessor {
   }
   
   analyzeKeyword(keyword, totalWords) {
+    this.countTagsOccurrences();
     const textNodes = this.getTextNodes();
     const result = this.performAnalysis(keyword, textNodes, totalWords);
     return new Keyword(keyword, result);
@@ -69,6 +52,7 @@ class KeywordAnalyzer extends TextProcessor {
 
   analyzeKeywords(keywords, totalWords) {
     const textNodes = this.getTextNodes();
+    this.countTagsOccurrences();
     return keywords.map(keyword => {
       const pattern = this.getKeywordPattern(keyword);
       const result = this._strategy.analyze(textNodes, pattern);

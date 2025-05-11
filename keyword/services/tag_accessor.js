@@ -32,6 +32,14 @@ class TagAccessor {
     return result;
   }
 
+  getTagOccurrences(tagName) {
+    const { selector, type } = this._tagAccess[tagName];
+    if (type === "multi") {
+      return this.doc.querySelectorAll(selector).length;
+    } 
+    return this.doc.querySelector(selector) ? 1 : 0;
+  }
+
   extractText(tagName, element) {
     const { textSource } = this._tagAccess[tagName];
     return element?.[textSource]?.toLowerCase() ?? '';

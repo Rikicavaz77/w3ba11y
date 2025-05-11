@@ -64,6 +64,10 @@ class Keyword {
     this._keywordOccurences = keywordOccurences;
   }
 
+  calculateDensity(totalWords) {
+    return ((this.frequency / Math.max(1, totalWords)) * 100).toFixed(2);
+  }
+
   calculateRelevanceScore(tagData) {
     let score = 0;
     let maxScore = 0;
