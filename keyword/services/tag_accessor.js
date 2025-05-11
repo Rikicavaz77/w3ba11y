@@ -4,17 +4,17 @@ class TagAccessor {
     this.cache = {};
     this.useCache = useCache;
     this._tagAccess = {
-      title:      { selector: "title", type: "single" },
-      description:{ selector: "meta[name='description' i]", type: "single" },
-      h1:         { selector: "h1", type: "multi" },
-      h2:         { selector: "h2", type: "multi" },
-      h3:         { selector: "h3", type: "multi" },
-      h4:         { selector: "h4", type: "multi" },
-      h5:         { selector: "h5", type: "multi" },
-      h6:         { selector: "h6", type: "multi" },
-      p:          { selector: "p", type: "multi" },
-      a:          { selector: "a", type: "multi" },
-      alt:        { selector: "img[alt]", type: "multi" }
+      title:      { selector: "title", type: "single", textSource: "innerText" },
+      description:{ selector: "meta[name='description' i]", type: "single", textSource: "content" },
+      h1:         { selector: "h1", type: "multi", textSource: "innerText" },
+      h2:         { selector: "h2", type: "multi", textSource: "innerText" },
+      h3:         { selector: "h3", type: "multi", textSource: "innerText" },
+      h4:         { selector: "h4", type: "multi", textSource: "innerText" },
+      h5:         { selector: "h5", type: "multi", textSource: "innerText" },
+      h6:         { selector: "h6", type: "multi", textSource: "innerText" },
+      p:          { selector: "p", type: "multi", textSource: "innerText" },
+      a:          { selector: "a", type: "multi", textSource: "innerText" },
+      alt:        { selector: "img[alt]", type: "multi", textSource: "alt" }
     };
   }
 
@@ -30,5 +30,10 @@ class TagAccessor {
 
     if (this.useCache) this.cache[tagName] = result;
     return result;
+  }
+
+  extractText(tagName, element) {
+    const { textSource } = this._tagAccess[tagName];
+    return element?.[textSource]?.toLowerCase() ?? '';
   }
 }

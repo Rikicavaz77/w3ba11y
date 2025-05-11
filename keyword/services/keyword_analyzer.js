@@ -3,17 +3,17 @@ class KeywordAnalyzer extends TextProcessor {
     super(doc, treeWalker, strategy);
     this._strategy = strategy;
     this._tagData = {
-      title:      { weight: 10, selector: "title", type: "single" },
-      description:{ weight: 6, selector: "meta[name='description' i]", type: "single" },
-      h1:         { weight: 5, selector: "h1", type: "multi" },
-      h2:         { weight: 4, selector: "h2", type: "multi" },
-      h3:         { weight: 3, selector: "h3", type: "multi" },
-      h4:         { weight: 2, selector: "h4", type: "multi" },
-      h5:         { weight: 2, selector: "h5", type: "multi" },
-      h6:         { weight: 2, selector: "h6", type: "multi" },
-      p:          { weight: 0, selector: "p", type: "multi" },
-      a:          { weight: 1.5, selector: "a", type: "multi" },
-      alt:        { weight: 2.5, selector: "img[alt]", type: "multi" }
+      title:      { weight: 10 },
+      description:{ weight: 6 },
+      h1:         { weight: 5 },
+      h2:         { weight: 4 },
+      h3:         { weight: 3 },
+      h4:         { weight: 2 },
+      h5:         { weight: 2 },
+      h6:         { weight: 2 },
+      p:          { weight: 0, },
+      a:          { weight: 1.5 },
+      alt:        { weight: 2.5 }
     };
   }
 

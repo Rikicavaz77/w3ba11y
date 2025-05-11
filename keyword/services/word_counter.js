@@ -4,24 +4,29 @@ class WordCounter extends TextProcessor {
     this.tagAccessor = tagAccessor;
   }
 
-  countWordsInTitleTag() {
-    const tag = this.tagAccessor.getTag("title");
-    
-  }
-
-  countWordsInMetaTag() {
-
+  countWordsInTag(tagName, pattern, words) {
+    let tags = this.tagAccessor.getTag(tagName);
+    if (!tags) return;
+    tags = Array.isArray(tags) ? tags : [tags];
+    tags.forEach(tag => {
+      const text = this.extractText(tagName, tag);
+      const matches = text.match(pattern) || [];
+      words.push(...matches);
+    })
   }
 
   countWords() {
     const pattern = this.getWordsPattern();
     const words = [];
-    let node;
     this.treeWalker.resetWalker();
+    let node;
     while ((node = this.treeWalker.nextNode())) {
       const matches = node.nodeValue.toLowerCase().match(pattern) || [];
       words.push(...matches);
     }
+    ["title", "description", "alt"].forEach(tag => {
+      this.countWordsInTag(tagName, pattern, words);
+    });
 
     return {
       words,
