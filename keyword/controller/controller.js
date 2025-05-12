@@ -222,6 +222,18 @@ class KeywordController {
         return;
       }
 
+      button = event.target.closest(".keyword-button--view-details");
+      if (button) {
+        const listItem = event.target.closest(".keyword-list-item");
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!listItem || !keywordsListContainer) return;
+        const keywordsList = this.getListByType(keywordsListContainer.dataset.listType).display;
+        const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
+        if (isNaN(keywordIndex)) return;
+        this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
+        return;
+      }
+
       button = event.target.closest(".keywords__pagination__button");
       if (button) {
         const keywordsListContainer = event.target.closest(".keyword-list__container");
