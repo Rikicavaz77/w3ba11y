@@ -164,7 +164,6 @@ class KeywordController {
         .filter(keyword => keyword.length > 0)
         .map(keyword => new Keyword(keyword));
       this.keywordAnalyzer.analyzeKeywords(this.metaKeywords, this.wordCounter.totalWords);
-      console.log(this.metaKeywords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
     return metaTagKeywordsContent ?? "Missing";
