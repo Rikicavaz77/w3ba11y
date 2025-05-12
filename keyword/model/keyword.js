@@ -77,6 +77,6 @@ class Keyword {
         maxScore += tagData[tag].weight;
       }
     });
-    this._relevanceScore = Math.ceil((score / maxScore) * 100);
+    this._relevanceScore = maxScore === 0 ? 0 : Math.ceil((score / maxScore) * 100);
   }
 }
