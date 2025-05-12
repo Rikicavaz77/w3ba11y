@@ -1,5 +1,5 @@
 class AnalysisResultView {
-  constructor() {
+  constructor(container) {
     this._container = this.generateAnalysisResultViewSection(container);
   }
 
