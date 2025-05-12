@@ -179,7 +179,7 @@ class KeywordController {
     if (!keyword || keyword.length === 0) return; 
     const keywordItem = new Keyword(keyword);
     this.userKeywords.push(keywordItem);
-    if (this.userKeywords.slice(0, -1).length === 0) {
+    if (this.userKeywords.length === 1) {
       this.displayUserKeywords.push(keywordItem);
       const userKeywordsData = this.displayUserKeywords.slice(0, this.batchSizes.userAdded);
       const totalPages = Math.ceil(this.displayUserKeywords.length / this.batchSizes.userAdded);
