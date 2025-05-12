@@ -59,7 +59,6 @@ class KeywordAnalyzer {
   }
 
   performAnalysis(keyword, textNodes, totalWords) {
-    console.log(totalWords);
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     this._strategy.analyze(textNodes, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
