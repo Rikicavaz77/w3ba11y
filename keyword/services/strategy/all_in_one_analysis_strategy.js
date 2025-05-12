@@ -8,7 +8,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     while (current && current !== this.context.root) {
       const tagName = current.nodeName.toLowerCase();
       if (this.context.allowedParentTags.includes(tagName)) {
-        keywordOccurrences[tagName] += occurrences;
+        keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + occurrences;
       }
       current = current.parentNode;
     };
