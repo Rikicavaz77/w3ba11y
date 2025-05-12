@@ -41,9 +41,6 @@ class KeywordAnalyzer {
 
   countOccurrencesInTag(tagName, pattern, keywordOccurrences) {
     let tags = this._tagAccessor.getTag(tagName);
-    if (pattern.toString().includes("HTML")) {
-      console.log(tags);
-    }
     if (!tags) return;
     tags = Array.isArray(tags) ? tags : [tags];
     let count = 0;
