@@ -80,10 +80,13 @@ class KeywordAnalyzer {
 
   analyzeKeywords(keywords, totalWords) {
     this.prepareAnalysisData();
-    this._tagAccessor.useCache = true;
-    keywords.forEach(keyword => {
-      this.performAnalysis(keyword, this.textNodes, totalWords);
-    });
-    this._tagAccessor.useCache = false;
+    try {
+      this._tagAccessor.useCache = true;
+      keywords.forEach(keyword => {
+        this.performAnalysis(keyword, this.textNodes, totalWords);
+      });
+    } finally {
+      this._tagAccessor.useCache = false;
+    }
   }
 }
