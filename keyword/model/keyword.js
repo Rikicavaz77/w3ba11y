@@ -65,7 +65,7 @@ class Keyword {
   }
 
   calculateDensity(totalWords) {
-    this._density = ((this._frequency / Math.max(1, totalWords)) * 100).toFixed(2);
+    this._density = parseFloat(((this._frequency / Math.max(1, totalWords)) * 100).toFixed(2));
   }
 
   calculateRelevanceScore(tagData) {
