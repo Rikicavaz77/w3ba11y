@@ -1,9 +1,25 @@
 class TextProcessor {
   constructor(doc, treeWalker) {
-    this.doc = doc;
-    this.root = doc.body;
-    this.treeWalker = treeWalker;
-    this.allowedParentTags = ['p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'li'];
+    this._doc = doc;
+    this._root = doc.body;
+    this._treeWalker = treeWalker;
+    this._allowedParentTags = ['p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'li'];
+  }
+
+  get doc() {
+    return this._doc;
+  }
+
+  get root() {
+    return this._root;
+  }
+
+  get treeWalker() {
+    return this._treeWalker;
+  }
+
+  get allowedParentTags() {
+    return this._allowedParentTags;
   }
 
   getParentName(node) {
@@ -33,9 +49,5 @@ class TextProcessor {
       textNodes.push(node);
     }
     return textNodes;
-  }
-
-  countTagOccurrences() {
-    
   }
 }
