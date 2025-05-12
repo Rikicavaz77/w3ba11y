@@ -1,7 +1,8 @@
-class KeywordAnalyzer extends TextProcessor {
-  constructor(doc, treeWalker, tagAccessor, strategy) {
-    super(doc, treeWalker);
+class KeywordAnalyzer {
+  constructor(textProcessor, tagAccessor, wordCounter, strategy) {
+    this._textProcessor = textProcessor;
     this._tagAccessor = tagAccessor;
+    this._wordCounter = wordCounter;
     this._strategy = strategy;
     this._strategy.setContext(this);
     this._tagData = {
@@ -19,6 +20,14 @@ class KeywordAnalyzer extends TextProcessor {
     };
   }
 
+  get root() {
+    return this._textProcessor.root;
+  }
+
+  get allowedParentTags() {
+    return this._textProcessor.allowedParentTags;
+  }
+
   setStrategy(strategy) {
     this._strategy = strategy;
     this._strategy.setContext(this);
@@ -26,37 +35,42 @@ class KeywordAnalyzer extends TextProcessor {
 
   countTagsOccurrences() {
     for (const tagName of Object.keys(this._tagData)) {
-      this._tagData[tagName] = this._tagAccessor.getTagOccurences(tagName);
+      this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
     }
   }
 
   countOccurrencesInTag(tagName, pattern, keywordOccurrences) {
     let tags = this._tagAccessor.getTag(tagName);
+    if (pattern.toString().includes("HTML")) {
+      console.log(tags);
+    }
     if (!tags) return;
     tags = Array.isArray(tags) ? tags : [tags];
-    keywordOccurrences[tagName] = 0;
+    let count = 0;
     tags.forEach(tag => {
-      const text = this.extractText(tagName, tag);
+      const text = this._tagAccessor.extractText(tagName, tag);
       const matches = text.match(pattern) || [];
+      count += matches.length;
       keywordOccurrences[tagName] += matches.length;
     });
-    return keywordOccurrences;
+    return count;
   }
 
   prepareAnalysisData() {
     this.countTagsOccurrences();
-    this.textNodes = this.getTextNodes();
+    this.textNodes = this._textProcessor.getTextNodes();
   }
 
   performAnalysis(keyword, textNodes, totalWords) {
-    const pattern = this.getKeywordPattern(keyword.name);
-    this._strategy.analyze(textNodes, pattern, keyword.keywordOccurrences);
+    console.log(totalWords);
+    const pattern = this._textProcessor.getKeywordPattern(keyword.name);
+    this._strategy.analyze(textNodes, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
-      this.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
+      keyword.frequency += this.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
     });
-    keyword.status = "done";
     keyword.calculateDensity(totalWords);
     keyword.calculateRelevanceScore(this._tagData);
+    keyword.status = "done";
   }
   
   analyzeKeyword(keyword, totalWords) {
@@ -66,8 +80,10 @@ class KeywordAnalyzer extends TextProcessor {
 
   analyzeKeywords(keywords, totalWords) {
     this.prepareAnalysisData();
+    this._tagAccessor.useCache = true;
     keywords.forEach(keyword => {
       this.performAnalysis(keyword, this.textNodes, totalWords);
     });
+    this._tagAccessor.useCache = false;
   }
 }

@@ -1,6 +1,6 @@
-class KeywordHighlighter extends TextProcessor {
-  constructor(doc, treeWalker) {
-    super(doc, treeWalker);
+class KeywordHighlighter {
+  constructor(textProcessor) {
+    this._textProcessor = textProcessor;
     this._colorMap = {
       h1: { bg: "#eb9fc5", color: "#560e63", border: "#af0bcc" },
       h2: { bg: "#ffae90", color: "#8e282a", border: "#e53935" },
@@ -15,6 +15,14 @@ class KeywordHighlighter extends TextProcessor {
       li: { bg: "#ff6f00", color: "#562020", border: "#e68c19" }
     };
     this.injectHighlightBlock();
+  }
+
+  get doc() {
+    return this._textProcessor.doc;
+  }
+
+  get root() {
+    return this._textProcessor.root;
   }
 
   get colorMap() {
@@ -46,7 +54,7 @@ class KeywordHighlighter extends TextProcessor {
         border-radius: 6px;
         border: 2px solid var(--highlight-border-color);
       }
-      ${Object.entries(this.colorMap)
+      ${Object.entries(this._colorMap)
         .map(([key, value]) => {
           return `.w3ba11y__highlight-keyword[data-parent="${key}"] {
             --highlight-bg-color: ${value.bg};
@@ -87,14 +95,14 @@ class KeywordHighlighter extends TextProcessor {
 
   highlightKeyword(keyword) {
     this.removeHighlight();
-    const textNodes = this.getTextNodes();
+    const textNodes = this._textProcessor.getTextNodes();
     const pattern = this.getKeywordPattern(keyword, 'iu');
   
     textNodes.forEach((node) => {
       if (pattern.test(node.nodeValue)) {
         const fragment = this.doc.createDocumentFragment();
         const parts = node.nodeValue.split(pattern);
-        const parent = this.getParentName(node);
+        const parent = this._textProcessor.getParentName(node);
         
         parts.forEach((part) => {
           if (part !== "" && pattern.test(part)) {

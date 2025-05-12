@@ -1,8 +1,8 @@
 class TagAccessor {
-  constructor(doc, useCache = false) {
-    this.doc = doc;
-    this.cache = {};
-    this.useCache = useCache;
+  constructor(root, useCache = false) {
+    this._root = root;
+    this._cache = {};
+    this._useCache = useCache;
     this._tagAccess = {
       title:      { selector: "title", type: "single", textSource: "innerText" },
       description:{ selector: "meta[name='description' i]", type: "single", textSource: "content" },
@@ -18,26 +18,34 @@ class TagAccessor {
     };
   }
 
+  get useCache() {
+    return this._useCache;
+  }
+
+  set useCache(useCache) {
+    this._useCache = useCache;
+  }
+
   resetCache() {
-    this.cache = {};
+    this._cache = {};
   }
 
   getTag(tagName) {
-    if (this.useCache && this.cache?.[tagName]) return this.cache[tagName];
+    if (this._useCache && this._cache?.[tagName]) return this._cache[tagName];
 
     const { selector, type } = this._tagAccess[tagName];
-    const result = (type === "multi") ? Array.from(this.doc.querySelectorAll(selector)) : this.doc.querySelector(selector);
+    const result = (type === "multi") ? Array.from(this._root.querySelectorAll(selector)) : this._root.querySelector(selector);
 
-    if (this.useCache) this.cache[tagName] = result;
+    if (this._useCache) this._cache[tagName] = result;
     return result;
   }
 
   getTagOccurrences(tagName) {
     const { selector, type } = this._tagAccess[tagName];
     if (type === "multi") {
-      return this.doc.querySelectorAll(selector).length;
+      return this._root.querySelectorAll(selector).length;
     } 
-    return this.doc.querySelector(selector) ? 1 : 0;
+    return this._root.querySelector(selector) ? 1 : 0;
   }
 
   extractText(tagName, element) {

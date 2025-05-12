@@ -1,14 +1,14 @@
 class Keyword {
-  constructor(name, { status = "analyzing", frequency = 0, density = 0, keywordOccurences = null, relevanceScore = 0 } = {}) {
+  constructor(name, { status = "analyzing", frequency = 0, density = 0, keywordOccurrences = null, relevanceScore = 0 } = {}) {
     this._name = name;
     this._status = status;
     this._frequency = frequency;
     this._density = density;
-    this._keywordOccurences = keywordOccurences || this.defaultKeywordOccurences();
+    this._keywordOccurrences = keywordOccurrences || this.defaultKeywordOccurrences();
     this._relevanceScore = relevanceScore;
   }
 
-  defaultKeywordOccurences() {
+  defaultKeywordOccurrences() {
     return {
       title:      0,
       description:0,
@@ -40,8 +40,8 @@ class Keyword {
     return this._density;
   }
 
-  get keywordOccurences() {
-    return this._keywordOccurences;
+  get keywordOccurrences() {
+    return this._keywordOccurrences;
   }
 
   get relevanceScore() {
@@ -56,27 +56,27 @@ class Keyword {
     this._status = status;
   }
 
-  set density(density) {
-    this._density = density;
+  set frequency(frequency) {
+    this._frequency = frequency;
   }
 
-  set keywordOccurences(keywordOccurences) {
-    this._keywordOccurences = keywordOccurences;
+  set keywordOccurrences(keywordOccurrences) {
+    this._keywordOccurrences = keywordOccurrences;
   }
 
   calculateDensity(totalWords) {
-    return ((this.frequency / Math.max(1, totalWords)) * 100).toFixed(2);
+    this._density = ((this._frequency / Math.max(1, totalWords)) * 100).toFixed(2);
   }
 
   calculateRelevanceScore(tagData) {
     let score = 0;
     let maxScore = 0;
-    Object.entries(this.keywordOccurences).forEach(([tag, occurrences]) => {
+    Object.entries(this.keywordOccurrences).forEach(([tag, occurrences]) => {
       if (tagData[tag].weight && tagData[tag].tagOccurrences > 0) {
         score += (occurrences / tagData[tag].tagOccurrences) * tagData[tag].weight;
         maxScore += tagData[tag].weight;
       }
     });
-    this.relevanceScore = Math.ceil((score / maxScore) * 100);
+    this._relevanceScore = Math.ceil((score / maxScore) * 100);
   }
 }

@@ -13,10 +13,11 @@ class KeywordController {
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
     const treeWalker = new TreeWalker(iframe.body);
-    const tagAccessor = new TagAccessor(iframe.body);
-    this.wordCounter = new WordCounter(iframe, treeWalker, tagAccessor);
-    this.keywordAnalyzer = new KeywordAnalyzer(iframe, treeWalker, tagAccessor, new CompactKeywordAnalysis());
-    this.keywordHighlighter = new KeywordHighlighter(iframe, treeWalker);
+    const textProcessor = new TextProcessor(iframe, treeWalker);
+    const tagAccessor = new TagAccessor(iframe);
+    this.wordCounter = new WordCounter(textProcessor, tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new StagedAnalysisStrategy());
+    this.keywordHighlighter = new KeywordHighlighter(textProcessor);
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];
@@ -25,12 +26,11 @@ class KeywordController {
   }
 
   init() {
+    const wordCountResult = this.wordCounter.countWords();
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
-    const wordCountResult = this.wordCounter.countWords();
-    this.totalWords = wordCountResult.totalWords;
     const overviewInfo = {
-      wordCount: this.totalWords,
+      wordCount: wordCountResult.totalWords,
       uniqueWordCount: wordCountResult.uniqueWords,
       metaTagKeywordsContent: metaTagKeywordsContent,
       lang: lang
@@ -163,7 +163,7 @@ class KeywordController {
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0)
         .map(keyword => new Keyword(keyword));
-      this.metaKeywords = this.keywordAnalyzer.analyzeKeywords(this.metaKeywords, this.totalWords);
+      this.keywordAnalyzer.analyzeKeywords(this.metaKeywords, this.wordCounter.totalWords);
       console.log(this.metaKeywords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
