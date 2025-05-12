@@ -1,18 +1,18 @@
 class TreeWalker {
   constructor(root) {
-    this.root = root;
-    this.invalidTags = ['script', 'style', 'noscript', 'iframe', 'object', 'textarea', 'button', 'svg'];
-    this.walker = this.createTreeWalker();
+    this._root = root;
+    this._invalidTags = ['script', 'style', 'noscript', 'iframe', 'object', 'textarea', 'button', 'svg'];
+    this._walker = this.createTreeWalker();
   }
 
   createTreeWalker() {
     return document.createTreeWalker(
-      this.root,
+      this._root,
       NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
       {
         acceptNode: (node) => {
           if (node.nodeType !== Node.TEXT_NODE) {
-            if (this.invalidTags.includes(node.nodeName.toLowerCase())) {
+            if (this._invalidTags.includes(node.nodeName.toLowerCase())) {
               return NodeFilter.FILTER_REJECT;
             }
             return NodeFilter.FILTER_SKIP;
@@ -25,10 +25,10 @@ class TreeWalker {
   }
 
   resetWalker() {
-    this.walker.currentNode = this.root;
+    this._walker.currentNode = this._root;
   }
 
   nextNode() {
-    return this.walker.nextNode();
+    return this._walker.nextNode();
   }
 }

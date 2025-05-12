@@ -1,27 +1,34 @@
 class KeywordController {
   constructor(iframe) {
     this.batchSizes = {
-      meta: 5
+      meta: 5,
+      userAdded: 5
     };
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
       toggleTooltip: this.view.toggleTooltip.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
-      updateHighlightColors: this.updateHighlightColors.bind(this)
+      updateHighlightColors: this.updateHighlightColors.bind(this),
+      analyzeKeyword: this.analyzeKeyword.bind(this)
     };
-    this.treeWalker = new TreeWalker(iframe.body);
-    this.wordCounter = new WordCounter(iframe, this.treeWalker);
-    this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
+    const treeWalker = new TreeWalker(iframe.body);
+    const textProcessor = new TextProcessor(iframe, treeWalker);
+    const tagAccessor = new TagAccessor(iframe);
+    this.wordCounter = new WordCounter(textProcessor, tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new StagedAnalysisStrategy());
+    this.keywordHighlighter = new KeywordHighlighter(textProcessor);
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
+    this.userKeywords = [];
+    this.displayUserKeywords = [];
     this.init();
   }
 
   init() {
+    const wordCountResult = this.wordCounter.countWords();
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
-    const wordCountResult = this.wordCounter.countWords();
     const overviewInfo = {
       wordCount: wordCountResult.totalWords,
       uniqueWordCount: wordCountResult.uniqueWords,
@@ -32,7 +39,12 @@ class KeywordController {
     if (this.displayMetaKeywords.length > 0) {
       const metaKeywordsData = this.displayMetaKeywords.slice(0, this.batchSizes.meta);
       const totalPages = Math.ceil(this.displayMetaKeywords.length / this.batchSizes.meta);
-      this.view.renderMetaTagKeywordsContainer(metaKeywordsData, totalPages);
+      this.view.renderKeywordListContainer(new KeywordListInfo(
+        "Meta keywords",
+        "meta",
+        metaKeywordsData,
+        totalPages
+      ));
     }
     this.buildUIEvents();
     this.setupTabListeners();
@@ -133,6 +145,11 @@ class KeywordController {
           original: this.metaKeywords,
           display: this.displayMetaKeywords
         };
+      case 'userAdded':
+          return {
+            original: this.userKeywords,
+            display: this.displayUserKeywords
+          };
       default:
         return null;
     }
@@ -141,11 +158,12 @@ class KeywordController {
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     if (metaTagKeywordsContent) {
-      const keywords = metaTagKeywordsContent.split(',');
+      let keywords = metaTagKeywordsContent.split(',');
       this.metaKeywords = keywords
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0)
         .map(keyword => new Keyword(keyword));
+      this.keywordAnalyzer.analyzeKeywords(this.metaKeywords, this.wordCounter.totalWords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
     return metaTagKeywordsContent ?? "Missing";
@@ -154,6 +172,27 @@ class KeywordController {
   getLang(doc) {
     const lang = doc.documentElement.lang;
     return lang || 'Missing';
+  }
+
+  analyzeKeyword() {
+    const keyword = this.view.customKeywordInput?.value.trim();
+    if (!keyword || keyword.length === 0) return; 
+    const keywordItem = new Keyword(keyword);
+    this.userKeywords.push(keywordItem);
+    if (this.userKeywords.length === 1) {
+      this.displayUserKeywords.push(keywordItem);
+      const userKeywordsData = this.displayUserKeywords.slice(0, this.batchSizes.userAdded);
+      const totalPages = Math.ceil(this.displayUserKeywords.length / this.batchSizes.userAdded);
+      this.view.renderKeywordListContainer(new KeywordListInfo(
+        "User added keywords",
+        "userAdded",
+        userKeywordsData,
+        totalPages
+      ));
+    } else {
+      const filterQuery = this.view.getListViewByType('userAdded').searchKeywordField.value;
+      this.updateVisibleKeywords('userAdded', filterQuery);
+    }
   }
 
   // SETUP LISTENERS
@@ -220,16 +259,6 @@ class KeywordController {
         return;
       }
     });
-    /* this.view.container.addEventListener("mouseover", (event) => {
-      if (event.target.closest(".keywords__tooltip-content")) {
-        this.view.toggleTooltip(event);
-      }
-    });
-    this.view.container.addEventListener("mouseout", (event) => {
-      if (event.target.closest(".keywords__tooltip-content")) {
-        this.view.toggleTooltip(event);
-      }
-    }); */
     const tooltips = this.view.tooltips;
     tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
@@ -237,5 +266,6 @@ class KeywordController {
     tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
     });
+    this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
   }
 }
