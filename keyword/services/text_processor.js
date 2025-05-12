@@ -34,38 +34,4 @@ class TextProcessor {
     }
     return textNodes;
   }
-
-  countOccurrencesInSingleTag(tagName, pattern) {
-    const tags = this.doc.querySelectorAll(`${tagName}`);
-    result[tagName] = { tagOccurrences: tags.length };
-    tags.forEach(tag => {
-      const tagContent = tag.innerText;
-      const matches = tagContent.match(pattern) || [];
-      result[tagName].keywordOccurrences += matches.length;
-    });
-    return result;
-  }
-
-  countOccurrencesInMetaTag(tagName, pattern) {
-    const result = {};
-    const tag = this.doc.querySelector(`meta[name='${tagName}' i]`);
-    result[tagName] = { tagOccurrences: tag ? 1 : 0 };
-    const tagContent = tag?.content;
-    if (tagContent) {
-      const matches = tagContent.match(this.pattern) || [];
-      result[tagName].keywordOccurrences = matches.length;
-    }
-    return result;
-  } 
-
-  countOccurrencesInAltAttribute(pattern) {
-    const result = {};
-    const tags = this.doc.querySelectorAll("img[alt]");
-    tags.forEach((tag) => {
-      const tagContent = tag.alt;
-      const matches = tagContent.match(pattern) || [];
-      result.alt.keywordOccurrences += matches.length;
-    });
-    return result;
-  } 
 }

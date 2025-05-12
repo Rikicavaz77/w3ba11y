@@ -159,14 +159,11 @@ class KeywordController {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     if (metaTagKeywordsContent) {
       let keywords = metaTagKeywordsContent.split(',');
-      /* this.metaKeywords = keywords
+      this.metaKeywords = keywords
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0)
-        .map(keyword => new Keyword(keyword)); */
-      keywords = keywords
-        .map(keyword => keyword.trim())
-        .filter(keyword => keyword.length > 0);
-      this.metaKeywords = this.keywordAnalyzer.analyzeKeywords(keywords, this.totalWords);
+        .map(keyword => new Keyword(keyword));
+      this.metaKeywords = this.keywordAnalyzer.analyzeKeywords(this.metaKeywords, this.totalWords);
       console.log(this.metaKeywords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
@@ -263,16 +260,6 @@ class KeywordController {
         return;
       }
     });
-    /* this.view.container.addEventListener("mouseover", (event) => {
-      if (event.target.closest(".keywords__tooltip-content")) {
-        this.view.toggleTooltip(event);
-      }
-    });
-    this.view.container.addEventListener("mouseout", (event) => {
-      if (event.target.closest(".keywords__tooltip-content")) {
-        this.view.toggleTooltip(event);
-      }
-    }); */
     const tooltips = this.view.tooltips;
     tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);

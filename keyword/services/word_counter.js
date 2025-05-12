@@ -24,7 +24,7 @@ class WordCounter extends TextProcessor {
       const matches = node.nodeValue.toLowerCase().match(pattern) || [];
       words.push(...matches);
     }
-    ["title", "description", "alt"].forEach(tag => {
+    ["title", "description", "alt"].forEach(tagName => {
       this.countWordsInTag(tagName, pattern, words);
     });
 
