@@ -12,9 +12,12 @@ class KeywordController {
       updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
-    this.treeWalker = new TreeWalker(iframe.body);
-    this.wordCounter = new WordCounter(iframe, this.treeWalker);
-    this.keywordHighlighter = new KeywordHighlighter(iframe, this.treeWalker);
+    const treeWalker = new TreeWalker(iframe.body);
+    const textProcessor = new TextProcessor(iframe, treeWalker);
+    const tagAccessor = new TagAccessor(iframe);
+    this.wordCounter = new WordCounter(textProcessor, tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new StagedAnalysisStrategy());
+    this.keywordHighlighter = new KeywordHighlighter(textProcessor);
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];
@@ -23,9 +26,9 @@ class KeywordController {
   }
 
   init() {
+    const wordCountResult = this.wordCounter.countWords();
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
-    const wordCountResult = this.wordCounter.countWords();
     const overviewInfo = {
       wordCount: wordCountResult.totalWords,
       uniqueWordCount: wordCountResult.uniqueWords,
@@ -155,11 +158,12 @@ class KeywordController {
   getMetaTagKeywordsContent(doc) {
     const metaTagKeywordsContent = doc.querySelector("meta[name='keywords' i]")?.content;
     if (metaTagKeywordsContent) {
-      const keywords = metaTagKeywordsContent.split(',');
+      let keywords = metaTagKeywordsContent.split(',');
       this.metaKeywords = keywords
         .map(keyword => keyword.trim())
         .filter(keyword => keyword.length > 0)
         .map(keyword => new Keyword(keyword));
+      this.keywordAnalyzer.analyzeKeywords(this.metaKeywords, this.wordCounter.totalWords);
       this.displayMetaKeywords = [...this.metaKeywords];
     }
     return metaTagKeywordsContent ?? "Missing";
@@ -255,16 +259,6 @@ class KeywordController {
         return;
       }
     });
-    /* this.view.container.addEventListener("mouseover", (event) => {
-      if (event.target.closest(".keywords__tooltip-content")) {
-        this.view.toggleTooltip(event);
-      }
-    });
-    this.view.container.addEventListener("mouseout", (event) => {
-      if (event.target.closest(".keywords__tooltip-content")) {
-        this.view.toggleTooltip(event);
-      }
-    }); */
     const tooltips = this.view.tooltips;
     tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
