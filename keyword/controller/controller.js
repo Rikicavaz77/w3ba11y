@@ -202,6 +202,16 @@ class KeywordController {
     });
   }
 
+  setTooltipListeners() {
+    const tooltips = this.view.tooltips;
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
+    });
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
+    });
+  }
+
   buildUIEvents() {
     this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
     this.view.container.addEventListener('change', (event) => {
@@ -232,6 +242,7 @@ class KeywordController {
         if (isNaN(keywordIndex)) return;
         this.view.renderKeywordDetails(keywordsList[keywordIndex]);
         this.view.toggleSection(button.dataset.section);
+        this.setTooltipListeners();
         return;
       }
 
@@ -278,13 +289,7 @@ class KeywordController {
         return;
       }
     });
-    const tooltips = this.view.tooltips;
-    tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
-    });
-    tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
-    });
+    this.setTooltipListeners();
     this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
   }
 }

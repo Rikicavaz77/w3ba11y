@@ -821,6 +821,7 @@ pre {
 }
 
 .keywords__analysis-item_title-container {
+  position: relative;
   display: flex;
   flex-wrap: nowrap;
   column-gap: 0.8em;
