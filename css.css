@@ -805,6 +805,7 @@ pre {
 .keywords__analysis-container {
   background-color: #fff;
   padding: 0.3em;
+  margin-bottom: 1.5em;
   border-radius: 0.625em;
   border-top-left-radius: 0;
   box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
@@ -817,4 +818,66 @@ pre {
   row-gap: 0.5em;
   flex-wrap: wrap;
   margin: 1em 0;
+}
+
+.keywords__analysis-item_title-container {
+  display: flex;
+  flex-wrap: nowrap;
+  column-gap: 0.8em;
+  width: 100%;
+}
+
+.keywords__analysis-item__title {
+  align-self: flex-start;
+}
+
+.keywords__score-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.2em;
+}
+
+.keywords__score {
+  font-size: 1.5em;
+  background-color: #6B6565;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5em;
+  height: 5em;
+  text-align: center;
+  border-radius: 50%;
+  border: 8px solid #322c2c;
+}
+
+.keywords_tag-occurrences-list {
+  list-style-type: none;
+  width: 100%;
+}
+
+.keywords_tag-occurrences-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  border: 1px solid #cfcfcf;
+  border-bottom: none;
+}
+
+.keywords_tag-occurrences-item:last-child {
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.keywords_tag-occurrences-item__title {
+  flex: 1;
+  padding: 0.5em;
+  border-right: 1px solid #cfcfcf;
+}
+
+.keywords_tag-occurrences-item__content {
+  flex: 1;
+  padding: 0.5em;
 }
