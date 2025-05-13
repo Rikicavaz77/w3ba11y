@@ -52,14 +52,16 @@ class KeywordController {
     this.oneWordKeywords = this.wordCounter.findOneWordKeyphrases(this.lang).map(keyword => new Keyword(keyword));
     this.keywordAnalyzer.analyzeKeywords(this.oneWordKeywords, this.wordCounter.totalWords);
     this.displayOneWordKeywords = [...this.oneWordKeywords];
-    const oneWordKeywordsData = this.displayOneWordKeywords.slice(0, this.batchSizes.oneWord);
-    const totalPages = Math.ceil(this.displayOneWordKeywords.length / this.batchSizes.oneWord);
-    this.view.renderKeywordListContainer(new KeywordListInfo(
-      "Most frequent 'single-word' keywords",
-      "oneWord",
-      oneWordKeywordsData,
-      totalPages
-    ));
+    if (this.displayOneWordKeywords.length > 0) {
+      const oneWordKeywordsData = this.displayOneWordKeywords.slice(0, this.batchSizes.oneWord);
+      const totalPages = Math.ceil(this.displayOneWordKeywords.length / this.batchSizes.oneWord);
+      this.view.renderKeywordListContainer(new KeywordListInfo(
+        "Most frequent 'single-word' keywords",
+        "oneWord",
+        oneWordKeywordsData,
+        totalPages
+      ));
+    }
     this.buildUIEvents();
     this.setupTabListeners();
   }
