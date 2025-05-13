@@ -42,7 +42,7 @@ class AnalysisResultView {
         <p>${keywordItem.name}</p>
       </div>
       <div class="keywords__analysis-item">
-        <div class="keywords__analysis-item_title-container">
+        <div class="keywords__analysis-item__title-container">
           <h3 class="keywords__analysis-item__title">Structural importance score:</h3>
           <div class="keywords__tooltip" tabindex="0" aria-describedby="keyword-score-tooltip">
             <div class="keywords__tooltip-content">

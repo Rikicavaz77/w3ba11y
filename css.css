@@ -820,7 +820,7 @@ pre {
   margin: 1em 0;
 }
 
-.keywords__analysis-item_title-container {
+.keywords__analysis-item__title-container {
   position: relative;
   display: flex;
   flex-wrap: nowrap;
