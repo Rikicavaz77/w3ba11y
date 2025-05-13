@@ -121,4 +121,8 @@ class KeywordHighlighter {
       }
     });
   }
+
+  highlightMatches() {
+    
+  }
 }
