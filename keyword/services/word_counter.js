@@ -76,7 +76,10 @@ class WordCounter {
     const words = this._collectWords();
     const filteredWords = words.filter(word => !stopwords.has(word));
     const wordsMap = this._countOccurrences(filteredWords);
-    const relevantWords = [...wordsMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const relevantWords = [...wordsMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([key, _]) => key);
     return relevantWords;
   }
 }

@@ -2,7 +2,8 @@ class KeywordController {
   constructor(iframe) {
     this.batchSizes = {
       meta: 5,
-      userAdded: 5
+      userAdded: 5,
+      oneWord: 5
     };
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
@@ -22,6 +23,8 @@ class KeywordController {
     this.displayMetaKeywords = [];
     this.userKeywords = [];
     this.displayUserKeywords = [];
+    this.oneWordKeywords = [];
+    this.displayOneWordKeywords = [];
     this.init();
   }
 
@@ -46,7 +49,17 @@ class KeywordController {
         totalPages
       ));
     }
-    console.log(this.wordCounter.findOneWordKeyphrases(this.lang));
+    this.oneWordKeywords = this.wordCounter.findOneWordKeyphrases(this.lang).map(keyword => new Keyword(keyword));
+    this.keywordAnalyzer.analyzeKeywords(this.oneWordKeywords, this.wordCounter.totalWords);
+    this.displayOneWordKeywords = [...this.oneWordKeywords];
+    const oneWordKeywordsData = this.displayOneWordKeywords.slice(0, this.batchSizes.oneWord);
+    const totalPages = Math.ceil(this.displayOneWordKeywords.length / this.batchSizes.oneWord);
+    this.view.renderKeywordListContainer(new KeywordListInfo(
+      "Most frequent 'single-word' keywords",
+      "oneWord",
+      oneWordKeywordsData,
+      totalPages
+    ));
     this.buildUIEvents();
     this.setupTabListeners();
   }
@@ -147,10 +160,15 @@ class KeywordController {
           display: this.displayMetaKeywords
         };
       case 'userAdded':
-          return {
-            original: this.userKeywords,
-            display: this.displayUserKeywords
-          };
+        return {
+          original: this.userKeywords,
+          display: this.displayUserKeywords
+        };
+      case 'oneWord':
+        return {
+          original: this.oneWordKeywords,
+          display: this.displayOneWordKeywords
+        };    
       default:
         return null;
     }
