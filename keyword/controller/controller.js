@@ -202,6 +202,16 @@ class KeywordController {
     });
   }
 
+  setTooltipListeners() {
+    const tooltips = this.view.tooltips;
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
+    });
+    tooltips.forEach(tooltip => {
+      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
+    });
+  }
+
   buildUIEvents() {
     this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
     this.view.container.addEventListener('change', (event) => {
@@ -219,6 +229,26 @@ class KeywordController {
         const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
         if (isNaN(keywordIndex)) return;
         this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
+        return;
+      }
+
+      button = event.target.closest(".keyword-button--view-details");
+      if (button) {
+        const listItem = event.target.closest(".keyword-list-item");
+        const keywordsListContainer = event.target.closest(".keyword-list__container");
+        if (!listItem || !keywordsListContainer) return;
+        const keywordsList = this.getListByType(keywordsListContainer.dataset.listType).display;
+        const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
+        if (isNaN(keywordIndex)) return;
+        this.view.renderKeywordDetails(keywordsList[keywordIndex]);
+        this.view.toggleSection(button.dataset.section);
+        this.setTooltipListeners();
+        return;
+      }
+
+      button = event.target.closest(".keywords__section__button--back");
+      if (button) {
+        this.view.toggleSection(button.dataset.section);
         return;
       }
 
@@ -259,13 +289,7 @@ class KeywordController {
         return;
       }
     });
-    const tooltips = this.view.tooltips;
-    tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
-    });
-    tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
-    });
+    this.setTooltipListeners();
     this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
   }
 }
