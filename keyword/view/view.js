@@ -118,7 +118,7 @@ class KeywordView {
     const keywordViewSection = document.createElement('section');
     keywordViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--keyword');
     keywordViewSection.innerHTML = `
-      <section class="keywords__section keywords__section--active keywords__section--dashboard">
+      <div class="keywords__section keywords__section--active keywords__section--dashboard">
         <header class="section__header">
           <h2 class="section__title">Keywords Analysis</h2>
           <div class="header__tabs">
@@ -138,7 +138,7 @@ class KeywordView {
           </div>
         </header>
         <div class="section__body"></div>
-      </section>
+      </div>
     `;
 
     const existingKeywordSection = asideBody.querySelector('.w3ba11y__section--keyword');

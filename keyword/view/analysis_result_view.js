@@ -9,7 +9,7 @@ class AnalysisResultView {
   }
 
   generateAnalysisResultViewSection(container) {
-    const keywordDetailsViewSection = document.createElement('section');
+    const keywordDetailsViewSection = document.createElement('div');
     keywordDetailsViewSection.classList.add('keywords__section', 'keywords__section--result');
     keywordDetailsViewSection.innerHTML = `
       <header class="section__header">
