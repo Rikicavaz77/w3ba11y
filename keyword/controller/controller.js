@@ -28,12 +28,12 @@ class KeywordController {
   init() {
     const wordCountResult = this.wordCounter.countWords();
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
-    const lang = this.getLang(this.view.iframe);
+    this.lang = this.getLang(this.view.iframe);
     const overviewInfo = {
       wordCount: wordCountResult.totalWords,
       uniqueWordCount: wordCountResult.uniqueWords,
       metaTagKeywordsContent: metaTagKeywordsContent,
-      lang: lang
+      lang: this.lang
     };
     this.view.render(overviewInfo, this.keywordHighlighter.colorMap);
     if (this.displayMetaKeywords.length > 0) {
@@ -46,6 +46,7 @@ class KeywordController {
         totalPages
       ));
     }
+    console.log(this.wordCounter.findOneWordKeyphrases(this.lang));
     this.buildUIEvents();
     this.setupTabListeners();
   }
