@@ -440,6 +440,23 @@ pre {
   z-index: 2;
 }
 
+.keywords__section {
+  display: none;
+}
+.keywords__section--active {
+  display: block;
+}
+.keywords__section__button--back {
+  background-color: #fff;
+  width: auto;
+  padding: 0.6em;
+  border-radius: 10px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border: none;
+  z-index: 2;
+}
+
 .w3ba11y__section--keyword .tab__button {
   width: 100%;
 }
@@ -783,4 +800,21 @@ pre {
 .keywords__pagination__button--active {
   background-color: #af0bcc;
   color: #fff;
+}
+
+.keywords__analysis-container {
+  background-color: #fff;
+  padding: 0.3em;
+  border-radius: 0.625em;
+  border-top-left-radius: 0;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+}
+
+.keywords__analysis-item {
+  display: flex;
+  align-items: center;
+  column-gap: 2em;
+  row-gap: 0.5em;
+  flex-wrap: wrap;
+  margin: 1em 0;
 }

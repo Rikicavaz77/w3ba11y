@@ -1,6 +1,7 @@
 class AnalysisResultView {
   constructor(container) {
     this._container = this.generateAnalysisResultViewSection(container);
+    this._body;
   }
 
   get container() {
@@ -23,11 +24,23 @@ class AnalysisResultView {
     `;
 
     container.appendChild(keywordDetailsViewSection);
+    this._body = keywordDetailsViewSection.querySelector('.section__body');
 
     return keywordDetailsViewSection;
   }
 
   render(keywordItem) {
-
+    let analysisResultContainer = this._body.querySelector('.keywords__analysis-container');
+    if (!analysisResultContainer) {
+      analysisResultContainer = document.createElement("div");
+      analysisResultContainer.classList.add("keywords__analysis-container");
+      this._body.appendChild(analysisResultContainer);
+    }
+    analysisResultContainer.innerHTML = `
+      <div class="keywords__analysis-item">
+        <h3>Keyword:</h3>
+        <p>${keywordItem.name}</p>
+      </div>
+    `;
   }
 }
