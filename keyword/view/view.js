@@ -118,7 +118,7 @@ class KeywordView {
     const keywordViewSection = document.createElement('section');
     keywordViewSection.classList.add('w3ba11y__section', 'w3ba11y__section--keyword');
     keywordViewSection.innerHTML = `
-      <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--dashboard>
+      <section class="keywords__section keywords__section--active keywords__section--dashboard>
         <header class="section__header">
           <h2 class="section__title">Keywords Analysis</h2>
           <div class="header__tabs">
@@ -327,6 +327,18 @@ class KeywordView {
     this.body.appendChild(keywordsSettingsContainer);
   }
 
+  renderKeywordDetails(keywordItem) {
+    if (!this.__analysisResultView) {
+      this.__analysisResultView = new AnalysisResultView(this._container);
+    }
+    this.__analysisResultView.render(keywordItem);
+  }
+
+  toggleSection(section) {
+    this.getAllSection().forEach(section => section.classList.remove('keywords__section--active'));
+    this.getSection(section)?.classList.add('keywords__section--active');
+  }
+
   render(overviewInfo, colorMap) {
     this.renderKeywordsAnalysisOverview(overviewInfo);
     this.renderKeywordsSettings(colorMap);
@@ -351,5 +363,13 @@ class KeywordView {
     this.container.querySelector('.tab--active').classList.remove('tab--active');
     this.activeTabButton.classList.add('tab__button--active');
     this.container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
+  }
+
+  getAllSection() {
+    return this._container.querySelectorAll('.keywords__section');
+  }
+
+  getSection(section) {
+    return this._container.querySelector(`.keywords__section--${section}`);
   }
 }

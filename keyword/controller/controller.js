@@ -230,10 +230,14 @@ class KeywordController {
         const keywordsList = this.getListByType(keywordsListContainer.dataset.listType).display;
         const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
         if (isNaN(keywordIndex)) return;
-        /*
-          To-Do: 
-          this.keywordHighlighter.highlightKeyword(keywordsList[keywordIndex].name);
-        */
+        this.view.renderKeywordDetails(keywordsList[keywordIndex]);
+        this.view.toggleSection(button.dataset.section);
+        return;
+      }
+
+      button = event.target.closest(".keywords__section__button--back");
+      if (button) {
+        this.view.toggleSection(button.dataset.section);
         return;
       }
 
