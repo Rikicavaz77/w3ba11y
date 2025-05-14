@@ -1,6 +1,7 @@
 class AnalysisResultView {
-  constructor(container) {
-    this._container = this.generateAnalysisResultViewSection(container);
+  constructor() {
+    this._container = this.generateAnalysisResultViewSection();
+    this._header;
     this._body;
   }
 
@@ -8,7 +9,15 @@ class AnalysisResultView {
     return this._container;
   }
 
-  generateAnalysisResultViewSection(container) {
+  get header() {
+    return this._header;
+  }
+
+  get body() {
+    return this._body;
+  }
+
+  generateAnalysisResultViewSection() {
     const keywordDetailsViewSection = document.createElement('div');
     keywordDetailsViewSection.classList.add('keywords__section', 'keywords__section--result');
     keywordDetailsViewSection.innerHTML = `
@@ -23,7 +32,7 @@ class AnalysisResultView {
       <div class="section__body"></div>
     `;
 
-    container.appendChild(keywordDetailsViewSection);
+    this._header = keywordDetailsViewSection.querySelector('.section__header');
     this._body = keywordDetailsViewSection.querySelector('.section__body');
 
     return keywordDetailsViewSection;
@@ -78,9 +87,5 @@ class AnalysisResultView {
         </ul>
       </div>
     `;
-    const anchor = document.querySelector(".w3ba11y__header");
-    if (anchor) {
-      anchor.scrollIntoView();
-    }
   }
 }

@@ -50,11 +50,14 @@ class KeywordController {
     this.setupTabListeners();
   }
 
-  renderPage(listType, listView, keywordsList, currentPage) {
+  renderPage(listType, listView, keywordList, currentPage) {
+    const totalPages = Math.ceil(keywordList.length / this.batchSizes[listType]);
+    if (currentPage > totalPages || currentPage < 1) {
+      currentPage = 1;
+    }
     let start = (currentPage - 1) * this.batchSizes[listType];
     let end = start + this.batchSizes[listType];
-    const keywordsData = keywordsList.slice(start, end);
-    const totalPages = Math.ceil(keywordsList.length / this.batchSizes[listType]);
+    const keywordsData = keywordList.slice(start, end);
     listView.render(keywordsData, totalPages, currentPage, start);
   }
 
@@ -282,9 +285,9 @@ class KeywordController {
     });
     this.view.container.addEventListener('input', (event) => {
       if (event.target.matches('input[type="text"][data-search]')) {
-        const keywordsListContainer = event.target.closest(".keyword-list__container");
-        if (!keywordsListContainer) return;
-        const listType = keywordsListContainer.dataset.listType;
+        const keywordListContainer = event.target.closest(".keyword-list__container");
+        if (!keywordListContainer) return;
+        const listType = keywordListContainer.dataset.listType;
         this.updateVisibleKeywords(listType, event.target.value);
         return;
       }
