@@ -586,12 +586,12 @@ pre {
   border: 2px solid #79747a;
 }
 
-.keywords__tooltip {
+.keywords__tooltip-container {
   flex: 1 1 auto;
   display: flex;
 }
 
-.keywords__tooltip-content {
+.keywords__tooltip-trigger {
   display: flex;
   align-items: center;
 }
@@ -776,7 +776,6 @@ pre {
   margin: 0 0.3em;
   padding: 0.3em;
   border: none;
-  cursor: pointer;
 }
 
 .keywords__pagination {

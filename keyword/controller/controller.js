@@ -7,7 +7,8 @@ class KeywordController {
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
-      toggleTooltip: this.view.toggleTooltip.bind(this.view),
+      showTooltip: this.view.showTooltip.bind(this.view),
+      hideTooltip: this.view.hideTooltip.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
       updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
@@ -206,12 +207,18 @@ class KeywordController {
   }
 
   setTooltipListeners() {
+    const tooltipsTrigger = this.view.tooltipsTrigger;
     const tooltips = this.view.tooltips;
-    tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseover", this.eventHandlers.toggleTooltip);
+    tooltipsTrigger.forEach(tooltipTrigger => {
+      tooltipTrigger.addEventListener("focus", this.eventHandlers.showTooltip);
+      tooltipTrigger.addEventListener("blur", this.eventHandlers.hideTooltip);
+      tooltipTrigger.addEventListener("mouseenter", this.eventHandlers.showTooltip);
+      tooltipTrigger.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
     });
+
     tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseout", this.eventHandlers.toggleTooltip);
+      tooltip.addEventListener("mouseenter", this.eventHandlers.showTooltip);
+      tooltip.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
     });
   }
 
@@ -294,5 +301,10 @@ class KeywordController {
     });
     this.setTooltipListeners();
     this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" || event.key === "Esc") {
+        this.view.hideAllTooltips();
+      }
+    });
   }
 }
