@@ -345,7 +345,7 @@ class KeywordView {
       this._body.appendChild(allKeywordListContainer);
     }
 
-    const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}]`);
+    const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}"]`);
     if (!existing) {
       if (keywordListInfo.type === "userAdded") {
         allKeywordListContainer.prepend(keywordListView.container);
