@@ -185,7 +185,7 @@ class KeywordView {
               </div>
             </div>
             <div class="keywords__overview-item-body">
-              <p class="keywords__overview-item-body__text">${overviewInfo.metaTagKeywordsContent}</p>
+              <p class="keywords__overview-item-body__text">${overviewInfo.metaTagKeywordsContent || 'Missing'}</p>
             </div>
           </div>
         </li>
@@ -206,7 +206,7 @@ class KeywordView {
               </div>
             </div>
             <div class="keywords__overview-item-body">
-              <p class="keywords__overview-item-body__text">${overviewInfo.lang}</p>
+              <p class="keywords__overview-item-body__text">${overviewInfo.lang || 'Missing'}</p>
             </div>
           </div>          
         </li>
