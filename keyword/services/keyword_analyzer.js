@@ -70,7 +70,7 @@ class KeywordAnalyzer {
   
   analyzeKeyword(keyword) {
     this._prepareAnalysisData();
-    this._performAnalysis(keyword, this._textNodes, this._wordCounter.totalWords);
+    this._performAnalysis(keyword, this._textNodes);
   }
 
   analyzeKeywords(keywords) {
@@ -78,7 +78,7 @@ class KeywordAnalyzer {
     try {
       this._tagAccessor.useCache = true;
       keywords.forEach(keyword => {
-        this._performAnalysis(keyword, this._textNodes, this._wordCounter.totalWords);
+        this._performAnalysis(keyword, this._textNodes);
       });
     } finally {
       this._tagAccessor.useCache = false;
