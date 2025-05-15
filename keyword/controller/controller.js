@@ -1,9 +1,5 @@
 class KeywordController {
   constructor(iframe) {
-    this.batchSizes = {
-      meta: 5,
-      userAdded: 5
-    };
     this.view = new KeywordView(iframe);
     this.eventHandlers = {
       changeTab: this.view.changeTab.bind(this.view),
@@ -13,12 +9,19 @@ class KeywordController {
       updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
-    const treeWalker = new TreeWalker(iframe.body);
+
+    const treeWalker = new TreeWalkerManager(iframe.body);
     const textProcessor = new TextProcessor(iframe, treeWalker);
     const tagAccessor = new TagAccessor(iframe);
     this.wordCounter = new WordCounter(textProcessor, tagAccessor);
     this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new StagedAnalysisStrategy());
     this.keywordHighlighter = new KeywordHighlighter(textProcessor);
+
+    // Keyword Lists Info
+    this.batchSizes = {
+      meta: 5,
+      userAdded: 5
+    };
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];

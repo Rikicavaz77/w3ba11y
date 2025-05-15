@@ -24,13 +24,13 @@ class TextProcessor {
 
   getParentName(node) {
     let current = node.parentNode;
-    while (current && current !== this.root) {
-      if (this.allowedParentTags.includes(current.nodeName.toLowerCase())) {
+    while (current && current !== this._root) {
+      if (this._allowedParentTags.includes(current.nodeName.toLowerCase())) {
         return current.nodeName;
       }
       current = current.parentNode;
     }
-    return this.root.nodeName;
+    return this._root.nodeName;
   }
 
   getWordsPattern() {
@@ -43,9 +43,9 @@ class TextProcessor {
 
   getTextNodes() {
     const textNodes = [];
+    this._treeWalker.resetWalker();
     let node;
-    this.treeWalker.resetWalker();
-    while ((node = this.treeWalker.nextNode())) {
+    while ((node = this._treeWalker.nextNode())) {
       textNodes.push(node);
     }
     return textNodes;
