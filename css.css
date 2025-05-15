@@ -518,7 +518,6 @@ pre {
 }
 
 .keywords__overview-item-header {
-  position: relative;
   display: flex;
   gap: 0.3em;
 }
@@ -546,7 +545,6 @@ pre {
 }
 
 .keywords__settings-item__title-container {
-  position: relative;
   display: flex;
   column-gap: 0.3em;
   margin-top: 0.8em;
@@ -588,6 +586,7 @@ pre {
 
 .keywords__tooltip-container {
   flex: 1 1 auto;
+  position: relative;
   display: flex;
 }
 
@@ -606,7 +605,9 @@ pre {
   color: #fff;
   position: absolute;
   top: 18px;
-  left: 0;
+  left: -50px;
+  max-width: 250px;
+  min-width: 104px;
   width: 100%;
   text-align: center;
   padding: 0.4em;
@@ -818,7 +819,6 @@ pre {
 }
 
 .keywords__analysis-item__title-container {
-  position: relative;
   display: flex;
   flex-wrap: nowrap;
   column-gap: 0.8em;

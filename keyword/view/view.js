@@ -175,12 +175,12 @@ class KeywordView {
           <div class="keywords__overview-item__info-container">
             <div class="keywords__overview-item-header">
               <h3 class="keywords__overview-item-title">Keywords</h3>
-              <div class="keywords__tooltip" tabindex="0" aria-describedby="keyword-meta-tooltip">
-                <div class="keywords__tooltip-content">
+              <div class="keywords__tooltip-container">
+                <div class="keywords__tooltip-trigger" tabindex="0" aria-describedby="keyword-meta-tooltip">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon keywords__icon--micro" aria-hidden="true">
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                   </svg>
-                  <span id="keyword-meta-tooltip" class="keywords__tooltip-text keywords--not-visible">Google no longer uses meta keywords as a ranking factor. However, including them can be useful for compatibility or documentation reasons.</span>
+                  <span id="keyword-meta-tooltip" role="tooltip" class="keywords__tooltip-text keywords--not-visible">Google no longer uses meta keywords as a ranking factor. However, including them can be useful for compatibility or documentation reasons.</span>
                 </div>                
               </div>
             </div>
@@ -196,12 +196,12 @@ class KeywordView {
           <div class="keywords__overview-item__info-container">
             <div class="keywords__overview-item-header">
               <h3 class="keywords__overview-item-title">Lang</h3>
-              <div class="keywords__tooltip" tabindex="0" aria-describedby="lang-tooltip">
-                <div class="keywords__tooltip-content">
+              <div class="keywords__tooltip-container">
+                <div class="keywords__tooltip-trigger" tabindex="0" aria-describedby="lang-tooltip">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon keywords__icon--micro" aria-hidden="true">
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                   </svg>
-                  <span id="lang-tooltip" class="keywords__tooltip-text keywords--not-visible">The language specified in the html tag.</span>
+                  <span id="lang-tooltip" role="tooltip" class="keywords__tooltip-text keywords--not-visible">The language specified in the html tag.</span>
                 </div>                                
               </div>
             </div>
@@ -218,12 +218,12 @@ class KeywordView {
           <div class="keywords__overview-item__info-container">
             <div class="keywords__overview-item-header">
               <h3 class="keywords__overview-item-title">Word Count</h3>
-              <div class="keywords__tooltip" tabindex="0" aria-describedby="total-words-tooltip">
-                <div class="keywords__tooltip-content">
+              <div class="keywords__tooltip-container">
+                <div class="keywords__tooltip-trigger" tabindex="0" aria-describedby="total-words-tooltip">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon keywords__icon--micro" aria-hidden="true">
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                   </svg>    
-                  <span id="total-words-tooltip" class="keywords__tooltip-text keywords--not-visible">The total number of words in the page's Document Object Model (DOM).</span>
+                  <span id="total-words-tooltip" role="tooltip" class="keywords__tooltip-text keywords--not-visible">The total number of words in the page's Document Object Model (DOM).</span>
                 </div>                            
               </div>
             </div>
@@ -239,12 +239,12 @@ class KeywordView {
           <div class="keywords__overview-item__info-container">
             <div class="keywords__overview-item-header">
               <h3 class="keywords__overview-item-title">Unique Word Count</h3>
-              <div class="keywords__tooltip" tabindex="0" aria-describedby="unique-words-tooltip">
-                <div class="keywords__tooltip-content">
+              <div class="keywords__tooltip-container">
+                <div class="keywords__tooltip-trigger" tabindex="0" aria-describedby="unique-words-tooltip">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon keywords__icon--micro" aria-hidden="true">
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                   </svg>
-                  <span id="unique-words-tooltip" class="keywords__tooltip-text keywords--not-visible">The total number of unique words in the page's Document Object Model (DOM).</span>
+                  <span id="unique-words-tooltip" role="tooltip" class="keywords__tooltip-text keywords--not-visible">The total number of unique words in the page's Document Object Model (DOM).</span>
                 </div>                           
               </div>
             </div>
@@ -269,12 +269,12 @@ class KeywordView {
       <h3 class="keywords__settings-title">Highlight keywords</h3>
       <div class="keywords__settings-item__title-container">
         <h4 class="keywords__settings-item__title">Customize tags color</h4>
-        <div class="keywords__tooltip" tabindex="0" aria-describedby="tags-color-tooltip">
-          <div class="keywords__tooltip-content">
+        <div class="keywords__tooltip-container">
+          <div class="keywords__tooltip-trigger" tabindex="0" aria-describedby="tags-color-tooltip">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon keywords__icon--micro" aria-hidden="true">
               <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
             </svg>
-            <span id="tags-color-tooltip" class="keywords__tooltip-text keywords--not-visible">Customize the colors used to highlight keywords based on the parent tag.</span>        
+            <span id="tags-color-tooltip" role="tooltip" class="keywords__tooltip-text keywords--not-visible">Customize the colors used to highlight keywords based on the parent tag.</span>        
           </div>                        
         </div>
       </div>
