@@ -6,7 +6,6 @@ class KeywordController {
       showTooltip: this.view.showTooltip.bind(this.view),
       hideTooltip: this.view.hideTooltip.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
-      updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
 
@@ -79,10 +78,10 @@ class KeywordController {
           display: this.displayMetaKeywords
         };
       case 'userAdded':
-          return {
-            original: this.userKeywords,
-            display: this.displayUserKeywords
-          };
+        return {
+          original: this.userKeywords,
+          display: this.displayUserKeywords
+        };
       default:
         return null;
     }
@@ -118,12 +117,13 @@ class KeywordController {
 
   // RENDER PAGE FUNCTION
   renderPage(listType, listView, keywordList, currentPage) {
-    const totalPages = Math.ceil(keywordList.length / this.batchSizes[listType]);
+    const batchSize = this.batchSizes[listType] ?? 5;
+    const totalPages = Math.ceil(keywordList.length / batchSize);
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
-    let start = (currentPage - 1) * this.batchSizes[listType];
-    let end = start + this.batchSizes[listType];
+    let start = (currentPage - 1) * batchSize;
+    let end = start + batchSize;
     const keywordsData = keywordList.slice(start, end);
     listView.render(keywordsData, totalPages, currentPage, start);
   }
@@ -228,7 +228,7 @@ class KeywordController {
     }
   }
 
-  // GET KEYWORD ITEM FROM TARGET FUNCTION
+  // GET KEYWORD ITEM FUNCTION
   getKeywordItem(target) {
     const listItem = target.closest('.keyword-list-item');
     const keywordListContainer = target.closest('.keyword-list__container');
@@ -239,7 +239,7 @@ class KeywordController {
     return display[keywordIndex];
   }
 
-  // GET LIST TYPE FROM TARGET FUNCTION
+  // GET LIST TYPE FUNCTION
   getListType(target) {
     const keywordsListContainer = target.closest(".keyword-list__container");
     if (!keywordsListContainer) return;
@@ -281,12 +281,12 @@ class KeywordController {
 
   bindSearchInput() {
     this.view.container.addEventListener('input', event => {
-      if (event.target.matches('input[type="text"][data-search]')) {
-        const keywordListContainer = event.target.closest(".keyword-list__container");
-        if (!keywordListContainer) return;
-        const listType = keywordListContainer.dataset.listType;
-        this.updateVisibleKeywords(listType, event.target.value.trim());
-        return;
+      const target = event.target;
+
+      if (target.matches('input[type="text"][data-search]')) {
+        const listType = this.getListType(target);
+        if (!listType) return;
+        this.updateVisibleKeywords(listType, target.value.trim());
       }
     });
   }
@@ -333,8 +333,8 @@ class KeywordController {
       handle('.keywords__pagination__button', (button, target) => {
         const listType = this.getListType(target);
         if (!listType) return;
-        const page = parseInt(button.dataset.page, 10);
-        this.changePage(listType, page);
+        const currentPage = parseInt(button.dataset.page, 10);
+        this.changePage(listType, currentPage);
       });
 
       handle('.keywords__sort-button', (button, target) => {
