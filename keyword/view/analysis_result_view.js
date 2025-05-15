@@ -17,6 +17,14 @@ class AnalysisResultView {
     return this._body;
   }
 
+  get tooltipsTrigger() {
+    return this._container.querySelectorAll('.keywords__tooltip-trigger');
+  }
+
+  get tooltips() {
+    return this._container.querySelectorAll('.keywords__tooltip-text');
+  }
+
   generateAnalysisResultViewSection() {
     const keywordDetailsViewSection = document.createElement('div');
     keywordDetailsViewSection.classList.add('keywords__section', 'keywords__section--result');

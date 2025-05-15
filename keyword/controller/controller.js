@@ -5,6 +5,7 @@ class KeywordController {
       changeTab: this.view.changeTab.bind(this.view),
       showTooltip: this.view.showTooltip.bind(this.view),
       hideTooltip: this.view.hideTooltip.bind(this.view),
+      handleKeywordInputFocus: this.handleKeywordInputFocus.bind(this),
       toggleHighlight: this.toggleHighlight.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
@@ -38,14 +39,15 @@ class KeywordController {
     if (this.displayMetaKeywords.length > 0) {
       this.renderKeywordListByType("meta");
     }
-    this.bindHighlightToggle();
-    this.bindColorPicker();
-    this.bindKeywordClickEvents();
-    this.bindSearchInput();
-    this.bindAnalyzeKeyword();
-    this.bindGlobalShortcuts();
     this.setupTabListeners();
     this.setupTooltipListeners();
+    this.bindColorPicker();
+    this.bindKeywordInputFocus();
+    this.bindHighlightToggle();
+    this.bindAnalyzeKeyword();
+    this.bindKeywordClickEvents();
+    this.bindSearchInput();
+    this.bindGlobalShortcuts();
   }
 
   // CREATE OVERVIEW FUNCTION
@@ -205,6 +207,10 @@ class KeywordController {
     }
   }
 
+  handleKeywordInputFocus() {
+    this.view.keywordHighlightCheckbox.checked = false;
+  }
+
   // UPDATE HIGHLIGHT COLORS FUNCTION
   updateHighlightColors(event) {
     const input = event.target;
@@ -260,22 +266,18 @@ class KeywordController {
     });
   }
 
-  setupTooltipListeners() {
-    this.view.tooltipsTrigger.forEach(tooltipTrigger => {
+  setupTooltipListeners(view = this.view) {
+    view.tooltipsTrigger.forEach(tooltipTrigger => {
       tooltipTrigger.addEventListener("focus", this.eventHandlers.showTooltip);
       tooltipTrigger.addEventListener("blur", this.eventHandlers.hideTooltip);
       tooltipTrigger.addEventListener("mouseenter", this.eventHandlers.showTooltip);
       tooltipTrigger.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
     });
 
-    this.view.tooltips.forEach(tooltip => {
+    view.tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseenter", this.eventHandlers.showTooltip);
       tooltip.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
     });
-  }
-
-  bindHighlightToggle() {
-    this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
   }
 
   bindColorPicker() {
@@ -284,6 +286,18 @@ class KeywordController {
         this.updateHighlightColors(event);
       }
     });
+  }
+
+  bindKeywordInputFocus() {
+    this.view.customKeywordInput.addEventListener("focus", this.eventHandlers.handleKeywordInputFocus);
+  }
+
+  bindHighlightToggle() {
+    this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
+  }
+
+  bindAnalyzeKeyword() {
+    this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
   }
 
   bindSearchInput() {
@@ -296,10 +310,6 @@ class KeywordController {
         this.updateVisibleKeywords(listType, target.value.trim());
       }
     });
-  }
-
-  bindAnalyzeKeyword() {
-    this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
   }
 
   bindGlobalShortcuts() {
@@ -330,7 +340,7 @@ class KeywordController {
         if (!keywordItem) return;
         this.view.renderKeywordDetails(keywordItem);
         this.view.toggleSection(button.dataset.section);
-        this.setupTooltipListeners();
+        this.setupTooltipListeners(this.view.analysis);
       });
 
       handle('.keywords__section__button--back', (button, _) => {

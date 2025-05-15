@@ -6,6 +6,9 @@ class KeywordView {
     this._body;
     this._tabButtons;
     this._activeTabButton;
+    this._colorInputs;
+    this._customKeywordInput;
+    this._keywordHighlightCheckbox;
     this._analyzeButton;
   }
 
@@ -41,10 +44,6 @@ class KeywordView {
     return this._container.querySelector('.tab__button--settings');
   }
 
-  get colorInputs() {
-    return this._container.querySelectorAll('.keywords__color-selector__input');
-  }
-
   get tooltipsTrigger() {
     return this._container.querySelectorAll('.keywords__tooltip-trigger');
   }
@@ -53,12 +52,20 @@ class KeywordView {
     return this._container.querySelectorAll('.keywords__tooltip-text');
   }
 
-  get keywordHighlightCheckbox() {
-    return this._container.querySelector("#highlight-input-keyword");
+  get analysis() {
+    return this._analysisResultView;
+  }
+
+  get colorInputs() {
+    return this._colorInputs;
   }
 
   get customKeywordInput() {
-    return this._container.querySelector("#custom-keyword-input");
+    return this._customKeywordInput;
+  }
+
+  get keywordHighlightCheckbox() {
+    return this._keywordHighlightCheckbox;
   }
 
   get analyzeButton() {
@@ -79,6 +86,18 @@ class KeywordView {
 
   set activeTabButton(button) {
     this._activeTabButton = button;
+  }
+
+  set colorInputs(colorInputs) {
+    this._colorInputs = colorInputs;
+  }
+
+  set customKeywordInput(customKeywordInput) {
+    this._customKeywordInput = customKeywordInput;
+  }
+
+  set keywordHighlightCheckbox(keywordHighlightCheckbox) {
+    this._keywordHighlightCheckbox = keywordHighlightCheckbox;
   }
 
   set analyzeButton(analyzeButton) {
@@ -302,7 +321,8 @@ class KeywordView {
         .join('')}
       </ul>
     `;
-    this.body.appendChild(settingsContainer);
+
+    this._colorInputs = settingsContainer.querySelectorAll('.keywords__color-selector__input');
   }
 
   renderKeywordInputBox() { 
@@ -331,6 +351,8 @@ class KeywordView {
       </div>
     `;
 
+    this._customKeywordInput = keywordInputContainer.querySelector('#custom-keyword-input');
+    this._keywordHighlightCheckbox = keywordInputContainer.querySelector("#highlight-input-keyword");
     this._analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
   }
 
