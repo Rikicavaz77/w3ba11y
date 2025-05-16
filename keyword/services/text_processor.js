@@ -37,7 +37,10 @@ class TextProcessor {
     return /[\p{L}\p{N}]+(?:[’'_.-][\p{L}\p{N}]+)*/gu;
   }
 
-  getKeywordPattern(keyword, flags = 'giu') {
+  getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
+    if (capture) {
+      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+    }
     return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${Utils.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
   }
 
