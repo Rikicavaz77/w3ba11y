@@ -14,7 +14,10 @@ class KeywordAnalyzer {
       h5:         { weight: 2 },
       h6:         { weight: 2 },
       p:          { weight: 0, },
+      strong:     { weight: 0, },
+      em:         { weight: 0, },
       a:          { weight: 1.5 },
+      li:         { weight: 0 },
       alt:        { weight: 2.5 }
     };
   }
@@ -34,7 +37,9 @@ class KeywordAnalyzer {
 
   countTagsOccurrences() {
     for (const tagName of Object.keys(this._tagData)) {
-      this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
+      if (this._tagData[tagName].weight) {
+        this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
+      }
     }
   }
 
