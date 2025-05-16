@@ -93,7 +93,7 @@ class KeywordHighlighter {
   highlightKeyword(keyword) {
     this.removeHighlight();
     const textNodes = this._textProcessor.getTextNodes();
-    const pattern = this.getKeywordPattern(keyword, 'iu');
+    const pattern = this._textProcessor.getKeywordPattern(keyword, { capture: true, flags: 'iu' });
   
     textNodes.forEach(node => {
       if (pattern.test(node.nodeValue)) {
