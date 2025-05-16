@@ -14,7 +14,7 @@ class KeywordController {
     const textProcessor = new TextProcessor(iframe, treeWalker);
     const tagAccessor = new TagAccessor(iframe);
     this.wordCounter = new WordCounter(textProcessor, tagAccessor);
-    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new StagedAnalysisStrategy());
+    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
     this.keywordHighlighter = new KeywordHighlighter(textProcessor);
 
     // Keyword Lists Info

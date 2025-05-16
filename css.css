@@ -522,6 +522,7 @@ pre {
 
 .keywords__overview-item-header {
   display: flex;
+  align-items: center;
   gap: 0.3em;
 }
 
@@ -608,8 +609,8 @@ pre {
   background-color: #000;
   color: #fff;
   position: absolute;
-  top: 15px;
-  left: -50px;
+  top: 20px;
+  left: -75px;
   max-width: 250px;
   min-width: 104px;
   width: 100%;
@@ -617,6 +618,18 @@ pre {
   padding: 0.4em;
   border-radius: 6px;
   z-index: 1;
+}
+
+.keywords__tooltip-text::before {
+  position: absolute;
+  top: -7px;
+  left: 75px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #000;
 }
 
 .keywords__input-container {
@@ -757,6 +770,7 @@ pre {
 
 .keyword-list {
   list-style-type: none;
+  margin: 0.3em 0;
 }
 
 .keyword-list-item {
@@ -793,6 +807,7 @@ pre {
   row-gap: 0.2em;
   flex-wrap: wrap;
   list-style-type: none;
+  margin: 0.3em 0;
 }
 
 .keywords__pagination__button {
