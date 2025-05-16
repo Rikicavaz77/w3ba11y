@@ -29,10 +29,6 @@ class KeywordHighlighter {
     return this._colorMap;
   }
 
-  getKeywordPattern(keyword, flags = 'giu') {
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
-  }
-
   updateTagColors(tag, prop, value) {
     if (!this._colorMap[tag]) return;
     if (!['bg', 'color', 'border'].includes(prop)) return;
@@ -104,9 +100,16 @@ class KeywordHighlighter {
         const fragment = this.doc.createDocumentFragment();
         const parts = node.nodeValue.split(pattern);
         const parent = this._textProcessor.getParentName(node);
-        
-        parts.forEach(part => {
-          if (part !== "" && pattern.test(part)) {
+
+        let isMatch = false;
+        parts.forEach((part, index) => {
+          if (index % 2 === 1) {
+            isMatch = true;
+          } else {
+            isMatch = false;
+          }
+          
+          if (part !== "" && isMatch) {
             const span = this.doc.createElement("span");
             span.classList.add("w3ba11y__highlight-keyword");
             span.dataset.parent = parent.toLowerCase();
