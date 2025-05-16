@@ -18,7 +18,7 @@ class WordCounter {
     return this._textProcessor.treeWalker;
   }
 
-  countWordsInTag(tagName, pattern, words) {
+  _countWordsInTag(tagName, pattern, words) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return;
     tags = Array.isArray(tags) ? tags : [tags];
@@ -26,7 +26,7 @@ class WordCounter {
       const text = this._tagAccessor.extractText(tagName, tag);
       const matches = text.match(pattern) || [];
       words.push(...matches);
-    })
+    });
   }
 
   countWords() {
@@ -39,7 +39,7 @@ class WordCounter {
       words.push(...matches);
     }
     ["title", "description", "alt"].forEach(tagName => {
-      this.countWordsInTag(tagName, pattern, words);
+      this._countWordsInTag(tagName, pattern, words);
     });
 
     this._totalWords = words.length;
