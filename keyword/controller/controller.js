@@ -5,7 +5,7 @@ class KeywordController {
       changeTab: this.view.changeTab.bind(this.view),
       showTooltip: this.view.showTooltip.bind(this.view),
       hideTooltip: this.view.hideTooltip.bind(this.view),
-      handleKeywordInputFocus: this.handleKeywordInputFocus.bind(this),
+      clearHighlightCheckbox: this.clearHighlightCheckbox.bind(this),
       toggleHighlight: this.toggleHighlight.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
@@ -207,7 +207,7 @@ class KeywordController {
     }
   }
 
-  handleKeywordInputFocus() {
+  clearHighlightCheckbox() {
     this.view.keywordHighlightCheckbox.checked = false;
   }
 
@@ -289,7 +289,7 @@ class KeywordController {
   }
 
   bindKeywordInputFocus() {
-    this.view.customKeywordInput.addEventListener("focus", this.eventHandlers.handleKeywordInputFocus);
+    this.view.customKeywordInput.addEventListener("focus", this.eventHandlers.clearHighlightCheckbox);
   }
 
   bindHighlightToggle() {
@@ -332,6 +332,7 @@ class KeywordController {
       handle('.keyword-button--highlight', (_, target) => {
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
+        this.clearHighlightCheckbox();
         this.keywordHighlighter.highlightKeyword(keywordItem.name);
       });
 
