@@ -59,6 +59,7 @@ class KeywordHighlighter {
         background-color: #000;
         color: #fff;
         content: attr(data-parent);
+        text-transform: capitalize;
         position: absolute;
         top: -4px;
         left: -2px;

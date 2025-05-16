@@ -88,7 +88,7 @@ class AnalysisResultView {
         ${Object.entries(keywordItem.keywordOccurrences)
           .map(([key, value]) => 
             `<li class="keywords_tag-occurrences-item">
-              <h4 class="keywords_tag-occurrences-item__title">${key.toUpperCase()}</h4>
+              <h4 class="keywords_tag-occurrences-item__title">${key}</h4>
               <p class="keywords_tag-occurrences-item__content">${value}</p>
             </li>`)
           .join('')}

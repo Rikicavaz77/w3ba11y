@@ -555,6 +555,7 @@ pre {
 
 .keywords__settings-item__title {
   font-size: 1em;
+  text-transform: capitalize;
 }
 
 .keywords__tag-color-options {
@@ -877,6 +878,7 @@ pre {
 
 .keywords_tag-occurrences-item__title {
   flex: 1;
+  text-transform: capitalize;
   padding: 0.5em;
   border-right: 1px solid #cfcfcf;
 }
