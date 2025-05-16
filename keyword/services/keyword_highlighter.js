@@ -30,7 +30,7 @@ class KeywordHighlighter {
   }
 
   getKeywordPattern(keyword, flags = 'giu') {
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}]['’-_.])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|['’-_.][\\p{L}\\p{N}])`, flags);
+    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
   }
 
   updateTagColors(tag, prop, value) {
