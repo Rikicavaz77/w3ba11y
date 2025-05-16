@@ -13,7 +13,10 @@ class TagAccessor {
       h5:         { selector: "h5", type: "multi", textSource: "innerText" },
       h6:         { selector: "h6", type: "multi", textSource: "innerText" },
       p:          { selector: "p", type: "multi", textSource: "innerText" },
+      strong:     { selector: "strong", type: "multi", textSource: "innerText" },
+      em:         { selector: "em", type: "multi", textSource: "innerText" },
       a:          { selector: "a", type: "multi", textSource: "innerText" },
+      li:          { selector: "li", type: "multi", textSource: "innerText" },
       alt:        { selector: "img[alt]", type: "multi", textSource: "alt" }
     };
   }

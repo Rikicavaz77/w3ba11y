@@ -3,7 +3,7 @@ class TextProcessor {
     this._doc = doc;
     this._root = doc.body;
     this._treeWalker = treeWalker;
-    this._allowedParentTags = ['p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'li'];
+    this._allowedParentTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'li'];
   }
 
   get doc() {

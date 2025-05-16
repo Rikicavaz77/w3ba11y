@@ -19,7 +19,10 @@ class Keyword {
       h5:         0,
       h6:         0,
       p:          0,
+      strong:     0,
+      em:         0,
       a:          0,
+      li:         0,
       alt:        0
     };
   }

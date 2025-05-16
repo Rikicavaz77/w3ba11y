@@ -9,7 +9,7 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
       keyword.frequency += matches.length;
     });
 
-    ["a", "p", ...Array.from({ length: 6 }, (_, i) => `h${i + 1}`)].forEach(tagName => {
+    this._context.allowedParentTags.forEach(tagName => {
       this._context.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
     });
   } 
