@@ -35,6 +35,7 @@ class KeywordController {
 
   init() {
     this.createOverview();
+    //this.processMostFrequentKeywords();
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
     if (this.displayMetaKeywords.length > 0) {
       this.renderKeywordListByType("meta");
