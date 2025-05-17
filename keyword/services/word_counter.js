@@ -71,7 +71,10 @@ class WordCounter {
 
   findOneWordKeywords(lang = 'en') {
     const baseLang = lang.split('-')[0].toLowerCase();
-    const stopwords = this._stopwords[baseLang] || new Set();
+    let stopwords = this._stopwords[baseLang] || new Set();
+    if (baseLang === 'it') {
+      stopwords = new Set([...stopwords, ...this._stopwords['en']]);
+    }
 
     const words = this._collectWords();
     const filteredWords = words.filter(word => !stopwords.has(word));
