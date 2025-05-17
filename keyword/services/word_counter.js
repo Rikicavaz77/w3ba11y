@@ -2,12 +2,14 @@ class WordCounter {
   constructor(textProcessor, tagAccessor) {
     this._textProcessor = textProcessor;
     this._tagAccessor = tagAccessor;
+    this._cachedWords = null;
     this._totalWords = 0;
     this._uniqueWords = 0;
     this._stopwords = {
       en: new Set(sw.eng),
       it: new Set(sw.ita),
     };
+    this.countWords();
   }
 
   get totalWords() {
@@ -33,7 +35,9 @@ class WordCounter {
     });
   }
 
-  _collectWords() {
+  _collectWords(forceRefresh = false) {
+    if (!forceRefresh && this._cachedWords) return this._cachedWords;
+
     const pattern = this._textProcessor.getWordsPattern();
     const words = [];
     this.treeWalker.resetWalker();
@@ -47,6 +51,7 @@ class WordCounter {
       this._countWordsInTag(tagName, pattern, words);
     });
 
+    this._cachedWords = words;
     return words;
   }
 
@@ -58,8 +63,12 @@ class WordCounter {
     return map;
   }
 
-  countWords() {
-    const words = this._collectWords();
+  resetCache() {
+    this._cachedWords = null;
+  }
+
+  countWords(forceRefresh = false) {
+    const words = this._collectWords(forceRefresh);
     this._totalWords = words.length;
     this._uniqueWords = new Set(words).size;
 

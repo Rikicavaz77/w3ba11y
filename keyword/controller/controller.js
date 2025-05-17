@@ -60,13 +60,12 @@ class KeywordController {
 
   // CREATE OVERVIEW FUNCTION
   createOverview() {
-    const wordCountResult = this.wordCounter.countWords();
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
     this.processMetaKeywords(metaTagKeywordsContent);
     const lang = this.getLang(this.view.iframe);
     this.overviewInfo = new OverviewInfo(
-      wordCountResult.totalWords,
-      wordCountResult.uniqueWords,
+      this.wordCounter.totalWords,
+      this.wordCounter.uniqueWords,
       metaTagKeywordsContent,
       lang
     );
