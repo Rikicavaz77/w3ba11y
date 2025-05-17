@@ -94,4 +94,8 @@ class WordCounter {
       .map(([key, _]) => key);
     return relevantWords;
   }
+
+  findTwoWordsKeywords(lang = 'en') {
+    // To-Do
+  }
 }
