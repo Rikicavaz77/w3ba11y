@@ -14,7 +14,7 @@ class KeywordHighlighter {
       a: { bg: "#81d4fa", color: "#0d47a1", border: "#0288d1" },
       li: { bg: "#ff6f00", color: "#562020", border: "#e68c19" }
     };
-    this.injectHighlightBlock();
+    this._injectHighlightBlock();
   }
 
   get doc() {
@@ -29,19 +29,15 @@ class KeywordHighlighter {
     return this._colorMap;
   }
 
-  getKeywordPattern(keyword, flags = 'giu') {
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][\-_.])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[\-_.][\\p{L}\\p{N}])`, flags);
-  }
-
   updateTagColors(tag, prop, value) {
     if (!this._colorMap[tag]) return;
     if (!['bg', 'color', 'border'].includes(prop)) return;
     this._colorMap[tag][prop] = value;
-    this.injectHighlightBlock();
+    this._injectHighlightBlock();
   }
 
-  injectHighlightBlock() {
-    const css = `
+  _injectHighlightBlock() {
+    const staticCSS = `
       .w3ba11y__highlight-keyword {
         --highlight-bg-color: #98746d;
         --highlight-color: #011502;
@@ -54,20 +50,12 @@ class KeywordHighlighter {
         border-radius: 6px;
         border: 2px solid var(--highlight-border-color);
       }
-      ${Object.entries(this._colorMap)
-        .map(([key, value]) => {
-          return `.w3ba11y__highlight-keyword[data-parent="${key}"] {
-            --highlight-bg-color: ${value.bg};
-            --highlight-color: ${value.color};
-            --highlight-border-color: ${value.border};
-          }`; 
-        })
-        .join('')}
       .w3ba11y__highlight-keyword::before {
         font-size: calc((0.6em + 0.6rem) / 2);
         background-color: #000;
         color: #fff;
         content: attr(data-parent);
+        text-transform: capitalize;
         position: absolute;
         top: -4px;
         left: -2px;
@@ -76,18 +64,27 @@ class KeywordHighlighter {
       }
     `;
 
+    const dynamicCSS = Object.entries(this._colorMap)
+      .map(([key, value]) => `
+        .w3ba11y__highlight-keyword[data-parent="${key}"] {
+          --highlight-bg-color: ${value.bg};
+          --highlight-color: ${value.color};
+          --highlight-border-color: ${value.border};
+        }
+      `).join('\n');
+
     let styleEl = this.doc.getElementById('w3ba11y-highlight-keyword-style-override');
     if (!styleEl) {
       styleEl = this.doc.createElement('style');
       styleEl.id = 'w3ba11y-highlight-keyword-style-override';
       this.doc.head.appendChild(styleEl);
     }
-    styleEl.textContent = css;
+    styleEl.textContent = staticCSS + dynamicCSS;
   }
 
   removeHighlight() {
     const highlightedKeywords = this.root.querySelectorAll('.w3ba11y__highlight-keyword');
-    highlightedKeywords.forEach((element) => {
+    highlightedKeywords.forEach(element => {
       const newTextNode = this.doc.createTextNode(element.textContent);
       element.parentNode.replaceChild(newTextNode, element);
     });
@@ -96,16 +93,23 @@ class KeywordHighlighter {
   highlightKeyword(keyword) {
     this.removeHighlight();
     const textNodes = this._textProcessor.getTextNodes();
-    const pattern = this.getKeywordPattern(keyword, 'iu');
+    const pattern = this._textProcessor.getKeywordPattern(keyword, { capture: true, flags: 'iu' });
   
-    textNodes.forEach((node) => {
+    textNodes.forEach(node => {
       if (pattern.test(node.nodeValue)) {
         const fragment = this.doc.createDocumentFragment();
         const parts = node.nodeValue.split(pattern);
         const parent = this._textProcessor.getParentName(node);
-        
-        parts.forEach((part) => {
-          if (part !== "" && pattern.test(part)) {
+
+        let isMatch = false;
+        parts.forEach((part, index) => {
+          if (index % 2 === 1) {
+            isMatch = true;
+          } else {
+            isMatch = false;
+          }
+          
+          if (part !== "" && isMatch) {
             const span = this.doc.createElement("span");
             span.classList.add("w3ba11y__highlight-keyword");
             span.dataset.parent = parent.toLowerCase();
@@ -120,9 +124,5 @@ class KeywordHighlighter {
         node.parentNode.replaceChild(fragment, node);
       }
     });
-  }
-
-  highlightMatches() {
-    
   }
 }

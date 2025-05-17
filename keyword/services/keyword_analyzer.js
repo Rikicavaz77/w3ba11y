@@ -3,19 +3,21 @@ class KeywordAnalyzer {
     this._textProcessor = textProcessor;
     this._tagAccessor = tagAccessor;
     this._wordCounter = wordCounter;
-    this._strategy = strategy;
-    this._strategy.setContext(this);
+    this.setStrategy(strategy);
     this._tagData = {
-      title:      { weight: 10 },
+      title:      { weight: 7 },
       description:{ weight: 6 },
-      h1:         { weight: 5 },
-      h2:         { weight: 4 },
-      h3:         { weight: 3 },
+      h1:         { weight: 6 },
+      h2:         { weight: 5 },
+      h3:         { weight: 4 },
       h4:         { weight: 2 },
       h5:         { weight: 2 },
       h6:         { weight: 2 },
       p:          { weight: 0, },
-      a:          { weight: 1.5 },
+      strong:     { weight: 0, },
+      em:         { weight: 0, },
+      a:          { weight: 2.5 },
+      li:         { weight: 0 },
       alt:        { weight: 2.5 }
     };
   }
@@ -35,7 +37,9 @@ class KeywordAnalyzer {
 
   countTagsOccurrences() {
     for (const tagName of Object.keys(this._tagData)) {
-      this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
+      if (this._tagData[tagName].weight) {
+        this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
+      }
     }
   }
 
@@ -53,33 +57,33 @@ class KeywordAnalyzer {
     return count;
   }
 
-  prepareAnalysisData() {
+  _prepareAnalysisData() {
     this.countTagsOccurrences();
-    this.textNodes = this._textProcessor.getTextNodes();
+    this._textNodes = this._textProcessor.getTextNodes();
   }
 
-  performAnalysis(keyword, textNodes, totalWords) {
+  _performAnalysis(keyword, textNodes) {
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     this._strategy.analyze(textNodes, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
       keyword.frequency += this.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
     });
-    keyword.calculateDensity(totalWords);
+    keyword.calculateDensity(this._wordCounter.totalWords);
     keyword.calculateRelevanceScore(this._tagData);
     keyword.status = "done";
   }
   
-  analyzeKeyword(keyword, totalWords) {
-    this.prepareAnalysisData();
-    this.performAnalysis(keyword, this.textNodes, totalWords);
+  analyzeKeyword(keyword) {
+    this._prepareAnalysisData();
+    this._performAnalysis(keyword, this._textNodes);
   }
 
-  analyzeKeywords(keywords, totalWords) {
-    this.prepareAnalysisData();
+  analyzeKeywords(keywords) {
+    this._prepareAnalysisData();
     try {
       this._tagAccessor.useCache = true;
       keywords.forEach(keyword => {
-        this.performAnalysis(keyword, this.textNodes, totalWords);
+        this._performAnalysis(keyword, this._textNodes);
       });
     } finally {
       this._tagAccessor.useCache = false;

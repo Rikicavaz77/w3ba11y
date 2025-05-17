@@ -4,11 +4,11 @@ class Keyword {
     this._status = status;
     this._frequency = frequency;
     this._density = density;
-    this._keywordOccurrences = keywordOccurrences || this.defaultKeywordOccurrences();
+    this._keywordOccurrences = keywordOccurrences || this._defaultKeywordOccurrences();
     this._relevanceScore = relevanceScore;
   }
 
-  defaultKeywordOccurrences() {
+  _defaultKeywordOccurrences() {
     return {
       title:      0,
       description:0,
@@ -19,9 +19,12 @@ class Keyword {
       h5:         0,
       h6:         0,
       p:          0,
+      strong:     0,
+      em:         0,
       a:          0,
-      alt:        0,
-    }
+      li:         0,
+      alt:        0
+    };
   }
 
   get name() {
@@ -72,7 +75,7 @@ class Keyword {
     let score = 0;
     let maxScore = 0;
     Object.entries(this.keywordOccurrences).forEach(([tag, occurrences]) => {
-      if (tagData[tag].weight && tagData[tag].tagOccurrences > 0) {
+      if (tagData[tag] && tagData[tag].weight && tagData[tag].tagOccurrences > 0) {
         score += (occurrences / tagData[tag].tagOccurrences) * tagData[tag].weight;
         maxScore += tagData[tag].weight;
       }
