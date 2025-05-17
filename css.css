@@ -602,6 +602,8 @@ pre {
 
 .keywords__tooltip-icon {
   color: #474747;
+  width: 16px;
+  height: 16px;
 }
 
 .keywords__tooltip-text {
