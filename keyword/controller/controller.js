@@ -20,16 +20,20 @@ class KeywordController {
     // Keyword Lists Info
     this.batchSizes = {
       meta: 5,
-      userAdded: 5
+      userAdded: 5,
+      oneWord: 5
     };
     this.labelMap = {
       meta: "Meta keywords",
-      userAdded: "User added keywords"
+      userAdded: "User added keywords",
+      oneWord: "Most frequent 'single-word' keywords"
     };
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];
     this.displayUserKeywords = [];
+    this.oneWordKeywords = [];
+    this.displayOneWordKeywords = [];
     this.init();
   }
 
@@ -39,6 +43,10 @@ class KeywordController {
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
     if (this.displayMetaKeywords.length > 0) {
       this.renderKeywordListByType("meta");
+    }
+    this.processMostFrequentKeywords();
+    if (this.displayOneWordKeywords.length > 0) {
+      this.renderKeywordListByType("oneWord");
     }
     this.setupTabListeners();
     this.setupTooltipListeners();
@@ -85,6 +93,11 @@ class KeywordController {
           original: this.userKeywords,
           display: this.displayUserKeywords
         };
+      case 'oneWord':
+        return {
+          original: this.oneWordKeywords,
+          display: this.displayOneWordKeywords
+        };    
       default:
         return null;
     }
@@ -101,6 +114,15 @@ class KeywordController {
 
     this.metaKeywords = keywords;
     this.displayMetaKeywords = [...keywords];
+    this.keywordAnalyzer.analyzeKeywords(keywords);
+  }
+
+  processMostFrequentKeywords() {
+    const keywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
+      .map(k => new Keyword(k));
+
+    this.oneWordKeywords = keywords;
+    this.displayOneWordKeywords = [...keywords];
     this.keywordAnalyzer.analyzeKeywords(keywords);
   }
 

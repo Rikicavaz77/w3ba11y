@@ -110,6 +110,8 @@ class KeywordView {
         return this._metaKeywordsListView;
       case 'userAdded':
         return this._userKeywordsListView;
+      case 'oneWord':
+          return this._oneWordKeywordsListView;
       default:
         return null;
     }
@@ -123,10 +125,15 @@ class KeywordView {
         }
         return this._metaKeywordsListView;
       case 'userAdded':
-          if (!this._userKeywordsListView) {
-            this._userKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
-          }
-          return this._userKeywordsListView;
+        if (!this._userKeywordsListView) {
+          this._userKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+        }
+        return this._userKeywordsListView;
+      case 'oneWord':
+        if (!this._oneWordKeywordsListView) {
+          this._oneWordKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+        }
+        return this._oneWordKeywordsListView; 
       default:
         return null;
     }
