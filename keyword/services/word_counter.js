@@ -69,7 +69,7 @@ class WordCounter {
     };
   }
 
-  findOneWordKeyphrases(lang = 'en') {
+  findOneWordKeywords(lang = 'en') {
     const baseLang = lang.split('-')[0].toLowerCase();
     const stopwords = this._stopwords[baseLang] || new Set();
 

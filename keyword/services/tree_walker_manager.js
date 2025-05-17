@@ -1,4 +1,4 @@
-class TreeWalker {
+class TreeWalkerManager {
   constructor(root) {
     this._root = root;
     this._invalidTags = ['script', 'style', 'noscript', 'iframe', 'object', 'textarea', 'button', 'svg'];
