@@ -75,22 +75,30 @@ class TextProcessor {
     const nodeGroups = [];
     let currentGroup = [];
     let currentBlockParent = null;
+    let virtualText = null;
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
       const parent = this.getBlockParent(node);
       if (currentBlockParent === parent) {
-        currentGroup.push(node);
+        const start = virtualText.length;
+        virtualText += node.nodeValue;
+        const end = virtualText.length;
+        currentGroup.push({ node, start, end});
       } else {
         if (currentGroup.length > 0) {
-          nodeGroups.push({ nodes: currentGroup, parent: currentBlockParent});
+          nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent});
         }
-        currentGroup = [node];
+        virtualText = "";
+        const start = virtualText.length;
+        virtualText += node.nodeValue;
+        const end = virtualText.length;
+        currentGroup = [{ node, start, end}];
         currentBlockParent = parent;
       }
     }
     if (currentGroup.length > 0) {
-      nodeGroups.push({ nodes: currentGroup, parent: currentBlockParent});
+      nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent});
     }
 
     return nodeGroups;
