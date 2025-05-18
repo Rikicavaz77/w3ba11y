@@ -75,7 +75,7 @@ class TextProcessor {
     const nodeGroups = [];
     let currentGroup = [];
     let currentBlockParent = null;
-    let virtualText = null;
+    let virtualText = "";
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
