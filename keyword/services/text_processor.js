@@ -42,7 +42,7 @@ class TextProcessor {
     let current = node.parentNode;
     while(current && current !== this.root) {
       if (!this.isValidInlineElement(current)) {
-        return node;
+        return current;
       }
       current = current.parentNode;
     }
