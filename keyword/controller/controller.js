@@ -129,19 +129,19 @@ class KeywordController {
   }
 
   processMostFrequentKeywords() {
-    let keywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
+    const oneWordKeywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
 
-    this.oneWordKeywords = keywords;
-    this.displayOneWordKeywords = [...keywords];
-    this.keywordAnalyzer.analyzeKeywords(keywords);
+    this.oneWordKeywords = oneWordKeywords;
+    this.displayOneWordKeywords = [...oneWordKeywords];
+    this.keywordAnalyzer.analyzeKeywords(oneWordKeywords);
 
-    keywords = this.wordCounter.findCompoundKeywords(this.overviewInfo.lang)
+    const twoWordsKeywords = this.wordCounter.findCompoundKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
-      
-    this.twoWordsKeywords = keywords;
-    this.displayTwoWordsKeywords = [...keywords];
-    this.keywordAnalyzer.analyzeKeywords(keywords);
+
+    this.twoWordsKeywords = twoWordsKeywords;
+    this.displayTwoWordsKeywords = [...twoWordsKeywords];
+    this.keywordAnalyzer.analyzeKeywords(twoWordsKeywords);
   }
 
   // RENDER KEYWORD LIST FUNCTION
