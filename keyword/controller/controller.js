@@ -47,6 +47,7 @@ class KeywordController {
     if (this.displayOneWordKeywords.length > 0) {
       this.renderKeywordListByType("oneWord");
     }
+    console.log(this.wordCounter.findCompoundKeywords(this.overviewInfo.lang));
     this.setupTabListeners();
     this.setupTooltipListeners();
     this.bindColorPicker();

@@ -64,6 +64,10 @@ class TextProcessor {
     return /[\p{L}\p{N}]+(?:[’'_.-][\p{L}\p{N}]+)*/gu;
   }
 
+  getCompoundSplitPattern() {
+    return /[^\p{L}\p{N} ’'_.-]+|(?<![\p{L}\p{N}])[’'_.-]|[’'_.-](?![\p{L}\p{N}])/u;
+  }
+
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
     if (capture) {
       return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
@@ -79,19 +83,23 @@ class TextProcessor {
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
+      const text = node.nodeValue.trim();
       const parent = this.getBlockParent(node);
+
       if (currentBlockParent === parent) {
+        if (virtualText.length > 0) {
+          virtualText += " ";
+        }
         const start = virtualText.length;
-        virtualText += node.nodeValue;
+        virtualText += text;
         const end = virtualText.length;
         currentGroup.push({ node, start, end});
       } else {
         if (currentGroup.length > 0) {
           nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent});
         }
-        virtualText = "";
-        const start = virtualText.length;
-        virtualText += node.nodeValue;
+        virtualText = text;
+        const start = 0;
         const end = virtualText.length;
         currentGroup = [{ node, start, end}];
         currentBlockParent = parent;
