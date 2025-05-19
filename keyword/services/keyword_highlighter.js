@@ -93,36 +93,128 @@ class KeywordHighlighter {
   highlightKeyword(keyword) {
     this.removeHighlight();
     const textNodes = this._textProcessor.getTextNodes();
-    const pattern = this._textProcessor.getKeywordPattern(keyword, { capture: true, flags: 'iu' });
-  
-    textNodes.forEach(node => {
-      if (pattern.test(node.nodeValue)) {
-        const fragment = this.doc.createDocumentFragment();
-        const parts = node.nodeValue.split(pattern);
-        const parent = this._textProcessor.getParentName(node);
-
-        let isMatch = false;
-        parts.forEach((part, index) => {
-          if (index % 2 === 1) {
-            isMatch = true;
-          } else {
-            isMatch = false;
-          }
-          
-          if (part !== "" && isMatch) {
-            const span = this.doc.createElement("span");
-            span.classList.add("w3ba11y__highlight-keyword");
-            span.dataset.parent = parent.toLowerCase();
-            span.textContent = part;
-            fragment.appendChild(span);
-          } else if (part !== "") {
-            const newTextNode = this.doc.createTextNode(part);
-            fragment.appendChild(newTextNode);
-          }
-        });
-  
-        node.parentNode.replaceChild(fragment, node);
-      }
+    const pattern = this._textProcessor.getKeywordPattern(keyword);
+    const keywordParts = keyword.split(/\s+/);
+    const relatedTagsMap = new Map();
+    textNodes.forEach((node, index) => {
+      const matches = this.buildMatchesForNode(textNodes, index, pattern, keywordParts, relatedTagsMap);
+      this.highlightMatches(node, matches);
     });
+  }
+
+  buildMatchesForNode(textNodes, index, pattern, keywordParts, relatedTagsMap) {
+    const node = textNodes[index];
+    const matches = [...node.nodeValue.matchAll(pattern)].map(match => ({
+      matchStart: match.index,
+      matchEnd: match.index + match[0].length
+    }));
+
+    if (keywordParts.length === 1) return matches;
+  
+    const nextNode = textNodes[index + 1];
+    const sameParent = nextNode && this._textProcessor.getBlockParent(node) === this._textProcessor.getBlockParent(nextNode);
+    if (sameParent) {
+      const crossTagMatches = this.getKeywordMatchesAcrossMultipleTags(textNodes, index, keywordParts, 0, keywordParts.length - 1);
+      for (const [matchedNode, matchList] of crossTagMatches) {
+        if (!relatedTagsMap.has(matchedNode)) {
+          relatedTagsMap.set(matchedNode, matchList);
+        } else {
+          relatedTagsMap.get(matchedNode).push(...matchList);
+        }
+      }
+    }
+  
+    if (relatedTagsMap.has(node)) {
+      matches.push(...relatedTagsMap.get(node));
+      matches.sort((a, b) => a.matchStart - b.matchStart);
+    }
+    
+    return matches;
+  }
+
+  highlightMatches(node, matches) {
+    const text = node.nodeValue;
+    const parent = this._textProcessor.getParentName(node);
+    const fragment = this.doc.createDocumentFragment();
+    let lastIndex = 0;
+
+    for (const { matchStart, matchEnd} of matches) {
+      if (matchStart > lastIndex) {
+        const newTextNode = this.doc.createTextNode(text.slice(lastIndex, matchStart));
+        fragment.appendChild(newTextNode);
+      }
+
+      const span = this.doc.createElement("span");
+      span.classList.add("w3ba11y__highlight-keyword");
+      span.dataset.parent = parent.toLowerCase();
+      span.textContent = text.slice(matchStart, matchEnd);
+      fragment.appendChild(span);
+
+      lastIndex = matchEnd;
+    }
+
+    if (lastIndex < text.length) {
+      const newTextNode = this.doc.createTextNode(text.slice(lastIndex));
+      fragment.appendChild(newTextNode);
+    }
+
+    node.parentNode.replaceChild(fragment, node);
+  }
+
+  getKeywordMatchesAcrossMultipleTags(textNodes, index, keywordParts, start, end) {
+    const map = new Map();
+    const node = textNodes[index];
+  
+    if (!node || end <= start) return map;
+  
+    const isEndReached = end === keywordParts.length;
+    let pattern;
+    if (start === 0) {
+      pattern = new RegExp(`${keywordParts.slice(start, end).join(' ')}(?=[\\s]*$)`, "i");
+    } else {
+      if (!isEndReached) {
+        pattern = new RegExp(`(?<=^[\\s]*)${keywordParts.slice(start, end).join(' ')}(?=[\\s]*$)`, "i");
+      } else {
+        pattern = new RegExp(`(?<=^[\\s]*)${keywordParts.slice(start, end).join(' ')}`, "i");
+      }
+    }
+    
+    const match = node.nodeValue.match(pattern) || [];
+  
+    if (match.length === 0) {
+      return this.getKeywordMatchesAcrossMultipleTags(textNodes, index, keywordParts, start, end - 1);
+    }
+  
+    if (start !== 0 && isEndReached) {
+      this.addMatchToMap(map, node, match);
+      return map;
+    } else if (start === 0 && isEndReached) {
+      return map;
+    } else {
+      const nextNode = textNodes[index + 1];
+      if (!nextNode || this._textProcessor.getBlockParent(node) !== this._textProcessor.getBlockParent(nextNode)) {
+        return map;
+      }
+      const nextMatchesMap = this.getKeywordMatchesAcrossMultipleTags(textNodes, index + 1, keywordParts, end, keywordParts.length);
+      if (nextMatchesMap.size > 0) {
+        this.addMatchToMap(map, node, match);
+        for (const [key, value] of nextMatchesMap) {
+          map.set(key, value);
+        }
+      }
+      return map;
+    }
+  }
+  
+  addMatchToMap(map, node, match) {
+    const entry = {
+      matchStart: match.index,
+      matchEnd: match.index + match[0].length
+    };
+    if (!map.has(node)) {
+      map.set(node, [entry]);
+    } else {
+      map.get(node).push(entry);
+    }
   }
 }
