@@ -34,7 +34,7 @@ class KeywordController {
     this.displayMetaKeywords = [];
     this.userKeywords = [];
     this.displayUserKeywords = [];
-    // Compound keywords
+    // Most-relevant keywords
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
     this.twoWordsKeywords = [];
