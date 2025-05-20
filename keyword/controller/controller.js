@@ -215,11 +215,8 @@ class KeywordController {
 
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
-    let keyword = this.view.customKeywordInput?.value;
+    let keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return;
-
-    keyword = Utils.sanitizeInput(keyword);
-    if (!keyword) return; 
 
     if (event.target.checked) {
       this.keywordHighlighter.highlightKeyword(keyword);
@@ -243,10 +240,7 @@ class KeywordController {
 
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
-    let keyword = this.view.customKeywordInput?.value;
-    if (!keyword) return; 
-
-    keyword = Utils.sanitizeInput(keyword);
+    let keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return; 
 
     const keywordItem = new Keyword(keyword);
