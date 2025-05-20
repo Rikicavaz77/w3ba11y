@@ -10,6 +10,9 @@ class KeywordController {
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
 
+    /* To-Do:
+      DOM copy
+    */
     const treeWalker = new TreeWalkerManager(iframe.body);
     const textProcessor = new TextProcessor(iframe, treeWalker);
     const tagAccessor = new TagAccessor(iframe);
