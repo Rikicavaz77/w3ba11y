@@ -34,7 +34,6 @@ class KeywordController {
     this.displayUserKeywords = [];
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
-    this.init();
   }
 
   init() {
@@ -163,7 +162,7 @@ class KeywordController {
   // SORT FUNCTION 
   sortKeywords(keywords, sortDirection) {
     keywords.sort((a, b) => {
-      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true });
       return (sortDirection === "asc") ? compare : -compare;
     });
   }
@@ -383,4 +382,9 @@ class KeywordController {
       });
     });
   }
+}
+
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = KeywordController;
 }

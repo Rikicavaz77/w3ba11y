@@ -83,3 +83,8 @@ class Keyword {
     this._relevanceScore = maxScore === 0 ? 0 : Math.ceil((score / maxScore) * 100);
   }
 }
+
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = Keyword;
+}
