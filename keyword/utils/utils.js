@@ -3,11 +3,13 @@ class Utils {
     return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   } 
 
-  static sanitizeInput(text) {
+  static escapeHTML(text) {
     return text
-      .replace(/[^\p{L}\p{N} ’'_.-]|(?<![\p{L}\p{N}])[’'_.-]|[’'_.-](?![\p{L}\p{N}])/gu, '')
-      .replace(/ {2,}/g, ' ')
-      .trim();
+      .replace(/&/g ,'&amp;')
+      .replace(/"/g ,'&quot;')
+      .replace(/'/g ,'&#039;')
+      .replace(/</g ,'&lt;')
+      .replace(/>/g ,'&gt;');
   }
 }
 

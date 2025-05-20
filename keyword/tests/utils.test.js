@@ -10,21 +10,26 @@ describe('Utils', () => {
 
     it('should leave normal characters untouched', () => {
       const input = 'abc 123';
-      expect(Utils.escapeRegExp(input)).toBe('abc 123');
+      expect(Utils.escapeRegExp(input)).toBe(input);
     });
   });
 
-  describe('sanitizeInput()', () => {
-    it('should remove invalid characters', () => {
-      const input = 'Hello! 🌟 @world# <script>window.alert(1)</script>';
-      const expected = 'Hello world scriptwindow.alert1script';
-      expect(Utils.sanitizeInput(input)).toBe(expected);
+  describe('escapeHTML()', () => {
+    it('should escape dangerous HTML characters', () => {
+      const input = `<script>alert("xss")</script>`;
+      const expected = `&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;`;
+      expect(Utils.escapeHTML(input)).toBe(expected);
     });
 
-    it('should preserve letters, numbers, dash, dot, underscore, apostrophes', () => {
-      const input = `O'Reilly_dev-site.v1.0 - test...`;
-      const expected = `O'Reilly_dev-site.v1.0 test`;
-      expect(Utils.sanitizeInput(input)).toBe(expected);
+    it('should escape ampersands and quotes', () => {
+      const input = `Looney Tunes' Tom & "Jerry"`;
+      const expected = `Looney Tunes&#039; Tom &amp; &quot;Jerry&quot;`;
+      expect(Utils.escapeHTML(input)).toBe(expected);
+    });
+
+    it('should not escape safe text', () => {
+      const input = 'Normal text with numbers 1234';
+      expect(Utils.escapeHTML(input)).toBe(input);
     });
   });
 });

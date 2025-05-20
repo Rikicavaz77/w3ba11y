@@ -56,7 +56,7 @@ class AnalysisResultView {
     analysisResultContainer.innerHTML = `
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Keyword:</h3>
-        <p>${keywordItem.name}</p>
+        <p>${Utils.escapeHTML(keywordItem.name)}</p>
       </div>
       <div class="keywords__analysis-item">
         <div class="keywords__analysis-item__title-container">
