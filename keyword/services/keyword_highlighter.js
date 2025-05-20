@@ -98,7 +98,9 @@ class KeywordHighlighter {
     const relatedTagsMap = new Map();
     textNodes.forEach((node, index) => {
       const matches = this.buildMatchesForNode(textNodes, index, pattern, keywordParts, relatedTagsMap);
-      this.highlightMatches(node, matches);
+      if (matches.lenght > 0) {
+        this.highlightMatches(node, matches);
+      }
     });
   }
 
