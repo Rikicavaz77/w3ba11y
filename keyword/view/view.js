@@ -232,7 +232,7 @@ class KeywordView {
               </div>
             </div>
             <div class="keywords__overview-item-body">
-              <p class="keywords__overview-item-body__text">${Utils.escapeHTML(overviewInfo.lang) || 'Missing'}</p>
+              <p class="keywords__overview-item-body__text">${overviewInfo.lang || 'Missing'}</p>
             </div>
           </div>          
         </li>
