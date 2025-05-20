@@ -69,10 +69,13 @@ class TextProcessor {
   }
 
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
+    const keywordParts = keyword.split(/\s+/);
+    const escapedParts = keywordParts.map(Utils.escapeRegExp);
+    const newKeyword = escapedParts.join("\\s+");
     if (capture) {
-      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${newKeyword})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
     }
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${Utils.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${newKeyword}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
   }
 
   getTextNodeGroups() {
@@ -83,7 +86,7 @@ class TextProcessor {
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
-      const text = node.nodeValue.trim();
+      const text = node.nodeValue;
       const parent = this.getBlockParent(node);
 
       if (currentBlockParent === parent) {

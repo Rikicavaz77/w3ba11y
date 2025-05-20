@@ -58,13 +58,15 @@ class KeywordAnalyzer {
   }
 
   _prepareAnalysisData() {
+    this._strategy.reset();
     this.countTagsOccurrences();
-    this._textNodes = this._textProcessor.getTextNodes();
+    this._nodeGroups = this._textProcessor.getTextNodeGroups();
+    //this._textNodes = this._textProcessor.getTextNodes();
   }
 
-  _performAnalysis(keyword, textNodes) {
+  _performAnalysis(keyword) {
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
-    this._strategy.analyze(textNodes, pattern, keyword);
+    this._strategy.analyze(this._nodeGroups, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
       keyword.frequency += this.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
     });
@@ -75,7 +77,7 @@ class KeywordAnalyzer {
   
   analyzeKeyword(keyword) {
     this._prepareAnalysisData();
-    this._performAnalysis(keyword, this._textNodes);
+    this._performAnalysis(keyword);
   }
 
   analyzeKeywords(keywords) {
@@ -83,7 +85,7 @@ class KeywordAnalyzer {
     try {
       this._tagAccessor.useCache = true;
       keywords.forEach(keyword => {
-        this._performAnalysis(keyword, this._textNodes);
+        this._performAnalysis(keyword);
       });
     } finally {
       this._tagAccessor.useCache = false;

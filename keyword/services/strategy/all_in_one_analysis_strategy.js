@@ -3,24 +3,71 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
-  _findAncestors(node, occurrences, keywordOccurrences) {
+  reset() {
+    this._ancestorCache = new WeakMap(); 
+  }
+
+  _findAncestors(node) {
+    if (this._ancestorCache.has(node)) return this._ancestorCache.get(node);
+
     let current = node.parentNode;
+    const ancestors = [];
     while (current && current !== this._context.root) {
       const tagName = current.nodeName.toLowerCase();
       if (this._context.allowedParentTags.includes(tagName)) {
-        keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + occurrences;
+        ancestors.push(current);
       }
       current = current.parentNode;
-    };
+    }
+    
+    this._ancestorCache.set(node, ancestors);
+    return ancestors;
   }
 
-  analyze(textNodes, pattern, keyword) {
-    textNodes.forEach(node => {
-      const matches = node.nodeValue.match(pattern) || [];
-      if (matches.length > 0) {
-        this._findAncestors(node, matches.length, keyword.keywordOccurrences);
+  _getCommonAncestors(nodes) {
+    if (nodes.length === 0) return [];
+
+    const firstAncestors = this._findAncestors(nodes[0]);
+    const commonAncestors = new Set(firstAncestors);
+
+    for (let i = 1; i < nodes.length; i++) {
+      const currentAncestors = new Set(this._findAncestors(nodes[i]));
+
+      for (const ancestor of [...commonAncestors]) {
+        if (!currentAncestors.has(ancestor)) {
+          commonAncestors.delete(ancestor);
+        }
+        if (commonAncestors.size === 0) break;
       }
+    }
+    return [...commonAncestors];
+  }
+
+  _countOccurrencesInAncestors(ancestors, keywordOccurrences, occurrences = 1) {
+    ancestors.forEach(ancestor => {
+      const tagName = ancestor.nodeName.toLowerCase();
+      keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + occurrences;
+    });
+  }
+
+  analyze(nodeGroups, pattern, keyword) {
+    nodeGroups.forEach(({ nodes, virtualText }) => {
+      const matches = [...virtualText.matchAll(pattern)];
+      if (matches.length === 0) return;
+
       keyword.frequency += matches.length;
+
+      matches.forEach(match => {
+        const matchStart = match.index;
+        const matchEnd = matchStart + match[0].length;
+
+        const matchedNodes = nodes
+          .filter(({ start, end }) => matchEnd > start && matchStart < end)
+          .map(({ node }) => node);
+        
+        const commonAncestors = this._getCommonAncestors(matchedNodes);
+        this._countOccurrencesInAncestors(commonAncestors, keyword.keywordOccurrences);
+      });
     });
   } 
 }
