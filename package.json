@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Rikicavaz77/w3ba11y#readme",
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }
