@@ -4,7 +4,7 @@
   "description": "<h1 align=\"center\">w3ba11y</h1> <h2 align=\"center\">Documentazione</h2> <p align=\"center\">La documentazione di progetto è visibile <a href=\"https://github.com/Rikicavaz77/Stage-Docs\" target=\"_blank\"><b>qui</b></a>.</p>",
   "main": "main.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,11 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "keyword/controller"
+    ]
   }
 }
