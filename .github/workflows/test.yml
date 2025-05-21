@@ -2,7 +2,7 @@ name: Run tests
 
 on:
   pull_request:
-    types: [synchronize]
+    types: [opened, synchronize]
   push: 
     branches:
       - main
