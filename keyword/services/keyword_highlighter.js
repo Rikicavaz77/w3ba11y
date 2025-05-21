@@ -2,17 +2,17 @@ class KeywordHighlighter {
   constructor(textProcessor) {
     this._textProcessor = textProcessor;
     this._colorMap = {
-      h1: { bg: "#eb9fc5", color: "#560e63", border: "#af0bcc" },
-      h2: { bg: "#ffae90", color: "#8e282a", border: "#e53935" },
-      h3: { bg: "#fff94f", color: "#c24315", border: "#ffa588" },
-      h4: { bg: "#1984b5", color: "#000048", border: "#bfd5e2" },
-      h5: { bg: "#00ff8c", color: "#0c5f09", border: "#81e392" },
-      h6: { bg: "#fc7faa", color: "#790041", border: "#d81b60" },
-      p: { bg: "#c8e6c9", color: "#007032", border: "#66bb6a" },
+      h1:     { bg: "#eb9fc5", color: "#560e63", border: "#af0bcc" },
+      h2:     { bg: "#ffae90", color: "#8e282a", border: "#e53935" },
+      h3:     { bg: "#fff94f", color: "#c24315", border: "#ffa588" },
+      h4:     { bg: "#1984b5", color: "#000048", border: "#bfd5e2" },
+      h5:     { bg: "#00ff8c", color: "#0c5f09", border: "#81e392" },
+      h6:     { bg: "#fc7faa", color: "#790041", border: "#d81b60" },
+      p:      { bg: "#c8e6c9", color: "#007032", border: "#66bb6a" },
       strong: { bg: "#eb0f0f", color: "#000022", border: "#e77f45" },
-      em: { bg: "#e281fa", color: "#501f6d", border: "#d98ae0" },
-      a: { bg: "#81d4fa", color: "#0d47a1", border: "#0288d1" },
-      li: { bg: "#ff6f00", color: "#562020", border: "#e68c19" }
+      em:     { bg: "#e281fa", color: "#501f6d", border: "#d98ae0" },
+      a:      { bg: "#81d4fa", color: "#0d47a1", border: "#0288d1" },
+      li:     { bg: "#ff6f00", color: "#562020", border: "#e68c19" }
     };
     this._injectHighlightBlock();
   }
