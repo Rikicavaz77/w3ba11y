@@ -5,20 +5,20 @@ class KeywordAnalyzer {
     this._wordCounter = wordCounter;
     this.setStrategy(strategy);
     this._tagData = {
-      title:      { weight: 7 },
-      description:{ weight: 6 },
-      h1:         { weight: 6 },
-      h2:         { weight: 5 },
-      h3:         { weight: 4 },
-      h4:         { weight: 2 },
-      h5:         { weight: 2 },
-      h6:         { weight: 2 },
-      p:          { weight: 0, },
-      strong:     { weight: 0, },
-      em:         { weight: 0, },
-      a:          { weight: 2.5 },
-      li:         { weight: 0 },
-      alt:        { weight: 2.5 }
+      title:       { weight: 7 },
+      description: { weight: 6 },
+      h1:          { weight: 6 },
+      h2:          { weight: 5 },
+      h3:          { weight: 4 },
+      h4:          { weight: 2 },
+      h5:          { weight: 2 },
+      h6:          { weight: 2 },
+      p:           { weight: 0, },
+      strong:      { weight: 0, },
+      em:          { weight: 0, },
+      a:           { weight: 2.5 },
+      li:          { weight: 0 },
+      alt:         { weight: 2.5 }
     };
   }
 

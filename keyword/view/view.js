@@ -211,7 +211,7 @@ class KeywordView {
               </div>
             </div>
             <div class="keywords__overview-item-body">
-              <p class="keywords__overview-item-body__text">${overviewInfo.metaTagKeywordsContent || 'Missing'}</p>
+              <p class="keywords__overview-item-body__text">${overviewInfo.metaTagKeywordsContent ? Utils.escapeHTML(overviewInfo.metaTagKeywordsContent) : 'Missing'}</p>
             </div>
           </div>
         </li>

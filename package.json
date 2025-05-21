@@ -1,0 +1,24 @@
+{
+  "name": "w3ba11y",
+  "version": "1.0.0",
+  "description": "<h1 align=\"center\">w3ba11y</h1> <h2 align=\"center\">Documentazione</h2> <p align=\"center\">La documentazione di progetto è visibile <a href=\"https://github.com/Rikicavaz77/Stage-Docs\" target=\"_blank\"><b>qui</b></a>.</p>",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rikicavaz77/w3ba11y.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rikicavaz77/w3ba11y/issues"
+  },
+  "homepage": "https://github.com/Rikicavaz77/w3ba11y#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}

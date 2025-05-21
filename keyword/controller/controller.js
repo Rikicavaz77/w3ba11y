@@ -34,7 +34,6 @@ class KeywordController {
     this.displayUserKeywords = [];
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
-    this.init();
   }
 
   init() {
@@ -163,7 +162,7 @@ class KeywordController {
   // SORT FUNCTION 
   sortKeywords(keywords, sortDirection) {
     keywords.sort((a, b) => {
-      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true });
       return (sortDirection === "asc") ? compare : -compare;
     });
   }
@@ -215,11 +214,8 @@ class KeywordController {
 
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
-    let keyword = this.view.customKeywordInput?.value;
+    let keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return;
-
-    keyword = Utils.sanitizeInput(keyword);
-    if (!keyword) return; 
 
     if (event.target.checked) {
       this.keywordHighlighter.highlightKeyword(keyword);
@@ -243,10 +239,7 @@ class KeywordController {
 
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
-    let keyword = this.view.customKeywordInput?.value;
-    if (!keyword) return; 
-
-    keyword = Utils.sanitizeInput(keyword);
+    let keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return; 
 
     const keywordItem = new Keyword(keyword);
@@ -389,4 +382,9 @@ class KeywordController {
       });
     });
   }
+}
+
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = KeywordController;
 }

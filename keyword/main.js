@@ -6,6 +6,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     iframe = document.querySelector('main').shadowRoot.querySelector('iframe').contentDocument;
     controller = new KeywordController(iframe);
     window.keywordController = controller;
+    controller.init();
     chrome.runtime.sendMessage({ action: 'finishedComponents', component: 'keyword' });
   }
 
