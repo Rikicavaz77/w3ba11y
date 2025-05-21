@@ -46,5 +46,5 @@ describe('WordCounter', () => {
 
   afterAll(() => {
     delete global.sw;
-  })
+  });
 });
