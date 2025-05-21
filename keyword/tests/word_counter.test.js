@@ -43,4 +43,8 @@ describe('WordCounter', () => {
     expect(result.totalWords).toBe(11);
     expect(result.uniqueWords).toBe(9);
   });
+
+  afterAll(() => {
+    delete global.sw;
+  })
 });

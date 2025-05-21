@@ -5,7 +5,7 @@ describe('KeywordController - sortKeywords()', () => {
   let controller;
 
   beforeEach(() => {
-    controller = { sortKeywords: KeywordController.prototype.sortKeywords};
+    controller = { sortKeywords: KeywordController.prototype.sortKeywords };
   });
 
   it('sort in ascending order', () => {
