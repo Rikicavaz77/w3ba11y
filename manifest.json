@@ -20,7 +20,11 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["static/img/logo.png", "static/img/loading.gif"],
+      "resources": [
+        "css.css",
+        "static/img/logo.png", 
+        "static/img/loading.gif"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
