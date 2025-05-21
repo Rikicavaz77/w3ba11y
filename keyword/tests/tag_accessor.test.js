@@ -18,7 +18,7 @@ describe('TagAccessor', () => {
     document.body.innerHTML = `
       <h1>Test heading</h1>
       <h1>Another test heading</h1>
-      <img src="img.jpg" alt="Image alt text">
+      <img src="test.jpg" alt="Image alt text">
     `;
     doc = document;
     accessor = new TagAccessor(doc);
