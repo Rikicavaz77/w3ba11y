@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-const TextProcessor = require('../services/text_processor');
-const TreeWalkerManager = require('../services/tree_walker_manager');
-const Utils = require('../utils/utils');
+const TextProcessor = require('../../services/text_processor');
+const TreeWalkerManager = require('../../services/tree_walker_manager');
+const Utils = require('../../utils/utils');
 
 global.Utils = {
   escapeRegExp: Utils.escapeRegExp

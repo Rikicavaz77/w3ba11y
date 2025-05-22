@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const KeywordAnalysisStrategy = require('../services/strategy/keyword_analysis_strategy');
+const KeywordAnalysisStrategy = require('../../../services/strategy/keyword_analysis_strategy');
 
 describe('KeywordAnalysisStrategy', () => {
   test('should throw error if instantiated directly', () => {
