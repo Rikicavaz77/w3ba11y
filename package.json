@@ -24,7 +24,7 @@
   "jest": {
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
-      "keyword/controller"
+      "keyword/view"
     ]
   }
 }
