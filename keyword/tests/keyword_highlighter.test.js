@@ -20,9 +20,8 @@ describe('KeywordHighlighter', () => {
       <script>document.getElementById("keyword");</script>
       <p>Another keyword appears here.</p>
     `;
-    doc = document;
-    const treeWalker = new TreeWalkerManager(doc.body);
-    const textProcessor = new TextProcessor(doc, treeWalker);
+    const treeWalker = new TreeWalkerManager(document.body);
+    const textProcessor = new TextProcessor(document, treeWalker);
     highlighter = new KeywordHighlighter(textProcessor);
   });
 

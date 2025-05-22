@@ -38,10 +38,9 @@ describe('KeywordAnalyzer', () => {
       <p>Another keyword appears here.</p>
       <img src="test.jpg" alt="keyword in alt tag">
     `;
-    doc = document;
-    const treeWalker = new TreeWalkerManager(doc.body);
-    const textProcessor = new TextProcessor(doc, treeWalker);
-    const tagAccessor = new TagAccessor(doc);
+    const treeWalker = new TreeWalkerManager(document.body);
+    const textProcessor = new TextProcessor(document, treeWalker);
+    const tagAccessor = new TagAccessor(document);
     const wordCounter = new WordCounter(textProcessor, tagAccessor);
     analyzer = new KeywordAnalyzer(textProcessor, tagAccessor, wordCounter, new AllInOneAnalysisStrategy());
   });

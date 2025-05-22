@@ -10,7 +10,7 @@ global.Utils = {
 };
 
 describe('TextProcessor', () => {
-  let doc, treeWalker, processor;
+  let treeWalker, processor;
 
   beforeEach(() => {
     document.body.innerHTML = `
@@ -22,9 +22,8 @@ describe('TextProcessor', () => {
         <p>Another <strong>test</strong></p>
       </div> 
     `;
-    doc = document;
-    treeWalker = new TreeWalkerManager(doc.body);
-    processor = new TextProcessor(doc, treeWalker);
+    treeWalker = new TreeWalkerManager(document.body);
+    processor = new TextProcessor(document, treeWalker);
   });
 
   test('getTextNodes() should return valid text nodes', () => {

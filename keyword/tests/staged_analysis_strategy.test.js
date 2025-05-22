@@ -28,10 +28,9 @@ describe('StagedAnalysisStrategy', () => {
       <h1>This is a test keyword</h1>
       <p>Another keyword appears here</p>
     `;
-    doc = document;
-    const treeWalker = new TreeWalkerManager(doc.body);
-    const textProcessor = new TextProcessor(doc, treeWalker);
-    const tagAccessor = new TagAccessor(doc);
+    const treeWalker = new TreeWalkerManager(document.body);
+    const textProcessor = new TextProcessor(document, treeWalker);
+    const tagAccessor = new TagAccessor(document);
     const wordCounter = new WordCounter(textProcessor, tagAccessor);
     strategy = new StagedAnalysisStrategy();
     const analyzer = new KeywordAnalyzer(textProcessor, tagAccessor, wordCounter, strategy);
