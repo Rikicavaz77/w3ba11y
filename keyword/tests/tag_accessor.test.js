@@ -4,7 +4,7 @@
 const TagAccessor = require('../services/tag_accessor');
 
 describe('TagAccessor', () => {
-  let doc, accessor;
+  let accessor;
 
   beforeEach(() => {
     document.head.innerHTML = '';
@@ -20,8 +20,7 @@ describe('TagAccessor', () => {
       <h1>Another test heading</h1>
       <img src="test.jpg" alt="Image alt text">
     `;
-    doc = document;
-    accessor = new TagAccessor(doc);
+    accessor = new TagAccessor(document);
   });
 
   describe('getTag()', () => {
