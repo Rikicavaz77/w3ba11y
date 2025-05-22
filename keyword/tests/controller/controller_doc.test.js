@@ -87,19 +87,11 @@ describe('KeywordController', () => {
     });  
 
     it('should find, store and analyze keywords', () => {
-      const input = 'seo, accessibility, keyword';
-      controller.processMetaKeywords(input);
+      controller.processMostFrequentKeywords();
       
-      expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-      expect(controller.displayMetaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledWith(controller.metaKeywords);
-    });
-
-    it('should not analyze keywords if input is empty', () => {
-      const input = '';
-      controller.processMetaKeywords(input);
-      
-      expect(controller.keywordAnalyzer.analyzeKeywords).not.toHaveBeenCalled();
+      expect(controller.oneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
+      expect(controller.displayOneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
+      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledWith(controller.oneWordKeywords);
     });
   });
 
