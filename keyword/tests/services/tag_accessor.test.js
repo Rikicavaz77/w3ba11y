@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const TagAccessor = require('../services/tag_accessor');
+const TagAccessor = require('../../services/tag_accessor');
 
 describe('TagAccessor', () => {
   let accessor;

@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-const WordCounter = require('../services/word_counter');
-const TextProcessor = require('../services/text_processor');
-const TreeWalkerManager = require('../services/tree_walker_manager');
-const TagAccessor = require('../services/tag_accessor');
+const WordCounter = require('../../services/word_counter');
+const TextProcessor = require('../../services/text_processor');
+const TreeWalkerManager = require('../../services/tree_walker_manager');
+const TagAccessor = require('../../services/tag_accessor');
 
 global.sw = {
   eng: ['the', 'and', 'is'],

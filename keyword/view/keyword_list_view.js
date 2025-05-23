@@ -156,7 +156,7 @@ class KeywordListView {
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = null;
     this._sortDirection = null;
-    this._searchKeywordField.value = "";
+    this._searchKeywordField.value = '';
   }
 
   renderKeywords(keywords, startIndex) {
@@ -204,4 +204,9 @@ class KeywordListView {
     this._paginationButtons = this._pagination.querySelectorAll('.keywords__pagination__button');
     this._currentPage = currentPage;
   }
+}
+
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = KeywordListView;
 }

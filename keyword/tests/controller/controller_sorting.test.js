@@ -1,14 +1,14 @@
-const KeywordController = require('../controller/controller');
-const Keyword = require('../model/keyword');
+const KeywordController = require('../../controller/controller');
+const Keyword = require('../../model/keyword');
 
 describe('KeywordController - sortKeywords()', () => {
   let controller;
 
   beforeEach(() => {
-    controller = { sortKeywords: KeywordController.prototype.sortKeywords };
+    controller = Object.create(KeywordController.prototype);
   });
 
-  it('sort in ascending order', () => {
+  test('sort in ascending order', () => {
     const keywords = [
       new Keyword('machine'),
       new Keyword('bear'),
@@ -21,7 +21,7 @@ describe('KeywordController - sortKeywords()', () => {
     expect(result).toEqual(['bear', 'driver', 'machine']);
   });
 
-  it('sort in descending order', () => {
+  test('sort in descending order', () => {
     const keywords = [
       new Keyword('machine'),
       new Keyword('bear'),
@@ -34,7 +34,7 @@ describe('KeywordController - sortKeywords()', () => {
     expect(result).toEqual(['machine', 'driver', 'bear']);
   });
 
-  it('sort case-insensitive', () => {
+  test('sort case-insensitive', () => {
     const keywords = [
       new Keyword('apple'),
       new Keyword('agreement'),
@@ -47,7 +47,7 @@ describe('KeywordController - sortKeywords()', () => {
     expect(result).toEqual(['agreement', 'apple', 'Apple']);
   });
 
-  it('sort with numbers', () => {
+  test('sort with numbers', () => {
     const keywords = [
       new Keyword('11'),
       new Keyword('2'),
