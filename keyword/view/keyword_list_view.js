@@ -156,7 +156,7 @@ class KeywordListView {
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = null;
     this._sortDirection = null;
-    this._searchKeywordField.value = "";
+    this._searchKeywordField.value = '';
   }
 
   renderKeywords(keywords, startIndex) {
