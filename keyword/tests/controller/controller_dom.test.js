@@ -95,6 +95,64 @@ describe('KeywordController', () => {
     });
   });
 
+  describe('getListType()', () => {
+    it('should return listType from dataset', () => {
+      const container = document.createElement('div');
+      container.classList.add('keyword-list__container');
+      container.dataset.listType = 'meta';
+
+      const target = document.createElement('button');
+      container.appendChild(target);
+
+      const result = controller.getListType(target);
+      expect(result).toBe('meta');
+    });
+
+    it('should return undefined if no container', () => {
+      const target = document.createElement('div');
+      expect(controller.getListType(target)).toBeUndefined();
+    });
+  });
+
+  describe('getKeywordItem()', () => {
+    let container, listItem, target;
+
+    beforeEach(() => {
+      container = document.createElement('div');
+      container.classList.add('keyword-list__container');
+      container.dataset.listType = 'meta';
+
+      listItem = document.createElement('div');
+      listItem.classList.add('keyword-list-item');
+      listItem.dataset.keywordIndex = '1';
+      container.appendChild(listItem);
+
+      target = document.createElement('button');
+      listItem.appendChild(target);
+    });
+
+    it('should return correct keyword from display', () => {  
+      controller.displayMetaKeywords = [new Keyword('access'), new Keyword('accessibility'), new Keyword('account')];
+
+      const spy = jest.spyOn(controller, 'getListByType');
+
+      const result = controller.getKeywordItem(target);
+      expect(spy).toHaveBeenCalledWith('meta');
+      expect(result).toBeInstanceOf(Keyword);
+      expect(result.name).toBe('accessibility');
+    });
+
+    it('should return undefined if no listItem or container', () => {
+      const target = document.createElement('div');
+      expect(controller.getKeywordItem(target)).toBeUndefined();
+    });
+
+    it('should return undefined if keywordIndex is not a number', () => {
+      listItem.dataset.keywordIndex = 'invalid';
+      expect(controller.getKeywordItem(target)).toBeUndefined();
+    });
+  });
+
   afterAll(() => {
     delete global.Keyword;
   });

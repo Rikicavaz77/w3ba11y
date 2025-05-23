@@ -34,6 +34,7 @@ class KeywordController {
     this.displayUserKeywords = [];
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
+    this.init();
   }
 
   init() {

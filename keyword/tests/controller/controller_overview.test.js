@@ -4,12 +4,16 @@
 const KeywordController = require('../../controller/controller');
 const OverviewInfo = require('../../model/overview_info');
 global.OverviewInfo = OverviewInfo;
+const KeywordListInfo = require('../../model/keyword_list_info');
+global.KeywordListInfo = KeywordListInfo;
 const Keyword = require('../../model/keyword');
 global.Keyword = Keyword;
 const Utils = require('../../utils/utils');
 global.Utils = Utils;
 const KeywordView = require('../../view/view');
 global.KeywordView = KeywordView;
+const KeywordListView = require('../../view/keyword_list_view');
+global.KeywordListView = KeywordListView;
 const TreeWalkerManager = require('../../services/tree_walker_manager');
 global.TreeWalkerManager = TreeWalkerManager;
 const TextProcessor = require('../../services/text_processor');
@@ -69,9 +73,11 @@ describe('KeywordController - overview', () => {
 
   afterAll(() => {
     delete global.OverviewInfo;
+    delete global.KeywordListInfo;
     delete global.Keyword;
     delete global.Utils;
     delete global.KeywordView;
+    delete global.KeywordListView;
     delete global.TreeWalkerManager;
     delete global.TextProcessor;
     delete global.TagAccessor;
