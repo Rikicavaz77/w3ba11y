@@ -8,56 +8,55 @@ describe('KeywordController - sortKeywords()', () => {
     controller = Object.create(KeywordController.prototype);
   });
 
-  test('sort in ascending order', () => {
-    const keywords = [
-      new Keyword('machine'),
-      new Keyword('bear'),
-      new Keyword('driver')
-    ];
+  describe('sort with different frequencies', () => {
+    let keywords;
 
-    controller.sortKeywords(keywords, 'asc');
+    beforeEach(() => {
+      keywords = [
+        new Keyword('machine', { frequency: 10 }),
+        new Keyword('bear', { frequency: 20 }),
+        new Keyword('driver', { frequency: 15 })
+      ];
+    });
 
-    const result = keywords.map(k => k.name);
-    expect(result).toEqual(['bear', 'driver', 'machine']);
+    it('sort in ascending order', () => {
+      controller.sortKeywords(keywords, 'asc');
+  
+      const result = keywords.map(k => k.name);
+      expect(result).toEqual(['machine', 'driver', 'bear']);
+    });
+
+    test('sort in descending order', () => {
+      controller.sortKeywords(keywords, 'desc');
+  
+      const result = keywords.map(k => k.name);
+      expect(result).toEqual(['bear', 'driver', 'machine']);
+    });
   });
 
-  test('sort in descending order', () => {
-    const keywords = [
-      new Keyword('machine'),
-      new Keyword('bear'),
-      new Keyword('driver')
-    ];
+  describe('sort with equal frequencies', () => {
+    let keywords;
 
-    controller.sortKeywords(keywords, 'desc');
+    beforeEach(() => {
+      keywords = [
+        new Keyword('apple', { frequency: 10 }),
+        new Keyword('agreement', { frequency: 10 }),
+        new Keyword('Apple', { frequency: 10 })
+      ];
+    });
 
-    const result = keywords.map(k => k.name);
-    expect(result).toEqual(['machine', 'driver', 'bear']);
-  });
+    it('sort in ascending order', () => {
+      controller.sortKeywords(keywords, 'asc');
+  
+      const result = keywords.map(k => k.name);
+      expect(result).toEqual(['apple', 'agreement', 'Apple']);
+    });
 
-  test('sort case-insensitive', () => {
-    const keywords = [
-      new Keyword('apple'),
-      new Keyword('agreement'),
-      new Keyword('Apple')
-    ];
-
-    controller.sortKeywords(keywords, 'asc');
-
-    const result = keywords.map(k => k.name);
-    expect(result).toEqual(['agreement', 'apple', 'Apple']);
-  });
-
-  test('sort with numbers', () => {
-    const keywords = [
-      new Keyword('11'),
-      new Keyword('2'),
-      new Keyword('item2'),
-      new Keyword('item11')
-    ];
-
-    controller.sortKeywords(keywords, 'asc');
-
-    const result = keywords.map(k => k.name);
-    expect(result).toEqual(['2', '11', 'item2', 'item11']);
+    it('sort in descending order', () => {
+      controller.sortKeywords(keywords, 'desc');
+  
+      const result = keywords.map(k => k.name);
+      expect(result).toEqual(['apple', 'agreement', 'Apple']);
+    });
   });
 });
