@@ -61,7 +61,7 @@ describe('KeywordView', () => {
     expect(document.body.contains(dummy)).toBe(false);
   });
 
-  test('setters should assign values correclty', () => {
+  test('setters should assign values correctly', () => {
     const dummy = {};
 
     view.header = dummy;
