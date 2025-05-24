@@ -163,7 +163,7 @@ class KeywordController {
   // SORT FUNCTION 
   sortKeywords(keywords, sortDirection) {
     keywords.sort((a, b) => {
-      const compare = a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true });
+      const compare = a.frequency - b.frequency;
       return (sortDirection === "asc") ? compare : -compare;
     });
   }

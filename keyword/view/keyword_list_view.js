@@ -141,7 +141,9 @@ class KeywordListView {
 
   scrollToPagination() {
     if (this._pagination) {
-      this._pagination.scrollIntoView();
+      this._pagination.scrollIntoView({
+        block: "nearest"
+      });
     }
   }
 
@@ -167,7 +169,7 @@ class KeywordListView {
       item.classList.add('keyword-list-item');
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
       item.innerHTML = `
-        <h4 class="keyword-item__title">${Utils.escapeHTML(keywordItem.name)}</h4>
+        <h4 class="keyword-item__title">${Utils.escapeHTML(keywordItem.name)} (${keywordItem.frequency})</h4>
         <div class="keyword-item__actions">
           <button class="keyword-item__actions__button keyword-button--highlight">
             <span class="visually-hidden">Highlight keyword</span>
