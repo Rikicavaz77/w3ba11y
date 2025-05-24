@@ -22,7 +22,7 @@ describe('KeywordListView', () => {
     expect(view.currentPage).toBe(1);
   });
 
-  test('setters should assign values correclty', () => {
+  test('setters should assign values correctly', () => {
     const dummy = {};
 
     view.container = dummy;
