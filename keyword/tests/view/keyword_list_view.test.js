@@ -11,7 +11,7 @@ describe('KeywordListView', () => {
 
   beforeEach(() => {
     view = new KeywordListView('Meta keywords', 'meta');
-    keywords = [new Keyword('test', { frequency: 26 }), new Keyword('another test', { frequency: 12 })];
+    keywords = [new Keyword('test', { frequency: 26 }), new Keyword('another test', { frequency: 'invalid' })];
   });
 
   test('should initialize container and fields correctly', () => {
@@ -58,7 +58,9 @@ describe('KeywordListView', () => {
     expect(items.length).toBe(2);
     expect(items[0].querySelectorAll('.keyword-button--highlight').length).toBe(1);
     expect(items[0].querySelectorAll('.keyword-button--view-details').length).toBe(1);
-    expect(items[1].textContent).toContain('another test (12)');
+    expect(items[0].textContent).toContain('test (26)');
+    expect(items[0].dataset.keywordIndex).toBe('0');
+    expect(items[1].textContent).toContain('another test (0)');
     expect(items[1].dataset.keywordIndex).toBe('1');
   });
 

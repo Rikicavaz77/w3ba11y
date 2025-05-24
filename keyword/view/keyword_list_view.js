@@ -159,11 +159,13 @@ class KeywordListView {
     const keywordList = this._container.querySelector(".keyword-list");
     keywordList.innerHTML = "";
     keywords.forEach(keywordItem => {
-      let item = document.createElement("li");
+      const item = document.createElement("li");
       item.classList.add('keyword-list-item');
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
+      const safeName = Utils.escapeHTML(keywordItem.name);
+      const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
       item.innerHTML = `
-        <h4 class="keyword-item__title">${Utils.escapeHTML(keywordItem.name)} (${keywordItem.frequency})</h4>
+        <h4 class="keyword-item__title">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
           <button class="keyword-item__actions__button keyword-button--highlight">
             <span class="visually-hidden">Highlight keyword</span>
