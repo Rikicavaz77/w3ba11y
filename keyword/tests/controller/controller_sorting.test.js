@@ -26,7 +26,7 @@ describe('KeywordController - sortKeywords()', () => {
       expect(result).toEqual(['machine', 'driver', 'bear']);
     });
 
-    test('sort in descending order', () => {
+    it('sort in descending order', () => {
       controller.sortKeywords(keywords, 'desc');
   
       const result = keywords.map(k => k.name);
