@@ -4,6 +4,8 @@ class KeywordView {
     this._iframe = iframe;
     this._header;
     this._body;
+    this._overviewTab;
+    this._settingsTab;
     this._tabButtons;
     this._activeTabButton;
     this._colorInputs;
@@ -40,8 +42,16 @@ class KeywordView {
     return this._container.querySelector('.keywords__section--dashboard');
   }
 
+  get overviewTab() {
+    return this._overviewTab;
+  }
+
   get overviewTabButton() {
     return this._container.querySelector('.tab__button--overview');
+  }
+
+  get settingsTab() {
+    return this._settingsTab;
   }
 
   get settingsTabButton() {
@@ -194,6 +204,7 @@ class KeywordView {
       overviewContainer = document.createElement("div");
       overviewContainer.classList.add("keywords__overview-container", "tab", "tab--active", "tab--overview");
       overviewContainer.dataset.tab = "overview";
+      this._overviewTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
     overviewContainer.innerHTML = `
@@ -293,6 +304,7 @@ class KeywordView {
       settingsContainer = document.createElement("div");
       settingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
       settingsContainer.dataset.tab = "settings";
+      this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
     settingsContainer.innerHTML = `

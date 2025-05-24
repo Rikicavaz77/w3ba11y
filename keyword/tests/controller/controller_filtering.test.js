@@ -1,16 +1,13 @@
 const KeywordController = require('../../controller/controller');
 const Keyword = require('../../model/keyword');
 const Utils = require('../../utils/utils');
-
-global.Utils = {
-  escapeRegExp: Utils.escapeRegExp
-};
+global.Utils = Utils;
 
 describe('KeywordController - filterKeywords()', () => {
   let controller;
 
   beforeEach(() => {
-    controller = { filterKeywords: KeywordController.prototype.filterKeywords };
+    controller = Object.create(KeywordController.prototype);
   });
 
   test('should filter keywords based on substring', () => {

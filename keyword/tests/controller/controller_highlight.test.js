@@ -68,12 +68,12 @@ describe('KeywordController - highlight()', () => {
           tag: 'p',
           prop: 'bg'
         },
-        value: 'yellow'
+        value: '#ffea00'
       }
     };
 
     controller.updateHighlightColors(event);
 
-    expect(controller.keywordHighlighter.updateTagColors).toHaveBeenCalledWith('p', 'bg', 'yellow');
+    expect(controller.keywordHighlighter.updateTagColors).toHaveBeenCalledWith('p', 'bg', '#ffea00');
   });
 });

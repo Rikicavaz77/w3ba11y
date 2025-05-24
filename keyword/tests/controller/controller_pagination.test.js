@@ -20,13 +20,9 @@ describe('KeywordController - pagination', () => {
   let controller;
 
   beforeEach(() => {
-    controller = { 
-      displayMetaKeywords: makeKeywords(12),
-      batchSizes: { meta: 5 },
-      renderPage: KeywordController.prototype.renderPage,
-      changePage: KeywordController.prototype.changePage,
-      getListByType: KeywordController.prototype.getListByType
-    };
+    controller = Object.create(KeywordController.prototype);
+    controller.displayMetaKeywords = makeKeywords(12);
+    controller.batchSizes = { meta: 5 };
   });
 
   describe('renderPage()', () => {
@@ -46,6 +42,22 @@ describe('KeywordController - pagination', () => {
         3,
         2,
         5
+      );
+    });
+
+    it('should render correct slice for page 3', () => {
+      const listView = mockListView({ currentPage: 3 });
+  
+      controller.renderPage('meta', listView, controller.displayMetaKeywords, 3);
+  
+      expect(listView.render).toHaveBeenCalledWith(
+        [
+          { name: 'Keyword11' },
+          { name: 'Keyword12' }
+        ],
+        3,
+        3,
+        10
       );
     });
 
@@ -70,15 +82,6 @@ describe('KeywordController - pagination', () => {
   });
   
   describe('changePage()', () => {
-    it('changePage() should do nothing if page is current', () => {
-      const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
-      controller.view = { getListViewByType: jest.fn(() => listView) };
-
-      controller.changePage('meta', 1);
-
-      expect(listView.render).not.toHaveBeenCalled();
-    });
-
     it('changePage() should call renderPage with correct arguments', () => {
       const listView = mockListView();
       controller.view = { getListViewByType: jest.fn(() => listView) };
@@ -93,6 +96,17 @@ describe('KeywordController - pagination', () => {
         2
       );
       expect(listView.scrollToPagination).toHaveBeenCalled();
+
+      spy.mockRestore();
+    });
+
+    it('changePage() should do nothing if page is current', () => {
+      const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
+      controller.view = { getListViewByType: jest.fn(() => listView) };
+
+      controller.changePage('meta', 1);
+
+      expect(listView.render).not.toHaveBeenCalled();
     });
   });
 });

@@ -5,16 +5,14 @@ const KeywordAnalysisStrategy = require('../../../services/strategy/keyword_anal
 global.KeywordAnalysisStrategy = KeywordAnalysisStrategy;
 const AllInOneAnalysisStrategy = require('../../../services/strategy/all_in_one_analysis_strategy');
 const KeywordAnalyzer = require('../../../services/keyword_analyzer');
-const TextProcessor = require('../../../services/text_processor');
 const TreeWalkerManager = require('../../../services/tree_walker_manager');
+const TextProcessor = require('../../../services/text_processor');
 const TagAccessor = require('../../../services/tag_accessor');
 const WordCounter = require('../../../services/word_counter');
 const Keyword = require('../../../model/keyword');
 const Utils = require('../../../utils/utils');
+global.Utils = Utils;
 
-global.Utils = {
-  escapeRegExp: Utils.escapeRegExp
-};
 global.sw = {
   eng: ['the', 'and', 'is'],
   ita: ['il', 'la', 'e']

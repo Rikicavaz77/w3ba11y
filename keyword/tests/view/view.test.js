@@ -12,7 +12,7 @@ const Utils = require('../../utils/utils');
 global.Utils = Utils;
 
 describe('KeywordView', () => {
-  let view, mockListView, keywords;
+  let view, keywords;
 
   beforeEach(() => {
     document.body.innerHTML = `
@@ -22,12 +22,6 @@ describe('KeywordView', () => {
     `;
 
     view = new KeywordView(document);
-    
-    mockListView = {
-      container: document.createElement('div'),
-      render: jest.fn()
-    }
-    view.createListView = jest.fn().mockReturnValue(mockListView);
     keywords = [new Keyword('test'), new Keyword('another test')];
   });
 
@@ -50,7 +44,7 @@ describe('KeywordView', () => {
     console.error.mockRestore();
   });
 
-  test('should remove existing keyword section before appending new one',() => {
+  test('should remove existing keyword section before appending new one', () => {
     document.body.querySelector('aside .w3ba11y__body').innerHTML = `
       <div class="w3ba11y__section w3ba11y__section--keyword"></div>
     `;
@@ -152,15 +146,25 @@ describe('KeywordView', () => {
   });
 
   describe('renderKeywordListContainer()', () => {
-    it('should append list view container', () => {
-      const appendSpy = jest.spyOn(Element.prototype, 'appendChild');
-  
-      const keywordListInfo = {
+    let mockListView, keywordListInfo;
+
+    beforeEach(() => {
+      mockListView = {
+        container: document.createElement('div'),
+        render: jest.fn()
+      }
+      view.createListView = jest.fn().mockReturnValue(mockListView);
+
+      keywordListInfo = {
         type: 'meta',
         title: 'Meta keywords',
         keywords: keywords,
         totalPages: 1
       };
+    });
+
+    it('should append list view container', () => {
+      const appendSpy = jest.spyOn(Element.prototype, 'appendChild');
   
       view.renderKeywordListContainer(keywordListInfo);
       const all = view.body.querySelector('.keyword-all-lists__container');
@@ -168,32 +172,23 @@ describe('KeywordView', () => {
       expect(all.contains(mockListView.container)).toBe(true);
       expect(mockListView.render).toHaveBeenCalledWith(keywords, 1);
       expect(appendSpy).toHaveBeenCalledTimes(2);
+
       appendSpy.mockRestore();
     });
 
     it('should prepend list view container', () => {
       const prependSpy = jest.spyOn(Element.prototype, 'prepend');
   
-      const keywordListInfo = {
-        type: 'userAdded',
-        title: 'User added keywords',
-        keywords: keywords,
-        totalPages: 1
-      };
+      keywordListInfo.type = 'userAdded';
+      keywordListInfo.title = 'User added keywords';
   
       view.renderKeywordListContainer(keywordListInfo);
       expect(prependSpy).toHaveBeenCalledWith(mockListView.container);
+
       prependSpy.mockRestore();
     });
 
     it('should not append if container already exists', () => {
-      const keywordListInfo = {
-        type: 'meta',
-        title: 'Meta keywords',
-        keywords: keywords,
-        totalPages: 1
-      };
-
       const all = document.createElement('div');
       all.classList.add('keyword-all-lists__container');
       const existing = document.createElement('div');
@@ -252,20 +247,20 @@ describe('KeywordView', () => {
     });
 
     it('should switch active tab', () => {
-      const overviewTab = view.overviewTabButton;
-      const settingsTab = view.settingsTabButton;
-      view.changeTab(settingsTab);
-      expect(overviewTab.classList.contains('tab__button--active')).toBe(false);
-      expect(view.container.querySelector('.tab--overview').classList.contains('tab--active')).toBe(false);
-      expect(view.activeTabButton).toBe(settingsTab);
-      expect(settingsTab.classList.contains('tab__button--active')).toBe(true);
-      expect(view.container.querySelector('.tab--settings').classList.contains('tab--active')).toBe(true);
+      const overviewTabButton = view.overviewTabButton;
+      const settingsTabButton = view.settingsTabButton;
+      view.changeTab(settingsTabButton);
+      expect(overviewTabButton.classList.contains('tab__button--active')).toBe(false);
+      expect(view.overviewTab.classList.contains('tab--active')).toBe(false);
+      expect(view.activeTabButton).toBe(settingsTabButton);
+      expect(settingsTabButton.classList.contains('tab__button--active')).toBe(true);
+      expect(view.settingsTab.classList.contains('tab--active')).toBe(true);
     });
 
     it('should not switch if tab already active', () => {
-      const overviewTab = view.overviewTabButton;
-      view.changeTab(overviewTab);
-      expect(view.activeTabButton).toBe(overviewTab);
+      const overviewTabButton = view.overviewTabButton;
+      view.changeTab(overviewTabButton);
+      expect(view.activeTabButton).toBe(overviewTabButton);
     });
   });
 
@@ -281,10 +276,6 @@ describe('KeywordView', () => {
   });
   
   describe('createListView()', () => {
-    beforeEach(() => {
-      view.createListView = KeywordView.prototype.createListView.bind(view);
-    });
-
     it('should create list view correctly', () => {
       ['meta', 'userAdded', 'oneWord'].forEach(type => {
         const result = view.createListView({ title: 'Test', type: type });
@@ -385,7 +376,7 @@ describe('KeywordView', () => {
     expect(sections[0]).toBe(view.dashboardSection);
   });
 
-  test('getSection() should return all sections', () => { 
+  test('getSection() should return the section by class', () => { 
     const section = view.getSection('dashboard');
     expect(section).toBeTruthy();
     expect(section).toBe(view.dashboardSection);

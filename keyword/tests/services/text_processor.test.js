@@ -4,13 +4,10 @@
 const TextProcessor = require('../../services/text_processor');
 const TreeWalkerManager = require('../../services/tree_walker_manager');
 const Utils = require('../../utils/utils');
-
-global.Utils = {
-  escapeRegExp: Utils.escapeRegExp
-};
+global.Utils = Utils;
 
 describe('TextProcessor', () => {
-  let treeWalker, processor;
+  let processor;
 
   beforeEach(() => {
     document.body.innerHTML = `
@@ -23,7 +20,7 @@ describe('TextProcessor', () => {
         <p>Another <b>test</b></p>
       </div> 
     `;
-    treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document.body);
     processor = new TextProcessor(document, treeWalker);
   });
 
