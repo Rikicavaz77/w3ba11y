@@ -58,6 +58,10 @@ class KeywordController {
     this.bindGlobalShortcuts();
   }
 
+  update() {
+    // To-Do
+  }
+
   // CREATE OVERVIEW FUNCTION
   createOverview() {
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
