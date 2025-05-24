@@ -81,8 +81,14 @@ describe('KeywordController - init', () => {
     expect(document.querySelector('.keywords__settings-container')).toBeTruthy();
     expect(document.querySelector('.keywords__input-container')).toBeTruthy();
     expect(document.querySelector('.keyword-all-lists__container')).toBeTruthy();
-    expect(document.querySelector('[data-list-type="meta"]')).toBeTruthy();
-    expect(document.querySelector('[data-list-type="oneWord"]')).toBeTruthy();
+    let listContainer = document.querySelector('[data-list-type="meta"]');
+    expect(listContainer).toBeTruthy();
+    let button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
+    expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
+    listContainer = document.querySelector('[data-list-type="oneWord"]');
+    expect(listContainer).toBeTruthy();
+    button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
+    expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
   });
 
   test('should highlight keyword on input and checkbox', () => {

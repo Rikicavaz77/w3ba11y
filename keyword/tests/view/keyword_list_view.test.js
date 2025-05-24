@@ -11,7 +11,7 @@ describe('KeywordListView', () => {
 
   beforeEach(() => {
     view = new KeywordListView('Meta keywords', 'meta');
-    keywords = [new Keyword('test'), new Keyword('another test')];
+    keywords = [new Keyword('test', { frequency: 26 }), new Keyword('another test', { frequency: 'invalid' })];
   });
 
   test('should initialize container and fields correctly', () => {
@@ -20,6 +20,14 @@ describe('KeywordListView', () => {
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
+    expect(view.sortDirection).toBeNull();
+    expect(view.currentSortButton).toBeNull();
+
+    view = new KeywordListView(`Most frequent 'single-word' keywords`, 'one Word', 'desc');
+    expect(view.sortDirection).toBe('desc');
+    const button = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
+    expect(view.currentSortButton).toBe(button);
+    expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
   });
 
   test('setters should assign values correctly', () => {
@@ -58,7 +66,9 @@ describe('KeywordListView', () => {
     expect(items.length).toBe(2);
     expect(items[0].querySelectorAll('.keyword-button--highlight').length).toBe(1);
     expect(items[0].querySelectorAll('.keyword-button--view-details').length).toBe(1);
-    expect(items[1].textContent).toContain('another test');
+    expect(items[0].textContent).toContain('test (26)');
+    expect(items[0].dataset.keywordIndex).toBe('0');
+    expect(items[1].textContent).toContain('another test (0)');
     expect(items[1].dataset.keywordIndex).toBe('1');
   });
 

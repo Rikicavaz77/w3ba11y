@@ -1,10 +1,10 @@
 class KeywordListView {
-  constructor(title, listType) {
+  constructor(title, listType, initialSortDirection = null) {
     this._title = title;
     this._listType = listType;
     this._searchKeywordField = null;
     this._currentSortButton = null;
-    this._sortDirection = null;
+    this._sortDirection = initialSortDirection;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
@@ -121,15 +121,15 @@ class KeywordListView {
       <ul class="keyword-list"></ul>
       <ol class="keywords__pagination"></ol>
     `;
-    /* To-Do:
-      <select name="sort-dropdown" class="keywords__sort-dropdown">
-        <option class="keywords__sort-dropdown__option" value="sort-by-name">Sort by name</option>
-        <option class="keywords__sort-dropdown__option" value="sort-by-score">Sort by score</option>
-      </select>
-    */
 
     this._searchKeywordField = keywordListContainer.querySelector('.keywords__input-wrapper__field');
     this._pagination = keywordListContainer.querySelector('.keywords__pagination');
+    if (this._sortDirection) {
+      const button = keywordListContainer.querySelector(`.keywords__sort-button[data-sort="${this._sortDirection}"]`);
+      if (button) {
+        this.updateSortButtons(button);
+      }
+    }
 
     return keywordListContainer;
   }
@@ -141,7 +141,9 @@ class KeywordListView {
 
   scrollToPagination() {
     if (this._pagination) {
-      this._pagination.scrollIntoView();
+      this._pagination.scrollIntoView({
+        block: "nearest"
+      });
     }
   }
 
@@ -163,11 +165,13 @@ class KeywordListView {
     const keywordList = this._container.querySelector(".keyword-list");
     keywordList.innerHTML = "";
     keywords.forEach(keywordItem => {
-      let item = document.createElement("li");
+      const item = document.createElement("li");
       item.classList.add('keyword-list-item');
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
+      const safeName = Utils.escapeHTML(keywordItem.name);
+      const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
       item.innerHTML = `
-        <h4 class="keyword-item__title">${Utils.escapeHTML(keywordItem.name)}</h4>
+        <h4 class="keyword-item__title">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
           <button class="keyword-item__actions__button keyword-button--highlight">
             <span class="visually-hidden">Highlight keyword</span>
