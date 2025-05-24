@@ -30,14 +30,11 @@ describe('KeywordController - events', () => {
     controller = Object.create(KeywordController.prototype);
     controller.view = mockView;
 
-    jest.spyOn(controller, 'toggleHighlight');
-
     controller.eventHandlers = {
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
       clearHighlightCheckbox: jest.fn(),
-      toggleHighlight: controller.toggleHighlight.bind(controller),
       analyzeKeyword: jest.fn()
     };
 
@@ -79,16 +76,21 @@ describe('KeywordController - events', () => {
   });
 
   test('bindHighlightToggle() should toggle highlight', () => {
+    const spy = jest.spyOn(controller, 'toggleHighlight');
+    controller.eventHandlers.toggleHighlight = controller.toggleHighlight.bind(controller);
+
     controller.bindHighlightToggle();
     controller.view.customKeywordInput.value = '  test  ';
     controller.view.keywordHighlightCheckbox.checked = true;
-    controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+    controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change'));
     expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('test');
     
     controller.view.keywordHighlightCheckbox.checked = false;
-    controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+    controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change'));
     expect(controller.keywordHighlighter.removeHighlight).toHaveBeenCalled();
-    expect(controller.toggleHighlight).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    spy.mockRestore();
   });
 
   test('bindAnalyzeKeyword() should trigger analysis', () => {
@@ -195,5 +197,9 @@ describe('KeywordController - events', () => {
       inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       expect(controller.removeFilters).toHaveBeenCalledWith('meta');
     });
+  });
+
+  afterAll(() => {
+    delete global.Keyword;
   });
 });
