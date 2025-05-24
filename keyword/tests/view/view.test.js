@@ -40,7 +40,7 @@ describe('KeywordView', () => {
     expect(view.iframe).toBe(document);
   });
 
-  test('should make container null if aside boy is missing', () => {
+  test('should make container null if aside body is missing', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
 
     document.body.innerHTML = '';
