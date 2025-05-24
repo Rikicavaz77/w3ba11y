@@ -71,6 +71,7 @@ describe('TagAccessor', () => {
     accessor.resetCache();
     const secondCall = accessor.getTag('h1');
 
+    expect(accessor.useCache).toBe(true);
     expect(secondCall).not.toBe(firstCall);
   });
 });

@@ -5,6 +5,9 @@ const KeywordView = require('../../view/view');
 const Keyword = require('../../model/keyword');
 const KeywordListView = require('../../view/keyword_list_view');
 global.KeywordListView = KeywordListView;
+jest.mock('../../view/analysis_result_view');
+const AnalysisResultView = require('../../view/analysis_result_view');
+global.AnalysisResultView = AnalysisResultView;
 const Utils = require('../../utils/utils');
 global.Utils = Utils;
 
@@ -35,6 +38,49 @@ describe('KeywordView', () => {
     expect(view.tabButtons.length).toBeGreaterThan(0);
     expect(view.activeTabButton.classList.contains('tab__button--overview')).toBe(true);
     expect(view.iframe).toBe(document);
+  });
+
+  test('should make container null if aside boy is missing', () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    document.body.innerHTML = '';
+    view = new KeywordView(document);
+    expect(view.container).toBeNull();
+
+    console.error.mockRestore();
+  });
+
+  test('should remove existing keyword section before appending new one',() => {
+    document.body.querySelector('aside .w3ba11y__body').innerHTML = `
+      <div class="w3ba11y__section w3ba11y__section--keyword"></div>
+    `;
+    const dummy = document.body.querySelector('.w3ba11y__section--keyword');
+
+    view = new KeywordView(document);
+    expect(document.body.contains(view.container)).toBe(true);
+    expect(document.body.contains(dummy)).toBe(false);
+  });
+
+  test('setters should assign values correclty', () => {
+    const dummy = {};
+
+    view.header = dummy;
+    view.body = dummy;
+    view.tabButtons = dummy;
+    view.activeTabButton = dummy;
+    view.colorInputs = dummy;
+    view.customKeywordInput = dummy;
+    view.keywordHighlightCheckbox = dummy;
+    view.analyzeButton = dummy;
+
+    expect(view.header).toBe(dummy);
+    expect(view.body).toBe(dummy);
+    expect(view.tabButtons).toBe(dummy);
+    expect(view.activeTabButton).toBe(dummy);
+    expect(view.colorInputs).toBe(dummy);
+    expect(view.customKeywordInput).toBe(dummy);
+    expect(view.keywordHighlightCheckbox).toBe(dummy);
+    expect(view.analyzeButton).toBe(dummy);
   });
 
   test('renderKeywordAnalysisOverview() should create overview container', () => {
@@ -162,21 +208,65 @@ describe('KeywordView', () => {
     });
   });
 
-  test('changeTab() should switch active tab', () => {
-    const overviewTab = view.overviewTabButton;
-    const settingsTab = view.settingsTabButton;
-    view.render({
-      metaTagKeywordsContent: '',
-      lang: '',
-      wordCount: 0,
-      uniqueWordCount: 0
-    }, {});
-    view.changeTab(settingsTab);
-    expect(overviewTab.classList.contains('tab__button--active')).toBe(false);
-    expect(view.container.querySelector('.tab--overview').classList.contains('tab--active')).toBe(false);
-    expect(view.activeTabButton).toBe(settingsTab);
-    expect(settingsTab.classList.contains('tab__button--active')).toBe(true);
-    expect(view.container.querySelector('.tab--settings').classList.contains('tab--active')).toBe(true);
+  describe('renderKeywordDetails()', () => {
+    let mockContainer, mockRender;
+
+    beforeEach(() => {
+      mockContainer = document.createElement('div');
+      mockRender = jest.fn();
+      AnalysisResultView.mockImplementation(() => ({
+        container: mockContainer,
+        render: mockRender
+      }));
+    });
+
+    test('should create and render AnalysisResultView if not present', () => {
+      view.renderKeywordDetails(keywords[0]);
+      expect(mockRender).toHaveBeenCalledWith(keywords[0]);
+      expect(view.analysis).toBeDefined();
+
+      view.renderKeywordDetails(keywords[1]);
+      expect(mockRender).toHaveBeenCalledWith(keywords[1]);
+      expect(AnalysisResultView).toHaveBeenCalledTimes(1);
+    });
+
+    test('should remove existing section before appending new one', () => {
+      const dummy = document.createElement('div');
+      dummy.classList.add('keywords__section--result');
+      view.container.appendChild(dummy);
+
+      view.renderKeywordDetails(keywords[0]);
+      expect(view.container.contains(mockContainer)).toBe(true);
+      expect(view.container.contains(dummy)).toBe(false);
+    });
+  });
+
+  describe('changeTab()', () => {
+    beforeEach(() => {
+      view.render({
+        metaTagKeywordsContent: '',
+        lang: '',
+        wordCount: 0,
+        uniqueWordCount: 0
+      }, {});
+    });
+
+    it('should switch active tab', () => {
+      const overviewTab = view.overviewTabButton;
+      const settingsTab = view.settingsTabButton;
+      view.changeTab(settingsTab);
+      expect(overviewTab.classList.contains('tab__button--active')).toBe(false);
+      expect(view.container.querySelector('.tab--overview').classList.contains('tab--active')).toBe(false);
+      expect(view.activeTabButton).toBe(settingsTab);
+      expect(settingsTab.classList.contains('tab__button--active')).toBe(true);
+      expect(view.container.querySelector('.tab--settings').classList.contains('tab--active')).toBe(true);
+    });
+
+    it('should not switch if tab already active', () => {
+      const overviewTab = view.overviewTabButton;
+      view.changeTab(overviewTab);
+      expect(view.activeTabButton).toBe(overviewTab);
+    });
   });
 
   test('getListViewByType() should return correct list view', () => {
@@ -196,20 +286,114 @@ describe('KeywordView', () => {
     });
 
     it('should create list view correctly', () => {
-      const result = view.createListView({ title: 'Test', type: 'meta' });
-      expect(result).toBeInstanceOf(KeywordListView);
-      expect(result.container.dataset.listType).toBe('meta');
+      ['meta', 'userAdded', 'oneWord'].forEach(type => {
+        const result = view.createListView({ title: 'Test', type: type });
+        expect(result).toBeInstanceOf(KeywordListView);
+        expect(result.container.dataset.listType).toBe(type);
+      });
     });
 
     it('should return existing list view if already created', () => {
-      const first = view.createListView({ title: 'Test', type: 'meta' });
-      const second = view.createListView({ title: 'Another test', type: 'meta' });
-      expect(second).toBe(first);
+      ['meta', 'userAdded', 'oneWord'].forEach(type => {
+        const first = view.createListView({ title: 'Test', type: type });
+        const second = view.createListView({ title: 'Another test', type: type });
+        expect(second).toBe(first);
+      });
     });
+
+    it('should return null for unknown type', () => {
+      const result = view.createListView({ title: 'Unknonw', type: 'unsupportedType' });
+      expect(result).toBeNull();
+    });
+  });
+
+  test('render() should call internal rendering methods', () => {
+    const overviewInfo = {
+      metaTagKeywordsContent: '',
+      lang: '',
+      wordCount: 0,
+      uniqueWordCount: 0
+    };
+    const colorMap = {
+      strong: { bg: '#e6320e', color: '#000000', border: '#000000' },
+    };
+
+    view.renderKeywordAnalysisOverview = jest.fn();
+    view.renderKeywordSettings = jest.fn();
+    view.renderKeywordInputBox = jest.fn();
+
+    view.render(overviewInfo, colorMap);
+
+    expect(view.renderKeywordAnalysisOverview).toHaveBeenCalledWith(overviewInfo);
+    expect(view.renderKeywordSettings).toHaveBeenCalledWith(colorMap);
+    expect(view.renderKeywordInputBox).toHaveBeenCalled();
+  });
+
+  test('toggleSection() should activate correct section and scroll', () => {
+    const mockSection = document.createElement('div');
+    mockSection.classList.add('keywords__section', 'keywords__section--test');
+    view.container.appendChild(mockSection);
+    
+    const header = document.createElement('div');
+    header.classList.add('w3ba11y__header');
+    header.scrollIntoView = jest.fn();
+    document.body.querySelector('aside').prepend(header);
+
+    view.toggleSection('test');
+    expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(false);
+    expect(mockSection.classList.contains('keywords__section--active')).toBe(true);
+    expect(header.scrollIntoView).toHaveBeenCalled();
+  });
+
+  test('showTooltip() should make tooltip visible', () => {
+    view.renderKeywordSettings({});
+    const trigger = view.tooltipsTrigger[0];
+    const tooltip = view.tooltips[0];
+
+    const event = { target: trigger };
+    view.showTooltip(event);
+    expect(tooltip.classList.contains('keywords--not-visible')).toBe(false);
+  });
+
+  test('hideTooltip() should make tooltip not visible', () => {
+    view.renderKeywordSettings({});
+    const trigger = view.tooltipsTrigger[0];
+    const tooltip = view.tooltips[0];
+    tooltip.classList.remove('keywords--not-visible');
+
+    const event = { target: trigger };
+    view.hideTooltip(event);
+    expect(tooltip.classList.contains('keywords--not-visible')).toBe(true);
+  });
+
+  test('hideAllTooltips() should add hidden class to all tooltips', () => {
+    const tooltip1 = document.createElement('span');
+    tooltip1.classList.add('keywords__tooltip-text');
+    const tooltip2 = document.createElement('span');
+    tooltip2.classList.add('keywords__tooltip-text');
+    view.container.appendChild(tooltip1);
+    view.container.appendChild(tooltip2);
+    
+    view.hideAllTooltips();
+    expect(tooltip1.classList.contains('keywords--not-visible')).toBe(true);
+    expect(tooltip2.classList.contains('keywords--not-visible')).toBe(true);
+  });
+
+  test('getAllSection() should return all sections', () => { 
+    const sections = view.getAllSection();
+    expect(sections.length).toBe(1);
+    expect(sections[0]).toBe(view.dashboardSection);
+  });
+
+  test('getSection() should return all sections', () => { 
+    const section = view.getSection('dashboard');
+    expect(section).toBeTruthy();
+    expect(section).toBe(view.dashboardSection);
   });
 
   afterAll(() => {
     delete global.KeywordListView;
+    delete global.AnalysisResultView;
     delete global.Utils;
   }); 
 });

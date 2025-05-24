@@ -20,6 +20,7 @@ describe('TextProcessor', () => {
         <div>   </div>
         <script>Ignored script</script>
         <p>Another <strong>test</strong></p>
+        <p>Another <b>test</b></p>
       </div> 
     `;
     treeWalker = new TreeWalkerManager(document.body);
@@ -29,14 +30,17 @@ describe('TextProcessor', () => {
   test('getTextNodes() should return valid text nodes', () => {
     const textNodes = processor.getTextNodes();
     const values = textNodes.map(n => n.nodeValue.trim());
-    expect(values).toEqual(['Main heading', 'This is a test.', 'Another', 'test']);
+    expect(values).toEqual(['Main heading', 'This is a test.', 'Another', 'test', 'Another', 'test']);
   });
 
   describe('getParentName()', () => {
     it('should return allowed parent tag', () => {
       const textNodes = processor.getTextNodes();
-      const parent = processor.getParentName(textNodes[0]);
+      let parent = processor.getParentName(textNodes[0]);
       expect(parent.toLowerCase()).toBe('h1');
+
+      parent = processor.getParentName(textNodes.at(-1));
+      expect(parent.toLowerCase()).toBe('p');
     });
 
     it('should return root node name when no allowed parent found', () => {
