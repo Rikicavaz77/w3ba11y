@@ -121,12 +121,6 @@ class KeywordListView {
       <ul class="keyword-list"></ul>
       <ol class="keywords__pagination"></ol>
     `;
-    /* To-Do:
-      <select name="sort-dropdown" class="keywords__sort-dropdown">
-        <option class="keywords__sort-dropdown__option" value="sort-by-name">Sort by name</option>
-        <option class="keywords__sort-dropdown__option" value="sort-by-score">Sort by score</option>
-      </select>
-    */
 
     this._searchKeywordField = keywordListContainer.querySelector('.keywords__input-wrapper__field');
     this._pagination = keywordListContainer.querySelector('.keywords__pagination');
