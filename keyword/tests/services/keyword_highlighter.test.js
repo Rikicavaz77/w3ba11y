@@ -2,14 +2,10 @@
  * @jest-environment jsdom
  */
 const KeywordHighlighter = require('../../services/keyword_highlighter');
-const TextProcessor = require('../../services/text_processor');
 const TreeWalkerManager = require('../../services/tree_walker_manager');
-
+const TextProcessor = require('../../services/text_processor');
 const Utils = require('../../utils/utils');
-
-global.Utils = {
-  escapeRegExp: Utils.escapeRegExp
-};
+global.Utils = Utils;
 
 describe('KeywordHighlighter', () => {
   let highlighter;

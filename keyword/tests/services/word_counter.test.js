@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 const WordCounter = require('../../services/word_counter');
-const TextProcessor = require('../../services/text_processor');
 const TreeWalkerManager = require('../../services/tree_walker_manager');
+const TextProcessor = require('../../services/text_processor');
 const TagAccessor = require('../../services/tag_accessor');
 
 global.sw = {
@@ -15,14 +15,10 @@ describe('WordCounter', () => {
   let wordCounter;
 
   beforeEach(() => {
-    document.head.innerHTML = '';
-    const title = document.createElement('title');
-    title.innerText = 'Test title';
-    document.head.appendChild(title);
-    const meta = document.createElement('meta');
-    meta.name = 'description';
-    meta.content = 'Test description';
-    document.head.appendChild(meta);
+    document.head.innerHTML = `
+      <title>Test title</title>
+      <meta name="description" content="Test description">
+    `;
     document.body.innerHTML = `
       <h1>Test heading</h1>
       <h1>Another test heading</h1>
@@ -41,21 +37,23 @@ describe('WordCounter', () => {
     expect(result.uniqueWords).toBe(13);
   });
 
-  test('findOneWordKeywords() should filter out english stopwords and return top words', () => {
-    const result = wordCounter.findOneWordKeywords();
-    expect(result).toContain('test');
-    expect(result).not.toContain('is');
-    expect(result[0]).toBe('test');
-    expect(result.length).toBeLessThanOrEqual(10);
-  });
+  describe('findOneWordKeywords()', () => {
+    it('should filter out english stopwords and return top words', () => {
+      const result = wordCounter.findOneWordKeywords();
+      expect(result).toContain('test');
+      expect(result).not.toContain('is');
+      expect(result[0]).toBe('test');
+      expect(result.length).toBeLessThanOrEqual(10);
+    });
 
-  test('findOneWordKeywords() should filter out english and italian stopwords', () => {
-    const result = wordCounter.findOneWordKeywords('it');
-    expect(result).toContain('caffè');
-    expect(result).toContain('test');
-    expect(result).not.toContain('il');
-    expect(result).not.toContain('is');
-  });
+    it('should filter out english and italian stopwords', () => {
+      const result = wordCounter.findOneWordKeywords('it');
+      expect(result).toContain('caffè');
+      expect(result).toContain('test');
+      expect(result).not.toContain('il');
+      expect(result).not.toContain('is');
+    });
+  }); 
 
   test('resetCache() should force recount', () => {
     const firstCount = wordCounter.countWords();

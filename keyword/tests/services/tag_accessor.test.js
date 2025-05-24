@@ -7,14 +7,10 @@ describe('TagAccessor', () => {
   let accessor;
 
   beforeEach(() => {
-    document.head.innerHTML = '';
-    const title = document.createElement('title');
-    title.innerText = 'Test title';
-    document.head.appendChild(title);
-    const meta = document.createElement('meta');
-    meta.name = 'Description';
-    meta.content = 'Test description';
-    document.head.appendChild(meta);
+    document.head.innerHTML = `
+      <title>Test title</title>
+      <meta name="Description" content="Test description">
+    `;
     document.body.innerHTML = `
       <h1>Test heading</h1>
       <h1>Another test heading</h1>
