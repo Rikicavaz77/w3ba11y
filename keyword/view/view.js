@@ -36,6 +36,10 @@ class KeywordView {
     return this._activeTabButton;
   }
 
+  get dashboardSection() {
+    return this._container.querySelector('.keywords__section--dashboard');
+  }
+
   get overviewTabButton() {
     return this._container.querySelector('.tab__button--overview');
   }
@@ -416,17 +420,17 @@ class KeywordView {
   showTooltip(event) {
     const tooltipText = event.target.closest('.keywords__tooltip-container')?.querySelector('.keywords__tooltip-text');
     if (!tooltipText) return;
-    tooltipText.classList.remove("keywords--not-visible");
+    tooltipText.classList.remove('keywords--not-visible');
   }
 
   hideTooltip(event) {
     const tooltipText = event.target.closest('.keywords__tooltip-container')?.querySelector('.keywords__tooltip-text');
     if (!tooltipText) return;
-    tooltipText.classList.add("keywords--not-visible");
+    tooltipText.classList.add('keywords--not-visible');
   }
 
   hideAllTooltips() {
-    this.tooltips.forEach(tooltip => tooltip.classList.add("keywords--not-visible"));
+    this.tooltips.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
   }
 
   changeTab(buttonClicked) {
@@ -449,6 +453,7 @@ class KeywordView {
   }
 }
 
+/* istanbul ignore next */
 // Export for use in Node environment (testing with Jest). Ignored in browsers
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = KeywordView;

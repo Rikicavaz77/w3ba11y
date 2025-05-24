@@ -22,6 +22,22 @@ describe('KeywordListView', () => {
     expect(view.currentPage).toBe(1);
   });
 
+  test('setters should assign values correctly', () => {
+    const dummy = {};
+
+    view.container = dummy;
+    view.searchKeywordField = dummy;
+    view.pagination = dummy;
+    view.paginationButtons = dummy;
+    view.currentPageButton = dummy;
+
+    expect(view.container).toBe(dummy);
+    expect(view.searchKeywordField).toBe(dummy);
+    expect(view.pagination).toBe(dummy);
+    expect(view.paginationButtons).toBe(dummy);
+    expect(view.currentPageButton).toBe(dummy);
+  });
+
   test('isCurrentPage() should return true if current page matches', () => {    
     view.currentPage = 3;
     expect(view.isCurrentPage(3)).toBe(true);

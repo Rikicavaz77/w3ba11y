@@ -23,8 +23,6 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "keyword/view/view.js"
-    ]
+    "coveragePathIgnorePatterns": []
   }
 }

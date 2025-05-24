@@ -14,8 +14,10 @@ describe('KeywordController', () => {
 
     controller.metaKeywords = [new Keyword('meta1')];
     controller.displayMetaKeywords = [new Keyword('meta1_display')];
-    controller.userKeywords = [];
-    controller.displayUserKeywords = [];
+    controller.userKeywords = [new Keyword('userAdded1')];
+    controller.displayUserKeywords = [new Keyword('userAdded1_display')];
+    controller.oneWordKeywords = [new Keyword('oneWord1')];
+    controller.displayOneWordKeywords = [new Keyword('oneWord1_display')];
     controller.batchSizes = { meta: 5 };
     controller.labelMap = { meta: 'Meta keywords' };
     controller.view = { 
@@ -25,9 +27,11 @@ describe('KeywordController', () => {
 
   describe('getListByType()', () => {
     it('should return the correct list', () => {
-      const { original, display } = controller.getListByType('meta');
-      expect(original[0].name).toBe('meta1');
-      expect(display[0].name).toBe('meta1_display');
+      ['meta', 'userAdded', 'oneWord'].forEach(type => {
+        const { original, display } = controller.getListByType(type);
+        expect(original[0].name).toContain(type);
+        expect(display[0].name).toContain(type);
+      });
     });
 
     it('should return null for unknown type', () => {
@@ -126,6 +130,9 @@ describe('KeywordController', () => {
 
   describe('analyzeKeyword()', () => {
     beforeEach(() => {
+      controller.userKeywords = [];
+      controller.displayUserKeywords = [];
+      
       controller.view = {
         customKeywordInput: { value: '  seo  ' },
         getListViewByType: jest.fn()
