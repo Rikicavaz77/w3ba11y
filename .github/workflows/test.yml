@@ -1,4 +1,5 @@
 name: Run tests
+run-name: "CI: Run Tests and Upload Coverage"
 
 on:
   pull_request:
