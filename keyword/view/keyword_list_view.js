@@ -141,7 +141,9 @@ class KeywordListView {
 
   scrollToPagination() {
     if (this._pagination) {
-      this._pagination.scrollIntoView();
+      this._pagination.scrollIntoView({
+        block: "nearest"
+      });
     }
   }
 

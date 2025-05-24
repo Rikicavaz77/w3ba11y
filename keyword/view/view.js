@@ -126,6 +126,8 @@ class KeywordView {
         return this._userKeywordsListView;
       case 'oneWord':
           return this._oneWordKeywordsListView;
+      case 'twoWords':
+        return this._twoWordsKeywordsListView;
       default:
         return null;
     }
@@ -148,6 +150,11 @@ class KeywordView {
           this._oneWordKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
         }
         return this._oneWordKeywordsListView; 
+      case 'twoWords':
+        if (!this._twoWordsKeywordsListView) {
+          this._twoWordsKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+        }
+        return this._twoWordsKeywordsListView; 
       default:
         return null;
     }
