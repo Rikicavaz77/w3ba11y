@@ -207,6 +207,9 @@ class KeywordView {
       this._overviewTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
+    /* To-Do:
+      Show warning if meta keywords is missing 
+    */
     overviewContainer.innerHTML = `
       <ul class="keywords__overview-list">
         <li class="keywords__overview-item">
