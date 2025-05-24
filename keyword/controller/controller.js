@@ -34,6 +34,7 @@ class KeywordController {
     this.displayUserKeywords = [];
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
+    this.init();
   }
 
   init() {
@@ -366,6 +367,7 @@ class KeywordController {
         const listType = this.getListType(target);
         if (!listType) return;
         const currentPage = parseInt(button.dataset.page, 10);
+        if (isNaN(currentPage)) return;
         this.changePage(listType, currentPage);
       });
 
@@ -384,6 +386,7 @@ class KeywordController {
   }
 }
 
+/* istanbul ignore next */
 // Export for use in Node environment (testing with Jest). Ignored in browsers
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = KeywordController;

@@ -4,6 +4,8 @@ class KeywordView {
     this._iframe = iframe;
     this._header;
     this._body;
+    this._overviewTab;
+    this._settingsTab;
     this._tabButtons;
     this._activeTabButton;
     this._colorInputs;
@@ -36,8 +38,20 @@ class KeywordView {
     return this._activeTabButton;
   }
 
+  get dashboardSection() {
+    return this._container.querySelector('.keywords__section--dashboard');
+  }
+
+  get overviewTab() {
+    return this._overviewTab;
+  }
+
   get overviewTabButton() {
     return this._container.querySelector('.tab__button--overview');
+  }
+
+  get settingsTab() {
+    return this._settingsTab;
   }
 
   get settingsTabButton() {
@@ -190,6 +204,7 @@ class KeywordView {
       overviewContainer = document.createElement("div");
       overviewContainer.classList.add("keywords__overview-container", "tab", "tab--active", "tab--overview");
       overviewContainer.dataset.tab = "overview";
+      this._overviewTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
     overviewContainer.innerHTML = `
@@ -289,6 +304,7 @@ class KeywordView {
       settingsContainer = document.createElement("div");
       settingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
       settingsContainer.dataset.tab = "settings";
+      this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
     settingsContainer.innerHTML = `
@@ -416,17 +432,17 @@ class KeywordView {
   showTooltip(event) {
     const tooltipText = event.target.closest('.keywords__tooltip-container')?.querySelector('.keywords__tooltip-text');
     if (!tooltipText) return;
-    tooltipText.classList.remove("keywords--not-visible");
+    tooltipText.classList.remove('keywords--not-visible');
   }
 
   hideTooltip(event) {
     const tooltipText = event.target.closest('.keywords__tooltip-container')?.querySelector('.keywords__tooltip-text');
     if (!tooltipText) return;
-    tooltipText.classList.add("keywords--not-visible");
+    tooltipText.classList.add('keywords--not-visible');
   }
 
   hideAllTooltips() {
-    this.tooltips.forEach(tooltip => tooltip.classList.add("keywords--not-visible"));
+    this.tooltips.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
   }
 
   changeTab(buttonClicked) {
@@ -447,4 +463,10 @@ class KeywordView {
   getSection(section) {
     return this._container.querySelector(`.keywords__section--${section}`);
   }
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = KeywordView;
 }

@@ -1,27 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-const TagAccessor = require('../services/tag_accessor');
+const TagAccessor = require('../../services/tag_accessor');
 
 describe('TagAccessor', () => {
-  let doc, accessor;
+  let accessor;
 
   beforeEach(() => {
-    document.head.innerHTML = '';
-    const title = document.createElement('title');
-    title.innerText = 'Test title';
-    document.head.appendChild(title);
-    const meta = document.createElement('meta');
-    meta.name = 'Description';
-    meta.content = 'Test description';
-    document.head.appendChild(meta);
+    document.head.innerHTML = `
+      <title>Test title</title>
+      <meta name="Description" content="Test description">
+    `;
     document.body.innerHTML = `
       <h1>Test heading</h1>
       <h1>Another test heading</h1>
       <img src="test.jpg" alt="Image alt text">
     `;
-    doc = document;
-    accessor = new TagAccessor(doc);
+    accessor = new TagAccessor(document);
   });
 
   describe('getTag()', () => {
@@ -72,6 +67,7 @@ describe('TagAccessor', () => {
     accessor.resetCache();
     const secondCall = accessor.getTag('h1');
 
+    expect(accessor.useCache).toBe(true);
     expect(secondCall).not.toBe(firstCall);
   });
 });

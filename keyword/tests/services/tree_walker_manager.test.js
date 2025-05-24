@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const TreeWalkerManager = require('../services/tree_walker_manager');
+const TreeWalkerManager = require('../../services/tree_walker_manager');
 
 describe('TreeWalkerManager', () => {
   let root, manager;

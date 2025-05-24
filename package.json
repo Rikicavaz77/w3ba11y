@@ -1,7 +1,7 @@
 {
   "name": "w3ba11y",
-  "version": "1.0.0",
-  "description": "<h1 align=\"center\">w3ba11y</h1> <h2 align=\"center\">Documentazione</h2> <p align=\"center\">La documentazione di progetto è visibile <a href=\"https://github.com/Rikicavaz77/Stage-Docs\" target=\"_blank\"><b>qui</b></a>.</p>",
+  "version": "0.0.2",
+  "description": "Tool to analyze and improve the accessibility and SEO optimization of websites",
   "main": "main.js",
   "scripts": {
     "test": "jest"
@@ -10,8 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/Rikicavaz77/w3ba11y.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "w3ba11y",
+    "accessibility",
+    "seo"
+  ],
+  "author": "Riccardo Fabbian, Riccardo Cavalli",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Rikicavaz77/w3ba11y/issues"
@@ -23,8 +27,6 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "keyword/controller"
-    ]
+    "coveragePathIgnorePatterns": []
   }
 }
