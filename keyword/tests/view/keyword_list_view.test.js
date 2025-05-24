@@ -20,6 +20,14 @@ describe('KeywordListView', () => {
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
+    expect(view.sortDirection).toBeNull();
+    expect(view.currentSortButton).toBeNull();
+
+    view = new KeywordListView(`Most frequent 'single-word' keywords`, 'one Word', 'desc');
+    expect(view.sortDirection).toBe('desc');
+    const button = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
+    expect(view.currentSortButton).toBe(button);
+    expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
   });
 
   test('setters should assign values correctly', () => {

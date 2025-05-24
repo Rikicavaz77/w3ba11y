@@ -53,14 +53,21 @@ describe('KeywordController', () => {
   test('renderKeywordListByType() should call renderKeywordListContainer with correct data', () => {
     controller.renderKeywordListByType('meta');
     
-    expect(controller.view.renderKeywordListContainer).toHaveBeenCalledTimes(1);
-    const arg = controller.view.renderKeywordListContainer.mock.calls[0][0];
+    expect(controller.view.renderKeywordListContainer).toHaveBeenCalled();
+    let arg = controller.view.renderKeywordListContainer.mock.calls[0][0];
     expect(arg).toBeInstanceOf(KeywordListInfo);
     expect(arg.type).toBe('meta');
     expect(arg.title).toBe('Meta keywords');
     expect(arg.keywords.length).toBe(1);
     expect(arg.keywords[0].name).toBe('meta1_display');
     expect(arg.totalPages).toBe(1);
+    expect(arg.sortDirection).toBeNull();
+
+
+    controller.renderKeywordListByType('oneWord', 'desc');
+    arg = controller.view.renderKeywordListContainer.mock.calls[1][0];
+    expect(arg).toBeInstanceOf(KeywordListInfo);
+    expect(arg.sortDirection).toBe('desc');
   });
 
   test('handleKeywordSorting() should sort keywords and update UI', () => {

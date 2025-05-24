@@ -41,11 +41,11 @@ class KeywordController {
     this.createOverview();
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
     if (this.displayMetaKeywords.length > 0) {
-      this.renderKeywordListByType("meta");
+      this.renderKeywordListByType('meta');
     }
     this.processMostFrequentKeywords();
     if (this.displayOneWordKeywords.length > 0) {
-      this.renderKeywordListByType("oneWord");
+      this.renderKeywordListByType('oneWord', 'desc');
     }
     this.setupTabListeners();
     this.setupTooltipListeners();
@@ -125,7 +125,7 @@ class KeywordController {
   }
 
   // RENDER KEYWORD LIST FUNCTION
-  renderKeywordListByType(listType) {
+  renderKeywordListByType(listType, sortDirection = null) {
     const { display } = this.getListByType(listType);
     const batchSize = this.batchSizes[listType] ?? 5;
     const keywordsData = display.slice(0, batchSize);
@@ -134,7 +134,8 @@ class KeywordController {
       this.labelMap[listType] ?? "Keywords",
       listType,
       keywordsData,
-      totalPages
+      totalPages,
+      sortDirection
     ));
   }
 

@@ -1,10 +1,10 @@
 class KeywordListView {
-  constructor(title, listType) {
+  constructor(title, listType, initialSortDirection = null) {
     this._title = title;
     this._listType = listType;
     this._searchKeywordField = null;
     this._currentSortButton = null;
-    this._sortDirection = null;
+    this._sortDirection = initialSortDirection;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
@@ -124,6 +124,12 @@ class KeywordListView {
 
     this._searchKeywordField = keywordListContainer.querySelector('.keywords__input-wrapper__field');
     this._pagination = keywordListContainer.querySelector('.keywords__pagination');
+    if (this._sortDirection) {
+      const button = keywordListContainer.querySelector(`.keywords__sort-button[data-sort="${this._sortDirection}"]`);
+      if (button) {
+        this.updateSortButtons(button);
+      }
+    }
 
     return keywordListContainer;
   }

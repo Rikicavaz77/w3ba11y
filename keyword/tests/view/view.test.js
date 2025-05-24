@@ -277,10 +277,22 @@ describe('KeywordView', () => {
   
   describe('createListView()', () => {
     it('should create list view correctly', () => {
-      ['meta', 'userAdded', 'oneWord'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type });
+      ['meta', 'userAdded'].forEach(type => {
+        const result = view.createListView({ title: 'Test', type: type, sortDirection: null });
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
+        expect(result.sortDirection).toBeNull();
+        expect(result.currentSortButton).toBeNull();
+      });
+
+      ['oneWord'].forEach(type => {
+        const result = view.createListView({ title: 'Test', type: type, sortDirection: 'desc' });
+        expect(result).toBeInstanceOf(KeywordListView);
+        expect(result.container.dataset.listType).toBe(type);
+        expect(result.sortDirection).toBe('desc');
+        const button = result.container.querySelector('.keywords__sort-button[data-sort="desc"]');
+        expect(result.currentSortButton).toBe(button);
+        expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
       });
     });
 

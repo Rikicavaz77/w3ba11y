@@ -135,17 +135,17 @@ class KeywordView {
     switch (keywordListInfo.type) {
       case 'meta':
         if (!this._metaKeywordsListView) {
-          this._metaKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+          this._metaKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type, keywordListInfo.sortDirection);
         }
         return this._metaKeywordsListView;
       case 'userAdded':
         if (!this._userKeywordsListView) {
-          this._userKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+          this._userKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type, keywordListInfo.sortDirection);
         }
         return this._userKeywordsListView;
       case 'oneWord':
         if (!this._oneWordKeywordsListView) {
-          this._oneWordKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type);
+          this._oneWordKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type, keywordListInfo.sortDirection);
         }
         return this._oneWordKeywordsListView; 
       default:
