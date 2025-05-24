@@ -132,7 +132,7 @@ describe('KeywordController', () => {
     beforeEach(() => {
       controller.userKeywords = [];
       controller.displayUserKeywords = [];
-
+      
       controller.view = {
         customKeywordInput: { value: '  seo  ' },
         getListViewByType: jest.fn()

@@ -68,29 +68,31 @@ describe('KeywordController - pagination', () => {
       );
     });
   });
+  
+  describe('changePage()', () => {
+    it('changePage() should do nothing if page is current', () => {
+      const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
+      controller.view = { getListViewByType: jest.fn(() => listView) };
 
-  test('changePage() should do nothing if page is current', () => {
-    const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
-    controller.view = { getListViewByType: jest.fn(() => listView) };
+      controller.changePage('meta', 1);
 
-    controller.changePage('meta', 1);
+      expect(listView.render).not.toHaveBeenCalled();
+    });
 
-    expect(listView.render).not.toHaveBeenCalled();
-  });
+    it('changePage() should call renderPage with correct arguments', () => {
+      const listView = mockListView();
+      controller.view = { getListViewByType: jest.fn(() => listView) };
+      const spy = jest.spyOn(controller, 'renderPage');
 
-  test('changePage() should call renderPage with correct arguments', () => {
-    const listView = mockListView();
-    controller.view = { getListViewByType: jest.fn(() => listView) };
-    const spy = jest.spyOn(controller, 'renderPage');
+      controller.changePage('meta', 2);
 
-    controller.changePage('meta', 2);
-
-    expect(spy).toHaveBeenCalledWith(
-      'meta',
-      listView,
-      controller.displayMetaKeywords,
-      2
-    );
-    expect(listView.scrollToPagination).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith(
+        'meta',
+        listView,
+        controller.displayMetaKeywords,
+        2
+      );
+      expect(listView.scrollToPagination).toHaveBeenCalled();
+    });
   });
 });
