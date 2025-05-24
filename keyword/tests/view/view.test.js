@@ -44,7 +44,7 @@ describe('KeywordView', () => {
     console.error.mockRestore();
   });
 
-  test('should remove existing keyword section before appending new one',() => {
+  test('should remove existing keyword section before appending new one', () => {
     document.body.querySelector('aside .w3ba11y__body').innerHTML = `
       <div class="w3ba11y__section w3ba11y__section--keyword"></div>
     `;
