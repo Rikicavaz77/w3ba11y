@@ -51,7 +51,7 @@ class KeywordView {
   }
 
   get settingsTab() {
-    return this._overviewTab;
+    return this._settingsTab;
   }
 
   get settingsTabButton() {
@@ -304,7 +304,7 @@ class KeywordView {
       settingsContainer = document.createElement("div");
       settingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
       settingsContainer.dataset.tab = "settings";
-      this.__settingsTab = settingsContainer;
+      this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
     settingsContainer.innerHTML = `
