@@ -402,6 +402,11 @@ pre {
   visibility: hidden !important;
 }
 
+.keywords__icon--large {
+  width: 1.8em;
+  height: 1.8em;
+}
+
 .keywords__icon--medium {
   width: 1.5em;
   height: 1.5em;
@@ -510,6 +515,13 @@ pre {
   color: #af0bcc;
   padding: 0.3em;
   border-radius: 8px;
+  box-sizing: content-box;
+}
+
+.keywords__overview-warning-icon {
+  background-color: transparent;
+  color: #df4a13;
+  padding: 0;
   box-sizing: content-box;
 }
 

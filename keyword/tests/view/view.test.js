@@ -77,6 +77,33 @@ describe('KeywordView', () => {
     expect(view.analyzeButton).toBe(dummy);
   });
 
+  test('renderOverviewItem() should render an item with correct data', () => {
+    const itemInfo = {
+      title: 'Test item',
+      tooltip: 'Tooltip text',
+      value: 'test', 
+      iconSvg: '<svg></svg>',
+      warningIconSvg: '<svg class="keywords__overview-warning-icon"></svg>'
+    };
+
+    let item = view.renderOverviewItem(itemInfo);
+    const listContainer = document.createElement('div');
+    listContainer.innerHTML = item;
+    expect(listContainer.textContent).toContain('Test item');
+    expect(listContainer.textContent).toContain('Tooltip text');
+    expect(listContainer.textContent).toContain('test');
+    expect(listContainer.querySelector('#test-item-tooltip')).toBeTruthy();
+    expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeNull();
+
+    ['', 0, null].forEach(value => {
+      itemInfo.value = value;
+      item = view.renderOverviewItem(itemInfo);
+      listContainer.innerHTML = item;
+      expect(listContainer.textContent).toContain(value === 0 ? '0' : 'Missing');
+      expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeTruthy();
+    });
+  });
+
   test('renderKeywordAnalysisOverview() should create overview container', () => {
     const overviewInfo = {
       metaTagKeywordsContent: 'test, another test',
@@ -86,24 +113,28 @@ describe('KeywordView', () => {
     };
 
     view.renderKeywordAnalysisOverview(overviewInfo);
-    const overview = view.body.querySelector('.keywords__overview-container');
+    let overview = view.body.querySelector('.keywords__overview-container');
     expect(overview).toBeTruthy();
     expect(overview.textContent).toContain('test, another test');
     expect(overview.textContent).toContain('en-US');
     expect(overview.textContent).toContain('2000');
     expect(overview.textContent).toContain('1000');
+    expect(overview.querySelectorAll('.keywords__overview-warning-icon').length).toBe(0);
 
     const anotherOverviewInfo = {
       metaTagKeywordsContent: '',
       lang: '',
-      wordCount: 100,
-      uniqueWordCount: 50
+      wordCount: 64,
+      uniqueWordCount: 0
     };
 
     view.renderKeywordAnalysisOverview(anotherOverviewInfo);
     expect(view.body.querySelectorAll('.keywords__overview-container').length).toBe(1);
-    const matches = view.body.querySelector('.keywords__overview-container').textContent.match(/Missing/gi);
+    overview = view.body.querySelector('.keywords__overview-container');
+    const matches = overview.textContent.match(/Missing/gi);
     expect(matches.length).toBe(2);
+    expect(overview.textContent).toContain('0');
+    expect(overview.querySelectorAll('.keywords__overview-warning-icon').length).toBe(3);
   });
 
   test('renderKeywordSettings() should create settings container and populate with color inputs', () => {
