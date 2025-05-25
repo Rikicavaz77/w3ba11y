@@ -374,9 +374,14 @@ class KeywordController {
         if (button) fn(button, target);
       };
 
-      handle('.keyword-button--highlight', (_, target) => {
+      handle('.keyword-button--highlight', (button, target) => {
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
+        const listType = this.getListType(target);
+        const listView = this.view.getListViewByType(listType);
+        if (!listView) return;
+        listView.activeHighlightedKeyword = keywordItem;
+        listView.updateHighlightButtons(button);
         this.clearHighlightCheckbox();
         this.keywordHighlighter.highlightKeyword(keywordItem.name);
       });

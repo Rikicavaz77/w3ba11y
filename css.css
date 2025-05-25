@@ -818,6 +818,12 @@ pre {
   border: none;
 }
 
+.keyword-button--highlight--active {
+  background-color: rgb(175, 11, 204);
+  color: #fff;
+  border-radius: 5px;
+}
+
 .keywords__pagination {
   display: flex;
   align-items: center;
