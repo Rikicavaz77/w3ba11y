@@ -13,11 +13,11 @@ describe('KeywordController', () => {
     controller = Object.create(KeywordController.prototype);
 
     controller.metaKeywords = [new Keyword('meta1')];
-    controller.displayMetaKeywords = [new Keyword('meta1_display')];
+    controller.displayMetaKeywords = [...controller.metaKeywords];
     controller.userKeywords = [new Keyword('userAdded1')];
-    controller.displayUserKeywords = [new Keyword('userAdded1_display')];
+    controller.displayUserKeywords = [...controller.userKeywords];
     controller.oneWordKeywords = [new Keyword('oneWord1')];
-    controller.displayOneWordKeywords = [new Keyword('oneWord1_display')];
+    controller.displayOneWordKeywords = [...controller.oneWordKeywords];
     controller.batchSizes = { meta: 5 };
     controller.labelMap = { meta: 'Meta keywords' };
 
@@ -59,7 +59,7 @@ describe('KeywordController', () => {
     expect(arg.type).toBe('meta');
     expect(arg.title).toBe('Meta keywords');
     expect(arg.keywords.length).toBe(1);
-    expect(arg.keywords[0].name).toBe('meta1_display');
+    expect(arg.keywords[0].name).toBe('meta1');
     expect(arg.totalPages).toBe(1);
     expect(arg.sortDirection).toBeNull();
 
@@ -153,6 +153,40 @@ describe('KeywordController', () => {
       controller.analyzeKeyword();
       expect(controller.userKeywords).toHaveLength(0);
       expect(controller.keywordAnalyzer.analyzeKeyword).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteKeyword()', () => {
+    beforeEach(() => {
+      controller.renderPage = jest.fn();
+
+      controller.userKeywords.push(new Keyword('another userAdded keyword'), new Keyword('last userAdded keyword'));
+      controller.displayUserKeywords = [...controller.userKeywords];
+      controller.displayUserKeywords.pop();
+    });
+
+    it('should remove keyword from arrays', () => {
+      controller.deleteKeyword('userAdded', 1);
+
+      expect(controller.userKeywords.map(k => k.name)).toEqual(['userAdded1', 'last userAdded keyword']);
+      expect(controller.displayUserKeywords.map(k => k.name)).toEqual(['userAdded1']);
+      expect(controller.renderPage).toHaveBeenCalledWith('userAdded', mockListView, controller.displayUserKeywords, 1);
+    });
+
+    it('should not remove keyword if keywordIndex is invalid', () => {
+      controller.deleteKeyword('userAdded', 5);
+
+      expect(controller.userKeywords.map(k => k.name)).toEqual(['userAdded1', 'another userAdded keyword', 'last userAdded keyword']);
+      expect(controller.displayUserKeywords.map(k => k.name)).toEqual(['userAdded1', 'another userAdded keyword']);
+      expect(controller.renderPage).not.toHaveBeenCalled();
+    });
+
+    it('should not call renderPage if listView is null', () => {
+      controller.view.getListViewByType = jest.fn().mockReturnValue(null),
+
+      controller.deleteKeyword('userAdded', 1);
+
+      expect(controller.renderPage).not.toHaveBeenCalled();
     });
   });
 

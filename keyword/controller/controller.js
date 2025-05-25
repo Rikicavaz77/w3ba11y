@@ -257,22 +257,51 @@ class KeywordController {
     }
   }
 
-  // GET KEYWORD ITEM FUNCTION
-  getKeywordItem(target) {
+  // DELETE KEYWORD FUNCTION
+  deleteKeyword(listType, keywordIndex) {
+    const { original, display } = this.getListByType(listType);
+
+    const keywordToRemove = display[keywordIndex];
+    if (!keywordToRemove) return;
+
+    const indexInOriginal = original.findIndex(k => k === keywordToRemove);
+    if (indexInOriginal !== -1) {
+      original.splice(indexInOriginal, 1);
+    };
+
+    display.splice(keywordIndex, 1);
+
+    const listView = this.view.getListViewByType(listType);
+    if (!listView) return;
+
+    this.renderPage(listType, listView, display, listView.currentPage);
+  }
+
+  // GET KEYWORD INDEX FUNCTION
+  getKeywordIndex(target) {
     const listItem = target.closest('.keyword-list-item');
-    const keywordListContainer = target.closest('.keyword-list__container');
-    if (!listItem || !keywordListContainer) return;
-    const { display } = this.getListByType(keywordListContainer.dataset.listType);
+    if (!listItem) return;
     const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
     if (isNaN(keywordIndex)) return;
-    return display[keywordIndex];
+    return keywordIndex;
   }
 
   // GET LIST TYPE FUNCTION
   getListType(target) {
-    const keywordsListContainer = target.closest(".keyword-list__container");
-    if (!keywordsListContainer) return;
-    return keywordsListContainer.dataset.listType;
+    const keywordListContainer = target.closest(".keyword-list__container");
+    if (!keywordListContainer) return;
+    return keywordListContainer.dataset.listType;
+  }
+
+  // GET KEYWORD ITEM FUNCTION
+  getKeywordItem(target) {
+    const listType = this.getListType(target);
+    if (!listType) return;
+    const keywordIndex = this.getKeywordIndex(target);
+    if (keywordIndex === undefined) return;
+
+    const { display } = this.getListByType(listType);
+    return display[keywordIndex];
   }
 
   // SETUP LISTENERS
@@ -350,6 +379,14 @@ class KeywordController {
         if (!keywordItem) return;
         this.clearHighlightCheckbox();
         this.keywordHighlighter.highlightKeyword(keywordItem.name);
+      });
+
+      handle('.keyword-button--delete', (_, target) => {
+        const listType = this.getListType(target);
+        if (!listType) return;
+        const keywordIndex = this.getKeywordIndex(target);
+        if (keywordIndex === undefined) return;
+        this.deleteKeyword(listType, keywordIndex);
       });
 
       handle('.keyword-button--view-details', (button, target) => {

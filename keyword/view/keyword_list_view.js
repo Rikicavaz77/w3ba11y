@@ -161,6 +161,18 @@ class KeywordListView {
     this._searchKeywordField.value = '';
   }
 
+  renderDeleteButtonIfNeeded() {
+    if (this._listType !== 'userAdded') return '';
+    return `
+      <button class="keyword-item__actions__button keyword-button--delete">
+        <span class="visually-hidden">Delete keyword</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__icon--delete keywords__icon--middle-align keywords__icon--medium" aria-hidden="true">
+          <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    `;
+  }
+
   renderKeywords(keywords, startIndex) {
     const keywordList = this._container.querySelector(".keyword-list");
     keywordList.innerHTML = "";
@@ -173,6 +185,7 @@ class KeywordListView {
       item.innerHTML = `
         <h4 class="keyword-item__title">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
+          ${this.renderDeleteButtonIfNeeded()}
           <button class="keyword-item__actions__button keyword-button--highlight">
             <span class="visually-hidden">Highlight keyword</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="keywords__icon--middle-align keywords__icon--medium" aria-hidden="true"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M315 315l158.4-215L444.1 70.6 229 229 315 315zm-187 5s0 0 0 0l0-71.7c0-15.3 7.2-29.6 19.5-38.6L420.6 8.4C428 2.9 437 0 446.2 0c11.4 0 22.4 4.5 30.5 12.6l54.8 54.8c8.1 8.1 12.6 19 12.6 30.5c0 9.2-2.9 18.2-8.4 25.6L334.4 396.5c-9 12.3-23.4 19.5-38.6 19.5L224 416l-25.4 25.4c-12.5 12.5-32.8 12.5-45.3 0l-50.7-50.7c-12.5-12.5-12.5-32.8 0-45.3L128 320zM7 466.3l63-63 70.6 70.6-31 31c-4.5 4.5-10.6 7-17 7L24 512c-13.3 0-24-10.7-24-24l0-4.7c0-6.4 2.5-12.5 7-17z"/></svg>
