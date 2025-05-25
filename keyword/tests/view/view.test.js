@@ -113,7 +113,7 @@ describe('KeywordView', () => {
     };
 
     view.renderKeywordAnalysisOverview(overviewInfo);
-    const overview = view.body.querySelector('.keywords__overview-container');
+    let overview = view.body.querySelector('.keywords__overview-container');
     expect(overview).toBeTruthy();
     expect(overview.textContent).toContain('test, another test');
     expect(overview.textContent).toContain('en-US');
@@ -130,7 +130,8 @@ describe('KeywordView', () => {
 
     view.renderKeywordAnalysisOverview(anotherOverviewInfo);
     expect(view.body.querySelectorAll('.keywords__overview-container').length).toBe(1);
-    const matches = view.body.querySelector('.keywords__overview-container').textContent.match(/Missing/gi);
+    overview = view.body.querySelector('.keywords__overview-container');
+    const matches = overview.textContent.match(/Missing/gi);
     expect(matches.length).toBe(2);
     expect(overview.textContent).toContain('0');
     expect(overview.querySelectorAll('.keywords__overview-warning-icon').length).toBe(3);
