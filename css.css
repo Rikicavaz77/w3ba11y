@@ -426,6 +426,10 @@ pre {
   vertical-align: middle;
 }
 
+.keywords__icon--delete {
+  color: #c40a0a;
+}
+
 .w3ba11y__section--keyword .section__header {
   padding: 0 0.5rem;
 }

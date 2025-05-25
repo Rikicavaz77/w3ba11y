@@ -100,6 +100,25 @@ describe('KeywordController', () => {
     });
   });
 
+  describe('getKeywordIndex()', () => {
+    it('should return keywordIndex from dataset', () => {
+      const container = document.createElement('div');
+      container.classList.add('keyword-list-item');
+      container.dataset.keywordIndex = '0';
+
+      const target = document.createElement('button');
+      container.appendChild(target);
+
+      const result = controller.getKeywordIndex(target);
+      expect(result).toBe(0);
+    });
+
+    it('should return undefined if no container', () => {
+      const target = document.createElement('div');
+      expect(controller.getKeywordIndex(target)).toBeUndefined();
+    });
+  });
+
   describe('getKeywordItem()', () => {
     let container, listItem, target;
 

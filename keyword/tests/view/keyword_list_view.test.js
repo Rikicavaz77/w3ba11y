@@ -60,16 +60,35 @@ describe('KeywordListView', () => {
     expect(view.renderPages).toHaveBeenCalledWith(1, 1);
   });
 
+  test('renderDeleteButtonIfNeeded() should handle delete button creation', () => {
+    let button = view.renderDeleteButtonIfNeeded();
+    expect(button).toBe('');
+
+    view = new KeywordListView('User added keywords', 'userAdded');
+    button = view.renderDeleteButtonIfNeeded();
+    expect(button).toContain('Delete keyword');
+    const container = document.createElement('div');
+    container.innerHTML = button;
+    expect(container.querySelector('.keyword-button--delete')).toBeTruthy();
+    expect(container.querySelector('.keywords__icon--delete')).toBeTruthy();
+  })
+
   test('renderKeywords() should populate keyword list', () => {   
     view.renderKeywords(keywords, 0);
-    const items = view.container.querySelectorAll('.keyword-list-item');
+    let items = view.container.querySelectorAll('.keyword-list-item');
     expect(items.length).toBe(2);
+    expect(items[0].querySelectorAll('.keyword-button--delete').length).toBe(0);
     expect(items[0].querySelectorAll('.keyword-button--highlight').length).toBe(1);
     expect(items[0].querySelectorAll('.keyword-button--view-details').length).toBe(1);
     expect(items[0].textContent).toContain('test (26)');
     expect(items[0].dataset.keywordIndex).toBe('0');
     expect(items[1].textContent).toContain('another test (0)');
     expect(items[1].dataset.keywordIndex).toBe('1');
+
+    view = new KeywordListView('User added keywords', 'userAdded');
+    view.renderKeywords(keywords, 0);
+    items = view.container.querySelectorAll('.keyword-list-item');
+    expect(items[0].querySelectorAll('.keyword-button--delete').length).toBe(1);
   });
 
   test('renderPages() should generate pagination with current page active', () => {   

@@ -40,12 +40,14 @@ describe('KeywordController - events', () => {
 
     controller.updateHighlightColors = jest.fn();
     controller.getListType = jest.fn().mockReturnValue('meta');
+    controller.getKeywordIndex = jest.fn().mockReturnValue(0);
     controller.updateVisibleKeywords = jest.fn();
     controller.clearHighlightCheckbox = jest.fn();
     controller.getKeywordItem = jest.fn().mockReturnValue(new Keyword('test'));
     controller.changePage = jest.fn();
     controller.handleKeywordSorting = jest.fn();
     controller.removeFilters = jest.fn();
+    controller.deleteKeyword = jest.fn();
     controller.keywordHighlighter = {
       highlightKeyword: jest.fn(),
       removeHighlight: jest.fn()
@@ -150,6 +152,12 @@ describe('KeywordController - events', () => {
       inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       expect(controller.clearHighlightCheckbox).toHaveBeenCalled();
       expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('test');
+    });
+
+    it('should delete keyword', () => {
+      button.classList.add('keyword-button--delete');
+      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(controller.deleteKeyword).toHaveBeenCalledWith('meta', 0);
     });
 
     it('should view details', () => {
