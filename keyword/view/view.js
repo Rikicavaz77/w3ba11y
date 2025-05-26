@@ -12,7 +12,6 @@ class KeywordView {
     this._customKeywordInput;
     this._keywordHighlightCheckbox;
     this._analyzeButton;
-    this._currentHighlightButton = null;
   }
 
   get container() {
@@ -87,8 +86,8 @@ class KeywordView {
     return this._analyzeButton;
   }
 
-  get activeHighlightedKeyword() {
-    return this._activeHighlightedKeyword;
+  get activeHighlightButton() {
+    return this._container.querySelector('.keyword-button--highlight--active');
   }
 
   set header(header) {
@@ -126,8 +125,8 @@ class KeywordView {
   _performListViewCreation({ title, type, sortDirection }, getActive) {
     return new KeywordListView({
       title,
-      type,
-      sortDirection,
+      listType: type,
+      initialSortDirection: sortDirection,
       getActiveHighlightedKeyword: getActive
     });
   }
@@ -474,12 +473,12 @@ class KeywordView {
   } */
 
   setActiveButton(clickedButton) {
-    this._container.querySelector('.keyword-button--highlight--active')?.classList.remove('keyword-button--highlight--active');
+    this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
     clickedButton.classList.add('keyword-button--highlight--active');
   }
 
   clearActiveButton() {
-    this._container.querySelector('.keyword-button--highlight--active')?.classList.remove('keyword-button--highlight--active');
+    this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
   }
 
   getAllSection() {
