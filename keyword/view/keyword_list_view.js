@@ -1,17 +1,16 @@
 class KeywordListView {
-  constructor(title, listType, initialSortDirection = null) {
+  constructor({ title, listType, initialSortDirection = null, getActiveHighlightedKeyword }) {
     this._title = title;
     this._listType = listType;
     this._searchKeywordField = null;
     this._currentSortButton = null;
     this._sortDirection = initialSortDirection;
+    this._getActiveHighlightedKeyword = getActiveHighlightedKeyword;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
     this._currentPage = 1;
     this._container = this.generateKeywordListViewSection();
-    this._currentHighlightButton = null;
-    this._activeHighlightedKeyword = null;
   }
 
   get container() {
@@ -46,10 +45,6 @@ class KeywordListView {
     return this._currentPage;
   }
 
-  get activeHighlightedKeyword() {
-    return this._activeHighlightedKeyword;
-  }
-
   set container(container) {
     this._container = container;
   }
@@ -80,10 +75,6 @@ class KeywordListView {
 
   set currentPage(currentPage) {
     this._currentPage = currentPage;
-  }
-
-  set activeHighlightedKeyword(activeHighlightedKeyword) {
-    this._activeHighlightedKeyword = activeHighlightedKeyword;
   }
 
   isCurrentPage(page) {
@@ -164,12 +155,6 @@ class KeywordListView {
     this._sortDirection = clickedButton.dataset.sort;
   }
 
-  updateHighlightButtons(clickedButton) {
-    this._currentHighlightButton?.classList.remove('keyword-button--highlight--active');
-    this._currentHighlightButton = clickedButton;
-    this._currentHighlightButton.classList.add('keyword-button--highlight--active');
-  }
-
   removeFilters() {
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = null;
@@ -198,11 +183,13 @@ class KeywordListView {
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
       const safeName = Utils.escapeHTML(keywordItem.name);
       const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
+      const isHighlighted = this._getActiveHighlightedKeyword() === keywordItem;
+      const highlightClass = isHighlighted ? 'keyword-button--highlight--active' : '';
       item.innerHTML = `
         <h4 class="keyword-item__title">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
           ${this.renderDeleteButtonIfNeeded()}
-          <button class="keyword-item__actions__button keyword-button--highlight">
+          <button class="keyword-item__actions__button keyword-button--highlight ${highlightClass}">
             <span class="visually-hidden">Highlight keyword</span>
             <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="keywords__icon--middle-align keywords__icon--medium" aria-hidden="true"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M315 315l158.4-215L444.1 70.6 229 229 315 315zm-187 5s0 0 0 0l0-71.7c0-15.3 7.2-29.6 19.5-38.6L420.6 8.4C428 2.9 437 0 446.2 0c11.4 0 22.4 4.5 30.5 12.6l54.8 54.8c8.1 8.1 12.6 19 12.6 30.5c0 9.2-2.9 18.2-8.4 25.6L334.4 396.5c-9 12.3-23.4 19.5-38.6 19.5L224 416l-25.4 25.4c-12.5 12.5-32.8 12.5-45.3 0l-50.7-50.7c-12.5-12.5-12.5-32.8 0-45.3L128 320zM7 466.3l63-63 70.6 70.6-31 31c-4.5 4.5-10.6 7-17 7L24 512c-13.3 0-24-10.7-24-24l0-4.7c0-6.4 2.5-12.5 7-17z"/></svg>
           </button>

@@ -34,6 +34,8 @@ class KeywordController {
     this.displayUserKeywords = [];
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
+
+    this.activeHighlightedKeyword = null;
     this.init();
   }
 
@@ -136,7 +138,7 @@ class KeywordController {
       keywordsData,
       totalPages,
       sortDirection
-    ));
+    ), () => this.activeHighlightedKeyword);
   }
 
   // RENDER PAGE FUNCTION
@@ -223,6 +225,20 @@ class KeywordController {
       this.keywordHighlighter.highlightKeyword(keyword);
     } else {
       this.keywordHighlighter.removeHighlight();
+    }
+  }
+
+  // HANDLE HIGHLIGHT FUNCTION
+  handleHighlightClick(keywordItem, clickedButton) {
+    if (this.activeHighlightedKeyword === keywordItem) {
+      this.activeHighlightedKeyword = null;
+      this.keywordHighlighter.removeHighlight();
+      this.view.clearActiveButton();
+    } else {
+      this.activeHighlightedKeyword = keywordItem;
+      this.clearHighlightCheckbox();
+      this.keywordHighlighter.highlightKeyword(keywordItem.name);
+      this.view.setActiveButton(clickedButton);
     }
   }
 
@@ -377,13 +393,7 @@ class KeywordController {
       handle('.keyword-button--highlight', (button, target) => {
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
-        const listType = this.getListType(target);
-        const listView = this.view.getListViewByType(listType);
-        if (!listView) return;
-        listView.activeHighlightedKeyword = keywordItem;
-        listView.updateHighlightButtons(button);
-        this.clearHighlightCheckbox();
-        this.keywordHighlighter.highlightKeyword(keywordItem.name);
+        this.handleHighlightClick(keywordItem, button);
       });
 
       handle('.keyword-button--delete', (_, target) => {

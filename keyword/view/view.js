@@ -12,6 +12,7 @@ class KeywordView {
     this._customKeywordInput;
     this._keywordHighlightCheckbox;
     this._analyzeButton;
+    this._currentHighlightButton = null;
   }
 
   get container() {
@@ -86,6 +87,10 @@ class KeywordView {
     return this._analyzeButton;
   }
 
+  get activeHighlightedKeyword() {
+    return this._activeHighlightedKeyword;
+  }
+
   set header(header) {
     this._header = header;
   }
@@ -118,6 +123,37 @@ class KeywordView {
     this._analyzeButton = analyzeButton;
   }
 
+  _performListViewCreation({ title, type, sortDirection }, getActive) {
+    return new KeywordListView({
+      title,
+      type,
+      sortDirection,
+      getActiveHighlightedKeyword: getActive
+    });
+  }
+
+  createListView(keywordListInfo, getActiveHighlightedKeyword) {
+    switch (keywordListInfo.type) {
+      case 'meta':
+        if (!this._metaKeywordsListView) {
+          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
+        }
+        return this._metaKeywordsListView;
+      case 'userAdded':
+        if (!this._userKeywordsListView) {
+          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
+        }
+        return this._userKeywordsListView;
+      case 'oneWord':
+        if (!this._oneWordKeywordsListView) {
+          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
+        }
+        return this._oneWordKeywordsListView; 
+      default:
+        return null;
+    }
+  }
+
   getListViewByType(listType) {
     switch (listType) {
       case 'meta':
@@ -126,28 +162,6 @@ class KeywordView {
         return this._userKeywordsListView;
       case 'oneWord':
           return this._oneWordKeywordsListView;
-      default:
-        return null;
-    }
-  }
-
-  createListView(keywordListInfo) {
-    switch (keywordListInfo.type) {
-      case 'meta':
-        if (!this._metaKeywordsListView) {
-          this._metaKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type, keywordListInfo.sortDirection);
-        }
-        return this._metaKeywordsListView;
-      case 'userAdded':
-        if (!this._userKeywordsListView) {
-          this._userKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type, keywordListInfo.sortDirection);
-        }
-        return this._userKeywordsListView;
-      case 'oneWord':
-        if (!this._oneWordKeywordsListView) {
-          this._oneWordKeywordsListView = new KeywordListView(keywordListInfo.title, keywordListInfo.type, keywordListInfo.sortDirection);
-        }
-        return this._oneWordKeywordsListView; 
       default:
         return null;
     }
@@ -376,8 +390,8 @@ class KeywordView {
     this._analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
   }
 
-  renderKeywordListContainer(keywordListInfo) {
-    const keywordListView = this.createListView(keywordListInfo);
+  renderKeywordListContainer(keywordListInfo, getActiveHighlightedKeyword) {
+    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightedKeyword);
     if (!keywordListView) return;
 
     let allKeywordListContainer = this._container.querySelector(".keyword-all-lists__container");
@@ -451,6 +465,21 @@ class KeywordView {
     this._container.querySelector('.tab--active').classList.remove('tab--active');
     this._activeTabButton.classList.add('tab__button--active');
     this._container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
+  }
+
+  /* updateHighlightButtons(clickedButton) {
+    this._currentHighlightButton?.classList.remove('keyword-button--highlight--active');
+    this._currentHighlightButton = clickedButton;
+    this._currentHighlightButton.classList.add('keyword-button--highlight--active');
+  } */
+
+  setActiveButton(clickedButton) {
+    this._container.querySelector('.keyword-button--highlight--active')?.classList.remove('keyword-button--highlight--active');
+    clickedButton.classList.add('keyword-button--highlight--active');
+  }
+
+  clearActiveButton() {
+    this._container.querySelector('.keyword-button--highlight--active')?.classList.remove('keyword-button--highlight--active');
   }
 
   getAllSection() {
