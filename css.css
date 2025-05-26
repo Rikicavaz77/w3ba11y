@@ -871,8 +871,17 @@ pre {
   width: 100%;
 }
 
-.keywords__analysis-item__title {
-  align-self: flex-start;
+.keywords__analysis-item__action-container {
+  display: flex;
+  column-gap: 1.5em;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.keywords__analysis-item__button {
+  position: relative;
+  padding: 0.3em;
+  border: none;
 }
 
 .keywords__score-container {

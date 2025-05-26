@@ -122,30 +122,31 @@ class KeywordView {
     this._analyzeButton = analyzeButton;
   }
 
-  _performListViewCreation({ title, type, sortDirection }, getActive) {
+  _performListViewCreation({ title, type, sortDirection }, getActiveKeyword, getActiveSource) {
     return new KeywordListView({
       title,
       listType: type,
       initialSortDirection: sortDirection,
-      getActiveHighlightedKeyword: getActive
+      getActiveHighlightedKeyword: getActiveKeyword,
+      getActiveHighlightSource: getActiveSource,
     });
   }
 
-  createListView(keywordListInfo, getActiveHighlightedKeyword) {
+  createListView(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource) {
     switch (keywordListInfo.type) {
       case 'meta':
         if (!this._metaKeywordsListView) {
-          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
+          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
         }
         return this._metaKeywordsListView;
       case 'userAdded':
         if (!this._userKeywordsListView) {
-          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
+          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
         }
         return this._userKeywordsListView;
       case 'oneWord':
         if (!this._oneWordKeywordsListView) {
-          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
+          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
         }
         return this._oneWordKeywordsListView; 
       default:
@@ -389,8 +390,8 @@ class KeywordView {
     this._analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
   }
 
-  renderKeywordListContainer(keywordListInfo, getActiveHighlightedKeyword) {
-    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightedKeyword);
+  renderKeywordListContainer(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource) {
+    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
     if (!keywordListView) return;
 
     let allKeywordListContainer = this._container.querySelector(".keyword-all-lists__container");
@@ -412,9 +413,9 @@ class KeywordView {
     keywordListView.render(keywordListInfo.keywords, keywordListInfo.totalPages);
   }
 
-  renderKeywordDetails(keywordItem) {
+  renderKeywordDetails(keywordItem, getActiveHighlightedKeyword, getActiveHighlightSource) {
     if (!this._analysisResultView) {
-      this._analysisResultView = new AnalysisResultView();
+      this._analysisResultView = new AnalysisResultView(getActiveHighlightedKeyword, getActiveHighlightSource);
 
       const existing = this._container.querySelector('.keywords__section--result');
       if (existing)

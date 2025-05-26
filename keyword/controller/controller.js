@@ -36,6 +36,7 @@ class KeywordController {
     this.displayOneWordKeywords = [];
 
     this.activeHighlightedKeyword = null;
+    this.activeHighlightSource = null;
     this.init();
   }
 
@@ -138,7 +139,7 @@ class KeywordController {
       keywordsData,
       totalPages,
       sortDirection
-    ), () => this.activeHighlightedKeyword);
+    ), () => this.activeHighlightedKeyword, () => this.activeHighlightSource);
   }
 
   // RENDER PAGE FUNCTION
@@ -232,10 +233,12 @@ class KeywordController {
   handleHighlightClick(keywordItem, clickedButton) {
     if (this.view.activeHighlightButton === clickedButton) {
       this.activeHighlightedKeyword = null;
+      this.activeHighlightSource = null;
       this.keywordHighlighter.removeHighlight();
       this.view.clearActiveButton();
     } else {
       this.activeHighlightedKeyword = keywordItem;
+      this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
       this.clearHighlightCheckbox();
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
       this.view.setActiveButton(clickedButton);
@@ -414,7 +417,7 @@ class KeywordController {
       handle('.keyword-button--view-details', (button, target) => {
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
-        this.view.renderKeywordDetails(keywordItem);
+        this.view.renderKeywordDetails(keywordItem, () => this.activeHighlightedKeyword, () => this.activeHighlightSource);
         this.view.toggleSection(button.dataset.section);
         this.setupTooltipListeners(this.view.analysis);
       });

@@ -1,11 +1,12 @@
 class KeywordListView {
-  constructor({ title, listType, initialSortDirection = null, getActiveHighlightedKeyword }) {
+  constructor({ title, listType, initialSortDirection = null, getActiveHighlightedKeyword, getActiveHighlightSource }) {
     this._title = title;
     this._listType = listType;
     this._searchKeywordField = null;
     this._currentSortButton = null;
     this._sortDirection = initialSortDirection;
     this._getActiveHighlightedKeyword = getActiveHighlightedKeyword;
+    this._getActiveHighlightSource = getActiveHighlightSource;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
@@ -183,7 +184,10 @@ class KeywordListView {
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
       const safeName = Utils.escapeHTML(keywordItem.name);
       const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
-      const isHighlighted = this._getActiveHighlightedKeyword() === keywordItem;
+      const isHighlighted = (
+        this._getActiveHighlightedKeyword() === keywordItem &&
+        this._getActiveHighlightSource() === 'list'
+      );
       const highlightClass = isHighlighted ? 'keyword-button--highlight--active' : '';
       item.innerHTML = `
         <h4 class="keyword-item__title">${safeName} (${safeFrequency})</h4>
