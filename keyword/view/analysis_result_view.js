@@ -1,10 +1,10 @@
 class AnalysisResultView {
-  constructor(getActiveHighlightedKeyword, getActiveHighlightSource) {
+  constructor(getActiveHighlightData) {
     this._container = this.generateAnalysisResultViewSection();
     this._header;
     this._body;
     this._getActiveHighlightedKeyword = getActiveHighlightedKeyword;
-    this._getActiveHighlightSource = getActiveHighlightSource;
+    this._getActiveHighlightData = getActiveHighlightData;
   }
 
   get container() {
@@ -48,6 +48,15 @@ class AnalysisResultView {
     return keywordDetailsViewSection;
   }
 
+  _getHighlightClass() {
+    const { keyword, source } = this._getActiveHighlightData();
+    const isHighlighted = (
+      keyword === this._currentKeywordItem &&
+      source === 'result'
+    );
+    return isHighlighted ? 'keyword-button--highlight--active' : '';
+  }
+
   render(keywordItem) {
     let analysisResultContainer = this._body.querySelector('.keywords__analysis-container');
     if (!analysisResultContainer) {
@@ -56,11 +65,7 @@ class AnalysisResultView {
       this._body.appendChild(analysisResultContainer);
     }
     this._currentKeywordItem = keywordItem;
-    const isHighlighted = (
-      this._getActiveHighlightedKeyword() === keywordItem &&
-      this._getActiveHighlightSource() === 'result'
-    );
-    const highlightClass = isHighlighted ? 'keyword-button--highlight--active' : '';
+    const highlightClass = this._getHighlightClass();
     analysisResultContainer.innerHTML = `
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Keyword:</h3>

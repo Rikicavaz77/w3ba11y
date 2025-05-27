@@ -122,31 +122,30 @@ class KeywordView {
     this._analyzeButton = analyzeButton;
   }
 
-  _performListViewCreation({ title, type, sortDirection }, getActiveKeyword, getActiveSource) {
+  _performListViewCreation({ title, type, sortDirection }, getActive) {
     return new KeywordListView({
       title,
       listType: type,
       initialSortDirection: sortDirection,
-      getActiveHighlightedKeyword: getActiveKeyword,
-      getActiveHighlightSource: getActiveSource,
+      getActiveHighlightData: getActive
     });
   }
 
-  createListView(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource) {
+  createListView(keywordListInfo, getActiveHighlightData) {
     switch (keywordListInfo.type) {
       case 'meta':
         if (!this._metaKeywordsListView) {
-          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
+          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
         }
         return this._metaKeywordsListView;
       case 'userAdded':
         if (!this._userKeywordsListView) {
-          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
+          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
         }
         return this._userKeywordsListView;
       case 'oneWord':
         if (!this._oneWordKeywordsListView) {
-          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
+          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
         }
         return this._oneWordKeywordsListView; 
       default:
@@ -413,9 +412,9 @@ class KeywordView {
     keywordListView.render(keywordListInfo.keywords, keywordListInfo.totalPages);
   }
 
-  renderKeywordDetails(keywordItem, getActiveHighlightedKeyword, getActiveHighlightSource) {
+  renderKeywordDetails(keywordItem, getActiveHighlightData) {
     if (!this._analysisResultView) {
-      this._analysisResultView = new AnalysisResultView(getActiveHighlightedKeyword, getActiveHighlightSource);
+      this._analysisResultView = new AnalysisResultView(getActiveHighlightData);
 
       const existing = this._container.querySelector('.keywords__section--result');
       if (existing)

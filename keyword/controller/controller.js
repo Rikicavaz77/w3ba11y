@@ -139,7 +139,7 @@ class KeywordController {
       keywordsData,
       totalPages,
       sortDirection
-    ), () => this.activeHighlightedKeyword, () => this.activeHighlightSource);
+    ), () => this.getActiveHighlightData());
   }
 
   // RENDER PAGE FUNCTION
@@ -296,6 +296,13 @@ class KeywordController {
     this.renderPage(listType, listView, display, listView.currentPage);
   }
 
+  getActiveHighlightData() {
+    return {
+      keyword: this.activeHighlightedKeyword,
+      source: this.activeHighlightSource
+    };
+  }
+
   // GET KEYWORD INDEX FUNCTION
   getKeywordIndex(target) {
     const listItem = target.closest('[data-keyword-index]');
@@ -307,9 +314,7 @@ class KeywordController {
 
   // GET LIST TYPE FUNCTION
   getListType(target) {
-    console.log(target);
     const keywordListContainer = target.closest('[data-list-type]');
-    console.log(keywordListContainer);
     if (!keywordListContainer) return;
     return keywordListContainer.dataset.listType;
   }
@@ -417,7 +422,7 @@ class KeywordController {
       handle('.keyword-button--view-details', (button, target) => {
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
-        this.view.renderKeywordDetails(keywordItem, () => this.activeHighlightedKeyword, () => this.activeHighlightSource);
+        this.view.renderKeywordDetails(keywordItem, () => this.getActiveHighlightData());
         this.view.toggleSection(button.dataset.section);
         this.setupTooltipListeners(this.view.analysis);
       });
