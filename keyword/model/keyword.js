@@ -71,6 +71,9 @@ class Keyword {
     this._density = parseFloat(((this._frequency / Math.max(1, totalWords)) * 100).toFixed(2));
   }
 
+  /* To-Do:
+    Remove score 
+  */
   calculateRelevanceScore(tagData) {
     let score = 0;
     let maxScore = 0;
