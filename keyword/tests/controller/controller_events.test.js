@@ -24,7 +24,9 @@ describe('KeywordController - events', () => {
       getListViewByType: jest.fn(),
       renderKeywordDetails: jest.fn(),
       toggleSection: jest.fn(),
-      analysis: {}
+      analysis: {
+        currentKeywordItem: new Keyword('analysis keyword')
+      }
     };
 
     controller = Object.create(KeywordController.prototype);
@@ -48,6 +50,9 @@ describe('KeywordController - events', () => {
     controller.handleKeywordSorting = jest.fn();
     controller.removeFilters = jest.fn();
     controller.deleteKeyword = jest.fn();
+    controller.handleHighlightClick = jest.fn();
+    controller.getActiveHighlightData = jest.fn();
+    controller.resetHighlightState = jest.fn();
     controller.keywordHighlighter = {
       highlightKeyword: jest.fn(),
       removeHighlight: jest.fn()
@@ -71,9 +76,9 @@ describe('KeywordController - events', () => {
     expect(arg.target.value).toBe('#ffff00');
   });
 
-  test('bindKeywordInputFocus() should attach focus handler', () => {
-    controller.bindKeywordInputFocus();
-    controller.view.customKeywordInput.dispatchEvent(new Event('focus'));
+  test('bindKeywordInputChange() should attach input handler', () => {
+    controller.bindKeywordInputChange();
+    controller.view.customKeywordInput.dispatchEvent(new Event('input'));
     expect(controller.eventHandlers.clearHighlightCheckbox).toHaveBeenCalled();
   });
 
@@ -85,10 +90,12 @@ describe('KeywordController - events', () => {
     controller.view.customKeywordInput.value = '  test  ';
     controller.view.keywordHighlightCheckbox.checked = true;
     controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change'));
+    expect(controller.resetHighlightState).toHaveBeenCalled();
     expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('test');
     
     controller.view.keywordHighlightCheckbox.checked = false;
     controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change'));
+    expect(controller.resetHighlightState).toHaveBeenCalled();
     expect(controller.keywordHighlighter.removeHighlight).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledTimes(2);
 
@@ -147,11 +154,30 @@ describe('KeywordController - events', () => {
       controller.view.container.appendChild(button);
     });
 
-    it('should highlight keyword', () => {
-      button.classList.add('keyword-button--highlight');
-      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(controller.clearHighlightCheckbox).toHaveBeenCalled();
-      expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('test');
+    describe('highlight', () => {
+      it('should highlight keyword from list', () => {
+        button.classList.add('keyword-button--highlight');
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.handleHighlightClick).toHaveBeenCalled();
+        const arg = controller.handleHighlightClick.mock.calls[0][0];
+        expect(arg.name).toBe('test');
+      });
+
+      it('should highlight keyword from analysis', () => {
+        button.classList.add('keyword-button--highlight');
+        button.dataset.keywordSource = 'result';
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.handleHighlightClick).toHaveBeenCalled();
+        const arg = controller.handleHighlightClick.mock.calls[0][0];
+        expect(arg.name).toBe('analysis keyword');
+      });
+
+      it('should not call handleHighlightClick if keywordItem is null', () => {
+        controller.getKeywordItem = jest.fn().mockReturnValue(null);
+        button.classList.add('keyword-button--highlight');
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.handleHighlightClick).not.toHaveBeenCalled();
+      });
     });
 
     it('should delete keyword', () => {
@@ -167,8 +193,11 @@ describe('KeywordController - events', () => {
       button.dataset.section = 'result';
       inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       expect(controller.view.renderKeywordDetails).toHaveBeenCalledTimes(1);
-      const arg = controller.view.renderKeywordDetails.mock.calls[0][0];
-      expect(arg.name).toBe('test');
+      const args = controller.view.renderKeywordDetails.mock.calls[0];
+      expect(args[0].name).toBe('test');
+      expect(typeof args[1]).toBe('function');
+      args[1]();
+      expect(controller.getActiveHighlightData).toHaveBeenCalled();
       expect(controller.view.toggleSection).toHaveBeenCalledWith('result');
       expect(controller.setupTooltipListeners).toHaveBeenCalledWith(controller.view.analysis);
     });

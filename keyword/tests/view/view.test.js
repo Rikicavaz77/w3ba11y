@@ -77,6 +77,15 @@ describe('KeywordView', () => {
     expect(view.analyzeButton).toBe(dummy);
   });
 
+  it('should return active highlight button', () => {
+    const button = document.createElement('button');
+    button.classList.add('keyword-button--highlight--active');
+    view.container.appendChild(button);
+    
+    const activeButton = view.activeHighlightButton;
+    expect(activeButton).toBe(button);
+  });
+
   test('renderOverviewItem() should render an item with correct data', () => {
     const itemInfo = {
       title: 'Test item',
@@ -197,7 +206,7 @@ describe('KeywordView', () => {
     it('should append list view container', () => {
       const appendSpy = jest.spyOn(Element.prototype, 'appendChild');
   
-      view.renderKeywordListContainer(keywordListInfo);
+      view.renderKeywordListContainer(keywordListInfo, () => {});
       const all = view.body.querySelector('.keyword-all-lists__container');
       expect(all).toBeTruthy();
       expect(all.contains(mockListView.container)).toBe(true);
@@ -235,11 +244,12 @@ describe('KeywordView', () => {
   });
 
   describe('renderKeywordDetails()', () => {
-    let mockContainer, mockRender;
+    let mockContainer, mockRender, mockGetActiveHighlightData;
 
     beforeEach(() => {
       mockContainer = document.createElement('div');
       mockRender = jest.fn();
+      mockGetActiveHighlightData = () => {};
       AnalysisResultView.mockImplementation(() => ({
         container: mockContainer,
         render: mockRender
@@ -247,13 +257,15 @@ describe('KeywordView', () => {
     });
 
     test('should create and render AnalysisResultView if not present', () => {
-      view.renderKeywordDetails(keywords[0]);
+      view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
       expect(mockRender).toHaveBeenCalledWith(keywords[0]);
       expect(view.analysis).toBeDefined();
 
-      view.renderKeywordDetails(keywords[1]);
+      view.renderKeywordDetails(keywords[1], mockGetActiveHighlightData);
       expect(mockRender).toHaveBeenCalledWith(keywords[1]);
+      
       expect(AnalysisResultView).toHaveBeenCalledTimes(1);
+      expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightData);
     });
 
     test('should remove existing section before appending new one', () => {
@@ -261,7 +273,7 @@ describe('KeywordView', () => {
       dummy.classList.add('keywords__section--result');
       view.container.appendChild(dummy);
 
-      view.renderKeywordDetails(keywords[0]);
+      view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
       expect(view.container.contains(mockContainer)).toBe(true);
       expect(view.container.contains(dummy)).toBe(false);
     });
@@ -309,34 +321,36 @@ describe('KeywordView', () => {
   describe('createListView()', () => {
     it('should create list view correctly', () => {
       ['meta', 'userAdded'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type, sortDirection: null });
+        const result = view.createListView({ title: 'Test', type: type, sortDirection: null }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBeNull();
         expect(result.currentSortButton).toBeNull();
+        expect(typeof result._getActiveHighlightData).toBe('function');
       });
 
       ['oneWord'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type, sortDirection: 'desc' });
+        const result = view.createListView({ title: 'Test', type: type, sortDirection: 'desc' }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBe('desc');
         const button = result.container.querySelector('.keywords__sort-button[data-sort="desc"]');
         expect(result.currentSortButton).toBe(button);
         expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
+        expect(typeof result._getActiveHighlightData).toBe('function');
       });
     });
 
     it('should return existing list view if already created', () => {
       ['meta', 'userAdded', 'oneWord'].forEach(type => {
-        const first = view.createListView({ title: 'Test', type: type });
-        const second = view.createListView({ title: 'Another test', type: type });
+        const first = view.createListView({ title: 'Test', type: type }, () => {});
+        const second = view.createListView({ title: 'Another test', type: type }, () => {});
         expect(second).toBe(first);
       });
     });
 
     it('should return null for unknown type', () => {
-      const result = view.createListView({ title: 'Unknonw', type: 'unsupportedType' });
+      const result = view.createListView({ title: 'Unknonw', type: 'unsupportedType' }, () => {});
       expect(result).toBeNull();
     });
   });
@@ -411,6 +425,39 @@ describe('KeywordView', () => {
     view.hideAllTooltips();
     expect(tooltip1.classList.contains('keywords--not-visible')).toBe(true);
     expect(tooltip2.classList.contains('keywords--not-visible')).toBe(true);
+  });
+
+  describe('isButtonActive()', () => {
+    it('should return true if button is active', () => {
+      const button = document.createElement('button');
+      button.classList.add('keyword-button--highlight--active');
+      
+      expect(view.isButtonActive(button)).toBe(true);
+    });
+
+    it('should return false if button is inactive', () => {
+      const button = document.createElement('button');
+      
+      expect(view.isButtonActive(button)).toBe(false);
+    });
+  });
+
+  test('setActiveButton() should make clicked button active', () => {
+    const button = document.createElement('button');
+    button.classList.add('keyword-button--highlight--active');
+    view.container.appendChild(button);
+    const newButton = document.createElement('button');
+    view.setActiveButton(newButton);
+    expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
+    expect(newButton.classList.contains('keyword-button--highlight--active')).toBe(true);
+  });
+
+  test('clearActiveButton() should make clicked button inactive', () => {
+    const button = document.createElement('button');
+    button.classList.add('keyword-button--highlight--active');
+    view.container.appendChild(button);
+    view.clearActiveButton(button);
+    expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
   });
 
   test('getAllSection() should return all sections', () => { 

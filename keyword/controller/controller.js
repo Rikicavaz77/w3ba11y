@@ -34,6 +34,9 @@ class KeywordController {
     this.displayUserKeywords = [];
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
+
+    this.activeHighlightedKeyword = null;
+    this.activeHighlightSource = null;
     this.init();
   }
 
@@ -50,7 +53,7 @@ class KeywordController {
     this.setupTabListeners();
     this.setupTooltipListeners();
     this.bindColorPicker();
-    this.bindKeywordInputFocus();
+    this.bindKeywordInputChange();
     this.bindHighlightToggle();
     this.bindAnalyzeKeyword();
     this.bindKeywordClickEvents();
@@ -77,6 +80,13 @@ class KeywordController {
 
   getLang(doc) {
     return doc.documentElement.lang;
+  }
+
+  getActiveHighlightData() {
+    return {
+      keyword: this.activeHighlightedKeyword,
+      source: this.activeHighlightSource
+    };
   }
 
   getListByType(listType) {
@@ -136,7 +146,7 @@ class KeywordController {
       keywordsData,
       totalPages,
       sortDirection
-    ));
+    ), () => this.getActiveHighlightData());
   }
 
   // RENDER PAGE FUNCTION
@@ -214,15 +224,37 @@ class KeywordController {
     this.renderPage(listType, listView, display, listView.currentPage);
   }
 
+  resetHighlightState() {
+    this.activeHighlightedKeyword = null;
+    this.activeHighlightSource = null;
+    this.view.clearActiveButton();
+  }
+
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
     let keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return;
 
     if (event.target.checked) {
+      this.resetHighlightState();
       this.keywordHighlighter.highlightKeyword(keyword);
     } else {
+      this.resetHighlightState();
       this.keywordHighlighter.removeHighlight();
+    }
+  }
+
+  // HANDLE HIGHLIGHT FUNCTION
+  handleHighlightClick(keywordItem, clickedButton) {
+    if (this.view.isButtonActive(clickedButton)) {
+      this.resetHighlightState();
+      this.keywordHighlighter.removeHighlight();
+    } else {
+      this.activeHighlightedKeyword = keywordItem;
+      this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
+      this.clearHighlightCheckbox();
+      this.view.setActiveButton(clickedButton);
+      this.keywordHighlighter.highlightKeyword(keywordItem.name);
     }
   }
 
@@ -264,6 +296,10 @@ class KeywordController {
     const keywordToRemove = display[keywordIndex];
     if (!keywordToRemove) return;
 
+    if (this.activeHighlightedKeyword === keywordToRemove) {
+      this.resetHighlightState();
+    }
+
     const indexInOriginal = original.findIndex(k => k === keywordToRemove);
     if (indexInOriginal !== -1) {
       original.splice(indexInOriginal, 1);
@@ -279,7 +315,7 @@ class KeywordController {
 
   // GET KEYWORD INDEX FUNCTION
   getKeywordIndex(target) {
-    const listItem = target.closest('.keyword-list-item');
+    const listItem = target.closest('[data-keyword-index]');
     if (!listItem) return;
     const keywordIndex = parseInt(listItem.dataset.keywordIndex, 10);
     if (isNaN(keywordIndex)) return;
@@ -288,7 +324,7 @@ class KeywordController {
 
   // GET LIST TYPE FUNCTION
   getListType(target) {
-    const keywordListContainer = target.closest(".keyword-list__container");
+    const keywordListContainer = target.closest('[data-list-type]');
     if (!keywordListContainer) return;
     return keywordListContainer.dataset.listType;
   }
@@ -333,8 +369,8 @@ class KeywordController {
     });
   }
 
-  bindKeywordInputFocus() {
-    this.view.customKeywordInput.addEventListener("focus", this.eventHandlers.clearHighlightCheckbox);
+  bindKeywordInputChange() {
+    this.view.customKeywordInput.addEventListener("input", this.eventHandlers.clearHighlightCheckbox);
   }
 
   bindHighlightToggle() {
@@ -374,11 +410,15 @@ class KeywordController {
         if (button) fn(button, target);
       };
 
-      handle('.keyword-button--highlight', (_, target) => {
-        const keywordItem = this.getKeywordItem(target);
+      handle('.keyword-button--highlight', (button, target) => {
+        let keywordItem;
+        if (button.dataset.keywordSource === 'result') {
+          keywordItem = this.view.analysis.currentKeywordItem;
+        } else {
+          keywordItem = this.getKeywordItem(target);
+        }
         if (!keywordItem) return;
-        this.clearHighlightCheckbox();
-        this.keywordHighlighter.highlightKeyword(keywordItem.name);
+        this.handleHighlightClick(keywordItem, button);
       });
 
       handle('.keyword-button--delete', (_, target) => {
@@ -392,7 +432,7 @@ class KeywordController {
       handle('.keyword-button--view-details', (button, target) => {
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
-        this.view.renderKeywordDetails(keywordItem);
+        this.view.renderKeywordDetails(keywordItem, () => this.getActiveHighlightData());
         this.view.toggleSection(button.dataset.section);
         this.setupTooltipListeners(this.view.analysis);
       });

@@ -7,10 +7,14 @@ const Utils = require('../../utils/utils');
 global.Utils = Utils;
 
 describe('AnalysisResultView', () => {
-  let view, keywordItem;
+  let view, keywordItem, mockGetActiveHighlightData;
 
   beforeEach(() => {
-    view = new AnalysisResultView();
+    mockGetActiveHighlightData = jest.fn().mockReturnValue({
+      keyword: null,
+      source: null
+    });
+    view = new AnalysisResultView(mockGetActiveHighlightData);
     keywordItem = new Keyword('test', {
       frequency: 24,
       density: 0.84,
@@ -45,25 +49,39 @@ describe('AnalysisResultView', () => {
       expect(container.innerHTML).toContain('85');
       expect(container.innerHTML).toContain('<h4 class="keywords_tag-occurrences-item__title">p</h4>');
       expect(container.innerHTML).toContain('<span>2</span>');
+      expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
       expect(container.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(1);
+      expect(view.currentKeywordItem).toBe(keywordItem);
     });
 
     it('should handle more renderings', () => {
       view.render(keywordItem);
-      const anotherkeywordItem = new Keyword('another test', {
-        frequency: 12,
-        density: 0.42,
-        relevanceScore: 40,
-        keywordOccurrences: {
-          title: 1,
-          description: 0,
-          h1: 0,
-          p: 2
-        }
-      });
+      const anotherkeywordItem = new Keyword('another test');
       view.render(anotherkeywordItem);
       const container = view.body.querySelectorAll('.keywords__analysis-container');
       expect(container.length).toBe(1);
+    });
+
+    it('should make highlight button active', () => {
+      mockGetActiveHighlightData = jest.fn().mockReturnValue({
+        keyword: keywordItem,
+        source: 'result'
+      });
+      view._getActiveHighlightData = mockGetActiveHighlightData;
+      view.render(keywordItem);
+      const container = view.body.querySelector('.keywords__analysis-container');
+      expect(container.querySelector('.keyword-button--highlight--active')).toBeTruthy();
+    });
+
+    it('should not make highlight button active', () => {
+      mockGetActiveHighlightData = jest.fn().mockReturnValue({
+        keyword: keywordItem,
+        source: 'list'
+      });
+      view._getActiveHighlightData = mockGetActiveHighlightData;
+      view.render(keywordItem);
+      const container = view.body.querySelector('.keywords__analysis-container');
+      expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
     });
 
     it('should return tooltip trigger and tooltip elements', () => {
