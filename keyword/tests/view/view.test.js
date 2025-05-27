@@ -134,7 +134,7 @@ describe('KeywordView', () => {
     const matches = overview.textContent.match(/Missing/gi);
     expect(matches.length).toBe(2);
     expect(overview.textContent).toContain('0');
-    expect(overview.querySelectorAll('.keywords__overview-warning-icon').length).toBe(3);
+    expect(overview.querySelectorAll('.keywords__overview-icon--warning').length).toBe(3);
   });
 
   test('renderKeywordSettings() should create settings container and populate with color inputs', () => {

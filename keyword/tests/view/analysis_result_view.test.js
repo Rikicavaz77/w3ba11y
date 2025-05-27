@@ -19,6 +19,7 @@ describe('AnalysisResultView', () => {
         title: 1,
         description: 1,
         h1: 1,
+        h2: 0,
         p: 2
       }
     });
@@ -43,7 +44,8 @@ describe('AnalysisResultView', () => {
       expect(container.innerHTML).toContain('0.84');
       expect(container.innerHTML).toContain('85');
       expect(container.innerHTML).toContain('<h4 class="keywords_tag-occurrences-item__title">p</h4>');
-      expect(container.innerHTML).toContain('<p class="keywords_tag-occurrences-item__content">2</p>');
+      expect(container.innerHTML).toContain('<span>2</span>');
+      expect(container.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(1);
     });
 
     it('should handle more renderings', () => {
