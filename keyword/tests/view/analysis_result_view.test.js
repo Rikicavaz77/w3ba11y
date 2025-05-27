@@ -62,7 +62,7 @@ describe('AnalysisResultView', () => {
       expect(container.length).toBe(1);
     });
 
-    it('should set highlight button active', () => {
+    it('should make highlight button active', () => {
       mockGetActiveHighlightData = jest.fn().mockReturnValue({
         keyword: keywordItem,
         source: 'result'
@@ -73,7 +73,7 @@ describe('AnalysisResultView', () => {
       expect(container.querySelector('.keyword-button--highlight--active')).toBeTruthy();
     });
 
-    it('should not set highlight button active', () => {
+    it('should not make highlight button active', () => {
       mockGetActiveHighlightData = jest.fn().mockReturnValue({
         keyword: keywordItem,
         source: 'list'
