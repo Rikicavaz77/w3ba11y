@@ -210,7 +210,7 @@ class KeywordListView {
       const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
       const highlightClass = this._getHighlightClass(keywordItem);
       item.innerHTML = `
-        <h4 class="keyword-item__title">${safeName} (${safeFrequency})</h4>
+        <h4 class="keyword-item__title keyword-name">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
           ${this._renderDeleteButtonIfNeeded()}
           <button class="keyword-item__actions__button keyword-button--highlight ${highlightClass}">
