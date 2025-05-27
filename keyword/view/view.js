@@ -389,8 +389,8 @@ class KeywordView {
     this._analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
   }
 
-  renderKeywordListContainer(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource) {
-    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightedKeyword, getActiveHighlightSource);
+  renderKeywordListContainer(keywordListInfo, getActiveHighlightData) {
+    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightData);
     if (!keywordListView) return;
 
     let allKeywordListContainer = this._container.querySelector(".keyword-all-lists__container");
@@ -455,22 +455,16 @@ class KeywordView {
     this.tooltips.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
   }
 
-  changeTab(buttonClicked) {
-    if (this._activeTabButton === buttonClicked)
+  changeTab(clickedButton) {
+    if (this._activeTabButton === clickedButton)
       return;
 
-    this._activeTabButton = buttonClicked;
+    this._activeTabButton = clickedButton;
     this._container.querySelector('.tab__button--active').classList.remove('tab__button--active');
     this._container.querySelector('.tab--active').classList.remove('tab--active');
     this._activeTabButton.classList.add('tab__button--active');
-    this._container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
+    this._container.querySelector(`.tab--${clickedButton.dataset.tab}`).classList.add('tab--active');
   }
-
-  /* updateHighlightButtons(clickedButton) {
-    this._currentHighlightButton?.classList.remove('keyword-button--highlight--active');
-    this._currentHighlightButton = clickedButton;
-    this._currentHighlightButton.classList.add('keyword-button--highlight--active');
-  } */
 
   setActiveButton(clickedButton) {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');

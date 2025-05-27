@@ -1,4 +1,5 @@
 const KeywordController = require('../../controller/controller');
+const Keyword = require('../../model/keyword');
 
 describe('KeywordController - highlight()', () => {
   let controller;
@@ -9,6 +10,8 @@ describe('KeywordController - highlight()', () => {
 
   describe('toggleHighlight()', () => {
     beforeEach(() => {
+      controller.resetHighlightState = jest.fn();
+
       controller.view = {
         customKeywordInput: { value: '    testKeyword     ' }
       };
@@ -22,7 +25,8 @@ describe('KeywordController - highlight()', () => {
     it('should highlight keyword if checked', () => {
       const event = { target: { checked: true } };
       controller.toggleHighlight(event);
-  
+      
+      expect(controller.resetHighlightState).toHaveBeenCalled();
       expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('testKeyword');
     });
 
@@ -30,6 +34,7 @@ describe('KeywordController - highlight()', () => {
       const event = { target: { checked: false } };
       controller.toggleHighlight(event);
       
+      expect(controller.resetHighlightState).toHaveBeenCalled();
       expect(controller.keywordHighlighter.highlightKeyword).not.toHaveBeenCalled();
       expect(controller.keywordHighlighter.removeHighlight).toHaveBeenCalled();
     });
@@ -44,6 +49,52 @@ describe('KeywordController - highlight()', () => {
       
       expect(controller.keywordHighlighter.highlightKeyword).not.toHaveBeenCalled();
       expect(controller.keywordHighlighter.removeHighlight).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleHighlightClick()', () => {
+    let keywordItem;
+
+    beforeEach(() => {
+      keywordItem = new Keyword('testKeyword');
+
+      controller.clearHighlightCheckbox = jest.fn();
+      controller.resetHighlightState = jest.fn();
+
+      controller.view = {
+        activeHighlightButton: {},
+        setActiveButton: jest.fn()
+      };
+
+      controller.keywordHighlighter = {
+        highlightKeyword: jest.fn(),
+        removeHighlight: jest.fn()
+      };
+    });
+
+    it('should highlight keyword if clicked button not active', () => {
+      const mockButton = {
+        dataset: { keywordSource: 'result' }
+      };
+
+      controller.handleHighlightClick(keywordItem, mockButton);
+        
+      expect(controller.activeHighlightedKeyword).toBe(keywordItem);
+      expect(controller.activeHighlightSource).toBe('result');
+      expect(controller.clearHighlightCheckbox).toHaveBeenCalled();
+      expect(controller.view.setActiveButton).toHaveBeenCalled();
+      expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('testKeyword');
+
+      mockButton.dataset = {};
+      controller.handleHighlightClick(keywordItem, mockButton);
+      expect(controller.activeHighlightSource).toBe('list');
+    });
+
+    it('should remove highlight if clicked button already active', () => {
+      controller.handleHighlightClick(keywordItem, controller.view.activeHighlightButton);
+        
+      expect(controller.resetHighlightState).toHaveBeenCalled();
+      expect(controller.keywordHighlighter.removeHighlight).toHaveBeenCalled();
     });
   });
 

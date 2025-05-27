@@ -13,6 +13,14 @@ class KeywordListView {
     this._container = this.generateKeywordListViewSection();
   }
 
+  get title() {
+    return this._title;
+  }
+  
+  get listType() {
+    return this._listType;
+  }
+
   get container() {
     return this._container;
   }
@@ -43,6 +51,14 @@ class KeywordListView {
 
   get currentPage() {
     return this._currentPage;
+  }
+
+  set title(title) {
+    this._title = title;
+  }
+  
+  set listType(listType) {
+    this._listType = listType;
   }
 
   set container(container) {

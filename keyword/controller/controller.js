@@ -53,7 +53,7 @@ class KeywordController {
     this.setupTabListeners();
     this.setupTooltipListeners();
     this.bindColorPicker();
-    this.bindKeywordInputFocus();
+    this.bindKeywordInputChange();
     this.bindHighlightToggle();
     this.bindAnalyzeKeyword();
     this.bindKeywordClickEvents();
@@ -80,6 +80,13 @@ class KeywordController {
 
   getLang(doc) {
     return doc.documentElement.lang;
+  }
+
+  getActiveHighlightData() {
+    return {
+      keyword: this.activeHighlightedKeyword,
+      source: this.activeHighlightSource
+    };
   }
 
   getListByType(listType) {
@@ -217,14 +224,22 @@ class KeywordController {
     this.renderPage(listType, listView, display, listView.currentPage);
   }
 
+  resetHighlightState() {
+    this.activeHighlightedKeyword = null;
+    this.activeHighlightSource = null;
+    this.view.clearActiveButton();
+  }
+
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
     let keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return;
 
     if (event.target.checked) {
+      this.resetHighlightState();
       this.keywordHighlighter.highlightKeyword(keyword);
     } else {
+      this.resetHighlightState();
       this.keywordHighlighter.removeHighlight();
     }
   }
@@ -232,16 +247,14 @@ class KeywordController {
   // HANDLE HIGHLIGHT FUNCTION
   handleHighlightClick(keywordItem, clickedButton) {
     if (this.view.activeHighlightButton === clickedButton) {
-      this.activeHighlightedKeyword = null;
-      this.activeHighlightSource = null;
+      this.resetHighlightState();
       this.keywordHighlighter.removeHighlight();
-      this.view.clearActiveButton();
     } else {
       this.activeHighlightedKeyword = keywordItem;
       this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
       this.clearHighlightCheckbox();
-      this.keywordHighlighter.highlightKeyword(keywordItem.name);
       this.view.setActiveButton(clickedButton);
+      this.keywordHighlighter.highlightKeyword(keywordItem.name);
     }
   }
 
@@ -283,6 +296,10 @@ class KeywordController {
     const keywordToRemove = display[keywordIndex];
     if (!keywordToRemove) return;
 
+    if (this.activeHighlightedKeyword === keywordToRemove) {
+      this.resetHighlightState();
+    }
+
     const indexInOriginal = original.findIndex(k => k === keywordToRemove);
     if (indexInOriginal !== -1) {
       original.splice(indexInOriginal, 1);
@@ -294,13 +311,6 @@ class KeywordController {
     if (!listView) return;
 
     this.renderPage(listType, listView, display, listView.currentPage);
-  }
-
-  getActiveHighlightData() {
-    return {
-      keyword: this.activeHighlightedKeyword,
-      source: this.activeHighlightSource
-    };
   }
 
   // GET KEYWORD INDEX FUNCTION
@@ -359,8 +369,8 @@ class KeywordController {
     });
   }
 
-  bindKeywordInputFocus() {
-    this.view.customKeywordInput.addEventListener("focus", this.eventHandlers.clearHighlightCheckbox);
+  bindKeywordInputChange() {
+    this.view.customKeywordInput.addEventListener("input", this.eventHandlers.clearHighlightCheckbox);
   }
 
   bindHighlightToggle() {
@@ -403,11 +413,11 @@ class KeywordController {
       handle('.keyword-button--highlight', (button, target) => {
         let keywordItem;
         if (button.dataset.keywordSource === 'result') {
-          keywordItem = this.view.analysis._currentKeywordItem;
+          keywordItem = this.view.analysis.currentKeywordItem;
         } else {
           keywordItem = this.getKeywordItem(target);
-          if (!keywordItem) return;
         }
+        if (!keywordItem) return;
         this.handleHighlightClick(keywordItem, button);
       });
 

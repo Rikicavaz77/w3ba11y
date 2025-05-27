@@ -3,7 +3,6 @@ class AnalysisResultView {
     this._container = this.generateAnalysisResultViewSection();
     this._header;
     this._body;
-    this._getActiveHighlightedKeyword = getActiveHighlightedKeyword;
     this._getActiveHighlightData = getActiveHighlightData;
   }
 
@@ -17,6 +16,10 @@ class AnalysisResultView {
 
   get body() {
     return this._body;
+  }
+
+  get currentKeywordItem() {
+    return this._currentKeywordItem;
   }
 
   get tooltipsTrigger() {

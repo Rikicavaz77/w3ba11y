@@ -20,6 +20,8 @@ describe('KeywordController', () => {
     controller.displayOneWordKeywords = [...controller.oneWordKeywords];
     controller.batchSizes = { meta: 5 };
     controller.labelMap = { meta: 'Meta keywords' };
+    controller.activeHighlightedKeyword = controller.metaKeywords[0];
+    controller.activeHighlightSource = 'list';
 
     mockListView = {
       updateSortButtons: jest.fn(),
@@ -30,6 +32,7 @@ describe('KeywordController', () => {
     }
     controller.view = { 
       renderKeywordListContainer: jest.fn(),
+      clearActiveButton: jest.fn(),
       getListViewByType: jest.fn().mockReturnValue(mockListView),
       customKeywordInput: { value: '  seo  ' }
     };
@@ -50,11 +53,18 @@ describe('KeywordController', () => {
     });
   });  
 
+  test('getActiveHighlightData() should return highlight data correctly', () => {
+    const highlightData = controller.getActiveHighlightData();
+    expect(highlightData.keyword).toBe(controller.metaKeywords[0]);
+    expect(highlightData.source).toBe('list');
+  });
+
   test('renderKeywordListByType() should call renderKeywordListContainer with correct data', () => {
     controller.renderKeywordListByType('meta');
     
     expect(controller.view.renderKeywordListContainer).toHaveBeenCalled();
-    let arg = controller.view.renderKeywordListContainer.mock.calls[0][0];
+    const args = controller.view.renderKeywordListContainer.mock.calls[0];
+    let arg = args[0];
     expect(arg).toBeInstanceOf(KeywordListInfo);
     expect(arg.type).toBe('meta');
     expect(arg.title).toBe('Meta keywords');
@@ -62,7 +72,12 @@ describe('KeywordController', () => {
     expect(arg.keywords[0].name).toBe('meta1');
     expect(arg.totalPages).toBe(1);
     expect(arg.sortDirection).toBeNull();
-
+    arg = args[1];
+    expect(typeof arg).toBe('function');
+    expect(arg()).toEqual({
+      keyword: controller.metaKeywords[0],
+      source: 'list'
+    });
 
     controller.renderKeywordListByType('oneWord', 'desc');
     arg = controller.view.renderKeywordListContainer.mock.calls[1][0];
@@ -120,6 +135,13 @@ describe('KeywordController', () => {
     expect(controller.renderPage).toHaveBeenCalledWith('meta', mockListView, controller.displayMetaKeywords, 1);
   });
 
+  test('resetHighlightState() should reset highlight data correctly', () => {
+    controller.resetHighlightState();
+    expect(controller.activeHighlightedKeyword).toBeNull();
+    expect(controller.activeHighlightSource).toBeNull();
+    expect(controller.view.clearActiveButton).toHaveBeenCalled();
+  });
+
   describe('analyzeKeyword()', () => {
     beforeEach(() => {
       controller.userKeywords = [];
@@ -158,6 +180,7 @@ describe('KeywordController', () => {
 
   describe('deleteKeyword()', () => {
     beforeEach(() => {
+      controller.resetHighlightState = jest.fn();
       controller.renderPage = jest.fn();
 
       controller.userKeywords.push(new Keyword('another userAdded keyword'), new Keyword('last userAdded keyword'));
@@ -170,6 +193,18 @@ describe('KeywordController', () => {
 
       expect(controller.userKeywords.map(k => k.name)).toEqual(['userAdded1', 'last userAdded keyword']);
       expect(controller.displayUserKeywords.map(k => k.name)).toEqual(['userAdded1']);
+      expect(controller.resetHighlightState).not.toHaveBeenCalled();
+      expect(controller.renderPage).toHaveBeenCalledWith('userAdded', mockListView, controller.displayUserKeywords, 1);
+    });
+
+    it('should remove keyword from arrays and reset highlight state', () => {
+      controller.activeHighlightedKeyword = controller.displayUserKeywords[1];
+
+      controller.deleteKeyword('userAdded', 1);
+
+      expect(controller.userKeywords.map(k => k.name)).toEqual(['userAdded1', 'last userAdded keyword']);
+      expect(controller.displayUserKeywords.map(k => k.name)).toEqual(['userAdded1']);
+      expect(controller.resetHighlightState).toHaveBeenCalled();
       expect(controller.renderPage).toHaveBeenCalledWith('userAdded', mockListView, controller.displayUserKeywords, 1);
     });
 
