@@ -138,10 +138,17 @@ class WordCounter {
   }
 
   findCompoundKeywords(lang = 'en', gramSize = 2) {
-    const stopwords = this._getStopwords(lang, false);
+    const mainStopwords = this._getStopwords(lang, false);
+    const baseLang = lang.split('-')[0].toLowerCase();
+    let secondaryStopwords;
+    if (baseLang !== 'en') {
+      secondaryStopwords = this._getStopwords('en', false);
+    }
     const compounds = this._collectCompounds(gramSize);
     const filteredWords = compounds.filter(compound => 
-      compound.split(' ').every(word => !stopwords.has(word)));
+      compound.split(' ')
+        .every(word => !mainStopwords.has(word))
+        .filter(word => secondaryStopwords?.has(word)).length < gramSize / 2);
     const wordsMap = this._countOccurrences(filteredWords);
     const relevantWords = [...wordsMap.entries()]
       .sort((a, b) => b[1] - a[1])
