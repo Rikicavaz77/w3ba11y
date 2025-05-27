@@ -425,6 +425,21 @@ describe('KeywordView', () => {
     expect(tooltip2.classList.contains('keywords--not-visible')).toBe(true);
   });
 
+  describe('isButtonActive()', () => {
+    it('should return true if button is active', () => {
+      const button = document.createElement('button');
+      button.classList.add('keyword-button--highlight--active');
+      
+      expect(view.isButtonActive(button)).toBe(true);
+    });
+
+    it('should return false if button is inactive', () => {
+      const button = document.createElement('button');
+      
+      expect(view.isButtonActive(button)).toBe(false);
+    });
+  });
+
   test('setActiveButton() should make clicked button active', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');

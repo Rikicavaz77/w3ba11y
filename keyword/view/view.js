@@ -466,6 +466,10 @@ class KeywordView {
     this._container.querySelector(`.tab--${clickedButton.dataset.tab}`).classList.add('tab--active');
   }
 
+  isButtonActive(clickedButton) {
+    return clickedButton.classList.contains('keyword-button--highlight--active');
+  }
+
   setActiveButton(clickedButton) {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
     clickedButton.classList.add('keyword-button--highlight--active');

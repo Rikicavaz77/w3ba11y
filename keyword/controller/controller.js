@@ -246,7 +246,7 @@ class KeywordController {
 
   // HANDLE HIGHLIGHT FUNCTION
   handleHighlightClick(keywordItem, clickedButton) {
-    if (clickedButton.classList.contains("keyword-button--highlight--active")) {
+    if (this.view.isButtonActive(clickedButton)) {
       this.resetHighlightState();
       this.keywordHighlighter.removeHighlight();
     } else {
