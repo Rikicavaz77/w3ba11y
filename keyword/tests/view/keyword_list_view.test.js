@@ -36,7 +36,7 @@ describe('KeywordListView', () => {
 
     view = new KeywordListView({
       title: `Most frequent 'single-word' keywords`, 
-      listType: 'one Word', 
+      listType: 'oneWord', 
       initialSortDirection: 'desc'
     });
     expect(view.sortDirection).toBe('desc');
