@@ -10,20 +10,20 @@ class Keyword {
 
   _defaultKeywordOccurrences() {
     return {
-      title:      0,
-      description:0,
-      h1:         0,
-      h2:         0,
-      h3:         0,
-      h4:         0,
-      h5:         0,
-      h6:         0,
-      p:          0,
-      strong:     0,
-      em:         0,
-      a:          0,
-      li:         0,
-      alt:        0
+      title:       0,
+      description: 0,
+      h1:          0,
+      h2:          0,
+      h3:          0,
+      h4:          0,
+      h5:          0,
+      h6:          0,
+      p:           0,
+      strong:      0,
+      em:          0,
+      a:           0,
+      li:          0,
+      alt:         0
     };
   }
 
@@ -82,4 +82,10 @@ class Keyword {
     });
     this._relevanceScore = maxScore === 0 ? 0 : Math.ceil((score / maxScore) * 100);
   }
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = Keyword;
 }

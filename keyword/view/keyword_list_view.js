@@ -1,15 +1,24 @@
 class KeywordListView {
-  constructor(title, listType) {
+  constructor({ title, listType, initialSortDirection = null, getActiveHighlightData }) {
     this._title = title;
     this._listType = listType;
     this._searchKeywordField = null;
     this._currentSortButton = null;
-    this._sortDirection = null;
+    this._sortDirection = initialSortDirection;
+    this._getActiveHighlightData = getActiveHighlightData;
     this._pagination;
     this._paginationButtons;
     this._currentPageButton;
     this._currentPage = 1;
     this._container = this.generateKeywordListViewSection();
+  }
+
+  get title() {
+    return this._title;
+  }
+  
+  get listType() {
+    return this._listType;
   }
 
   get container() {
@@ -42,6 +51,14 @@ class KeywordListView {
 
   get currentPage() {
     return this._currentPage;
+  }
+
+  set title(title) {
+    this._title = title;
+  }
+  
+  set listType(listType) {
+    this._listType = listType;
   }
 
   set container(container) {
@@ -121,15 +138,15 @@ class KeywordListView {
       <ul class="keyword-list"></ul>
       <ol class="keywords__pagination"></ol>
     `;
-    /* To-Do:
-      <select name="sort-dropdown" class="keywords__sort-dropdown">
-        <option class="keywords__sort-dropdown__option" value="sort-by-name">Sort by name</option>
-        <option class="keywords__sort-dropdown__option" value="sort-by-score">Sort by score</option>
-      </select>
-    */
 
     this._searchKeywordField = keywordListContainer.querySelector('.keywords__input-wrapper__field');
     this._pagination = keywordListContainer.querySelector('.keywords__pagination');
+    if (this._sortDirection) {
+      const button = keywordListContainer.querySelector(`.keywords__sort-button[data-sort="${this._sortDirection}"]`);
+      if (button) {
+        this.updateSortButtons(button);
+      }
+    }
 
     return keywordListContainer;
   }
@@ -158,26 +175,51 @@ class KeywordListView {
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = null;
     this._sortDirection = null;
-    this._searchKeywordField.value = "";
+    this._searchKeywordField.value = '';
+  }
+
+  _renderDeleteButtonIfNeeded() {
+    if (this._listType !== 'userAdded') return '';
+    return `
+      <button class="keyword-item__actions__button keyword-button--delete">
+        <span class="visually-hidden">Delete keyword</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__icon--delete keywords__icon--middle-align keywords__icon--medium" aria-hidden="true">
+          <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    `;
+  }
+
+  _getHighlightClass(keywordItem) {
+    const { keyword, source } = this._getActiveHighlightData();
+    const isHighlighted = (
+      keyword === keywordItem &&
+      source === 'list'
+    );
+    return isHighlighted ? 'keyword-button--highlight--active' : '';
   }
 
   renderKeywords(keywords, startIndex) {
     const keywordList = this._container.querySelector(".keyword-list");
     keywordList.innerHTML = "";
     keywords.forEach(keywordItem => {
-      let item = document.createElement("li");
+      const item = document.createElement("li");
       item.classList.add('keyword-list-item');
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
+      const safeName = Utils.escapeHTML(keywordItem.name);
+      const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
+      const highlightClass = this._getHighlightClass(keywordItem);
       item.innerHTML = `
-        <h4 class="keyword-item__title">${keywordItem.name}</h4>
+        <h4 class="keyword-item__title keyword-name">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
-          <button class="keyword-item__actions__button keyword-button--highlight">
+          ${this._renderDeleteButtonIfNeeded()}
+          <button class="keyword-item__actions__button keyword-button--highlight ${highlightClass}">
             <span class="visually-hidden">Highlight keyword</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="keywords__icon--middle-align keywords__icon--medium" aria-hidden="true"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M315 315l158.4-215L444.1 70.6 229 229 315 315zm-187 5s0 0 0 0l0-71.7c0-15.3 7.2-29.6 19.5-38.6L420.6 8.4C428 2.9 437 0 446.2 0c11.4 0 22.4 4.5 30.5 12.6l54.8 54.8c8.1 8.1 12.6 19 12.6 30.5c0 9.2-2.9 18.2-8.4 25.6L334.4 396.5c-9 12.3-23.4 19.5-38.6 19.5L224 416l-25.4 25.4c-12.5 12.5-32.8 12.5-45.3 0l-50.7-50.7c-12.5-12.5-12.5-32.8 0-45.3L128 320zM7 466.3l63-63 70.6 70.6-31 31c-4.5 4.5-10.6 7-17 7L24 512c-13.3 0-24-10.7-24-24l0-4.7c0-6.4 2.5-12.5 7-17z"/></svg>
+            <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="keywords__icon--middle-align keywords__icon--medium" aria-hidden="true"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M315 315l158.4-215L444.1 70.6 229 229 315 315zm-187 5s0 0 0 0l0-71.7c0-15.3 7.2-29.6 19.5-38.6L420.6 8.4C428 2.9 437 0 446.2 0c11.4 0 22.4 4.5 30.5 12.6l54.8 54.8c8.1 8.1 12.6 19 12.6 30.5c0 9.2-2.9 18.2-8.4 25.6L334.4 396.5c-9 12.3-23.4 19.5-38.6 19.5L224 416l-25.4 25.4c-12.5 12.5-32.8 12.5-45.3 0l-50.7-50.7c-12.5-12.5-12.5-32.8 0-45.3L128 320zM7 466.3l63-63 70.6 70.6-31 31c-4.5 4.5-10.6 7-17 7L24 512c-13.3 0-24-10.7-24-24l0-4.7c0-6.4 2.5-12.5 7-17z"/></svg>
           </button>
           <button data-section="result" class="keyword-item__actions__button keyword-button--view-details">
             <span class="visually-hidden">View keyword details</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="keywords__icon--middle-align keywords__icon--medium" aria-hidden="true"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
+            <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="keywords__icon--middle-align keywords__icon--medium" aria-hidden="true"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
           </button>
         </div>
       `;
@@ -206,4 +248,10 @@ class KeywordListView {
     this._paginationButtons = this._pagination.querySelectorAll('.keywords__pagination__button');
     this._currentPage = currentPage;
   }
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = KeywordListView;
 }
