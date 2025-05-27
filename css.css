@@ -522,9 +522,9 @@ pre {
   box-sizing: content-box;
 }
 
-.keywords__overview-warning-icon {
+.keywords__overview-icon--warning {
   background-color: transparent;
-  color: #df4a13;
+  color: rgb(218, 145, 19);
   padding: 0;
   box-sizing: content-box;
 }
@@ -928,10 +928,17 @@ pre {
   flex: 1;
   text-transform: capitalize;
   padding: 0.5em;
-  border-right: 1px solid #cfcfcf;
 }
 
 .keywords_tag-occurrences-item__content {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 1em;
   padding: 0.5em;
+  border-left: 1px solid #cfcfcf;
+}
+
+.keyword_occurrences-icon--warning {
+  color: rgb(218, 145, 19);
 }

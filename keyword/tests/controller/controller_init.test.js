@@ -142,6 +142,7 @@ describe('KeywordController - init', () => {
     expect(analysisContainer).toBeTruthy();
     expect(analysisContainer.innerHTML).toContain('keyword');
     expect(analysisContainer.innerHTML).toContain('2');
+    expect(analysisContainer.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(12);
   });
 
   afterAll(() => {
