@@ -261,8 +261,10 @@ describe('KeywordView', () => {
       expect(mockRender).toHaveBeenCalledWith(keywords[0]);
       expect(view.analysis).toBeDefined();
 
-      view.renderKeywordDetails(keywords[1], () => {});
+      view.renderKeywordDetails(keywords[1], mockGetActiveHighlightData);
       expect(mockRender).toHaveBeenCalledWith(keywords[1]);
+      
+      expect(AnalysisResultView).toHaveBeenCalledTimes(1);
       expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightData);
     });
 
