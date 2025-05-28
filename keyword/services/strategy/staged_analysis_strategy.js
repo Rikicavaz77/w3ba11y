@@ -10,7 +10,8 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
     });
 
     this._context.allowedParentTags.forEach(tagName => {
-      this._context.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
+      let count = this._context.countOccurrencesInTag(tagName, pattern);
+      keyword.keywordOccurrences[tagName] += count;
     });
   } 
 }
