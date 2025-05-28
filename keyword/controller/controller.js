@@ -21,19 +21,24 @@ class KeywordController {
     this.batchSizes = {
       meta: 5,
       userAdded: 5,
-      oneWord: 5
+      oneWord: 5,
+      twoWords: 5
     };
     this.labelMap = {
       meta: "Meta keywords",
       userAdded: "User added keywords",
-      oneWord: "Most frequent 'single-word' keywords"
+      oneWord: "Most frequent 'single-word' keywords",
+      twoWords: "Most frequent 'double-word' keywords"
     };
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];
     this.displayUserKeywords = [];
+    // Most-relevant keywords
     this.oneWordKeywords = [];
     this.displayOneWordKeywords = [];
+    this.twoWordsKeywords = [];
+    this.displayTwoWordsKeywords = [];
 
     this.activeHighlightedKeyword = null;
     this.activeHighlightSource = null;
@@ -49,6 +54,9 @@ class KeywordController {
     this.processMostFrequentKeywords();
     if (this.displayOneWordKeywords.length > 0) {
       this.renderKeywordListByType('oneWord', 'desc');
+    }
+    if (this.displayTwoWordsKeywords.length > 0) {
+      this.renderKeywordListByType('twoWords', 'desc');
     }
     this.setupTabListeners();
     this.setupTooltipListeners();
@@ -105,6 +113,11 @@ class KeywordController {
         return {
           original: this.oneWordKeywords,
           display: this.displayOneWordKeywords
+        }; 
+      case 'twoWords':
+        return {
+          original: this.twoWordsKeywords,
+          display: this.displayTwoWordsKeywords
         };    
       default:
         return null;
@@ -126,12 +139,19 @@ class KeywordController {
   }
 
   processMostFrequentKeywords() {
-    const keywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
+    const oneWordKeywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
 
-    this.oneWordKeywords = keywords;
-    this.displayOneWordKeywords = [...keywords];
-    this.keywordAnalyzer.analyzeKeywords(keywords);
+    this.oneWordKeywords = oneWordKeywords;
+    this.displayOneWordKeywords = [...oneWordKeywords];
+    this.keywordAnalyzer.analyzeKeywords(oneWordKeywords);
+
+    const twoWordsKeywords = this.wordCounter.findCompoundKeywords(this.overviewInfo.lang)
+      .map(k => new Keyword(k));
+
+    this.twoWordsKeywords = twoWordsKeywords;
+    this.displayTwoWordsKeywords = [...twoWordsKeywords];
+    this.keywordAnalyzer.analyzeKeywords(twoWordsKeywords);
   }
 
   // RENDER KEYWORD LIST FUNCTION
