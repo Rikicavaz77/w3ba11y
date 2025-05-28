@@ -43,16 +43,15 @@ class KeywordAnalyzer {
     }
   }
 
-  countOccurrencesInTag(tagName, pattern, keywordOccurrences) {
+  countOccurrencesInTag(tagName, pattern) {
     let tags = this._tagAccessor.getTag(tagName);
-    if (!tags) return;
-    tags = Array.isArray(tags) ? tags : [tags];
     let count = 0;
+    if (!tags) return count;
+    tags = Array.isArray(tags) ? tags : [tags];
     tags.forEach(tag => {
       const text = this._tagAccessor.extractText(tagName, tag);
       const matches = text.match(pattern) || [];
       count += matches.length;
-      keywordOccurrences[tagName] += matches.length;
     });
     return count;
   }
@@ -66,7 +65,9 @@ class KeywordAnalyzer {
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     this._strategy.analyze(textNodes, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
-      keyword.frequency += this.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
+      const count = this.countOccurrencesInTag(tagName, pattern);
+      keyword.frequency += count;
+      keyword.keywordOccurrences[tagName] += count;
     });
     keyword.calculateDensity(this._wordCounter.totalWords);
     keyword.calculateRelevanceScore(this._tagData);
