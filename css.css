@@ -105,7 +105,7 @@ pre {
   gap: .3rem;
   flex-wrap: nowrap;
   text-align: justify;
-  margin: 0.3rem 0;
+  margin: .3rem 0;
 }
 .warning-message-icon {
   color: rgb(218, 145, 19);
