@@ -19,10 +19,6 @@ class TextProcessor {
     return this._root;
   }
 
-  get treeWalker() {
-    return this._treeWalker;
-  }
-
   get allowedParentTags() {
     return this._allowedParentTags;
   }
@@ -33,7 +29,7 @@ class TextProcessor {
     const tag = node.nodeName.toLowerCase();
     const display = window.getComputedStyle(node).display;
 
-    if (!display.startsWith("inline")) return false;
+    if (!display.startsWith('inline')) return false;
 
    return this.allowedInlineTags.includes(tag);
   }
@@ -83,30 +79,30 @@ class TextProcessor {
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
-      const text = node.nodeValue.trim();
+      const text = node.nodeValue;
       const parent = this.getBlockParent(node);
 
       if (currentBlockParent === parent) {
-        if (virtualText.length > 0) {
-          virtualText += " ";
+        if (virtualText.length > 0 && !virtualText.endsWith(' ') && !text.startsWith(' ')) {
+          virtualText += ' ';
         }
         const start = virtualText.length;
         virtualText += text;
         const end = virtualText.length;
-        currentGroup.push({ node, start, end});
+        currentGroup.push({ node, start, end });
       } else {
         if (currentGroup.length > 0) {
-          nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent});
+          nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
         }
         virtualText = text;
         const start = 0;
         const end = virtualText.length;
-        currentGroup = [{ node, start, end}];
+        currentGroup = [{ node, start, end }];
         currentBlockParent = parent;
       }
     }
     if (currentGroup.length > 0) {
-      nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent});
+      nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
     }
 
     return nodeGroups;

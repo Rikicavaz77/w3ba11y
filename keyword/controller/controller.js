@@ -56,7 +56,7 @@ class KeywordController {
       this.renderKeywordListByType('oneWord', 'desc');
     }
     if (this.displayTwoWordsKeywords.length > 0) {
-      this.renderKeywordListByType("twoWords");
+      this.renderKeywordListByType('twoWords', 'desc');
     }
     this.setupTabListeners();
     this.setupTooltipListeners();

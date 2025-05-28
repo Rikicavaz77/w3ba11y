@@ -20,12 +20,12 @@ class WordCounter {
     return this._uniqueWords;
   }
 
-  get treeWalker() {
-    return this._textProcessor.treeWalker;
+  _getBaseLang(lang) {
+    return lang.split('-')[0].toLowerCase();
   }
 
   _getStopwords(lang, strict = true) {
-    const baseLang = lang.split('-')[0].toLowerCase();
+    const baseLang = this._getBaseLang(lang);
     let stopwords = this._stopwords[baseLang] || new Set();
     if (strict && baseLang !== 'en') {
       stopwords = new Set([...stopwords, ...this._stopwords['en']]);
@@ -70,13 +70,12 @@ class WordCounter {
     if (!forceRefresh && this._cachedWords) return this._cachedWords;
 
     const pattern = this._textProcessor.getWordsPattern();
+    const textNodes = this._textProcessor.getTextNodes();
     const words = [];
-    this.treeWalker.resetWalker();
-    let node;
-    while ((node = this.treeWalker.nextNode())) {
+    textNodes.forEach(node => {
       const matches = node.nodeValue.toLowerCase().match(pattern) || [];
       words.push(...matches);
-    }
+    });
 
     ["title", "description", "alt"].forEach(tagName => {
       this._collectWordsInTag(tagName, pattern, words);
@@ -139,16 +138,16 @@ class WordCounter {
 
   findCompoundKeywords(lang = 'en', gramSize = 2) {
     const mainStopwords = this._getStopwords(lang, false);
-    const baseLang = lang.split('-')[0].toLowerCase();
     let secondaryStopwords;
-    if (baseLang !== 'en') {
+    if (this._getBaseLang(lang) !== 'en') {
       secondaryStopwords = this._getStopwords('en', false);
     }
     const compounds = this._collectCompounds(gramSize);
-    const filteredWords = compounds.filter(compound => 
-      compound.split(' ')
-        .every(word => !mainStopwords.has(word))
-        .filter(word => secondaryStopwords?.has(word)).length < gramSize / 2);
+    const filteredWords = compounds.filter(compound => {
+      const words = compound.split(' ');
+      return words.every(word => !mainStopwords.has(word)) &&
+      (!secondaryStopwords || words.filter(word => secondaryStopwords.has(word)).length <= gramSize / 2);
+    });
     const wordsMap = this._countOccurrences(filteredWords);
     const relevantWords = [...wordsMap.entries()]
       .sort((a, b) => b[1] - a[1])
