@@ -32,6 +32,9 @@ class Interface {
   }
 
   render() {
+    /*  To-Do:
+        add warning message 
+    */
     document.documentElement.innerHTML = `
       <!DOCTYPE html>
       <html lang="en">
