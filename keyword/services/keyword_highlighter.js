@@ -84,10 +84,16 @@ class KeywordHighlighter {
 
   removeHighlight() {
     const highlightedKeywords = this.root.querySelectorAll('.w3ba11y__highlight-keyword');
+    const parents = new Set();
+
     highlightedKeywords.forEach(element => {
       const newTextNode = this.doc.createTextNode(element.textContent);
-      element.parentNode.replaceChild(newTextNode, element);
+      const parent = element.parentNode;
+      parent.replaceChild(newTextNode, element);
+      parents.add(parent);
     });
+
+    parents.forEach(parent => parent.normalize());
   }
 
   highlightKeyword(keyword) {
