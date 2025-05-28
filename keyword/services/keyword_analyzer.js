@@ -65,7 +65,7 @@ class KeywordAnalyzer {
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     this._strategy.analyze(textNodes, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
-      const count = this.countOccurrencesInTag(tagName, pattern);
+      let count = this.countOccurrencesInTag(tagName, pattern);
       keyword.frequency += count;
       keyword.keywordOccurrences[tagName] += count;
     });
