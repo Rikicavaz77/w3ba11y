@@ -41,6 +41,9 @@ class KeywordController {
   }
 
   init() {
+    /* To-Do:
+      pattern
+    */
     this.createOverview();
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
     if (this.displayMetaKeywords.length > 0) {
