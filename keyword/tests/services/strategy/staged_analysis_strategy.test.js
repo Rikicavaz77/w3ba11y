@@ -50,10 +50,10 @@ describe('StagedAnalysisStrategy', () => {
     strategy.analyzeSimpleKeyword(textNodes, pattern, simpleKeyword);
     expect(simpleKeyword.frequency).toBe(4);
     expect(simpleKeyword.keywordOccurrences.h1).toBe(1);
+    expect(simpleKeyword.keywordOccurrences.h2).toBe(0);
     expect(simpleKeyword.keywordOccurrences.p).toBe(3);
     expect(simpleKeyword.keywordOccurrences.strong).toBe(1);
     expect(simpleKeyword.keywordOccurrences.em).toBe(1);
-    expect(simpleKeyword.keywordOccurrences.h2).toBe(0);
   });
 
   test('analyzeCompoundKeyword() should count keyword occurrences', () => {

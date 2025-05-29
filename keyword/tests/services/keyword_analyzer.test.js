@@ -49,7 +49,7 @@ describe('KeywordAnalyzer', () => {
 
   describe('prepareAnalysisData()', () => {
     it('should get only text nodes', () => {
-      const keywords = [new Keyword('keyword'), new Keyword('keyword')]
+      const keywords = [new Keyword('keyword'), new Keyword('test')]
       analyzer._prepareAnalysisData(keywords);
       expect(analyzer._textNodes).toBeDefined();
       expect(analyzer._nodeGroups).toBeUndefined();

@@ -74,7 +74,7 @@ describe('AllInOneAnalysisStrategy', () => {
   }); 
 
   describe('getCommonAncestors()', () => {
-    test('should return valid common ancestors', () => {
+    it('should return valid common ancestors', () => {
       const p = document.createElement('p');
       const strong = document.createElement('strong');
       const em = document.createElement('em');
@@ -92,7 +92,7 @@ describe('AllInOneAnalysisStrategy', () => {
       expect(commonAncestors).not.toContain(em);
     });
 
-    test('should return an empty array if no valid common ancenstors', () => {
+    it('should return an empty array if no valid common ancenstors', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       div.appendChild(span);
@@ -129,10 +129,10 @@ describe('AllInOneAnalysisStrategy', () => {
     strategy.analyzeSimpleKeyword(textNodes, pattern, simpleKeyword);
     expect(simpleKeyword.frequency).toBe(4);
     expect(simpleKeyword.keywordOccurrences.h1).toBe(1);
+    expect(simpleKeyword.keywordOccurrences.h2).toBe(0);
     expect(simpleKeyword.keywordOccurrences.p).toBe(3);
     expect(simpleKeyword.keywordOccurrences.strong).toBe(1);
     expect(simpleKeyword.keywordOccurrences.em).toBe(1);
-    expect(simpleKeyword.keywordOccurrences.h2).toBe(0);
   });
 
   test('analyzeCompoundKeyword() should count keyword occurrences', () => {
