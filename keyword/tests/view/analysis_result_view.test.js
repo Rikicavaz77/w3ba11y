@@ -45,8 +45,8 @@ describe('AnalysisResultView', () => {
       expect(container.innerHTML).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
       expect(container.innerHTML).toContain('24');
       expect(container.innerHTML).toContain('0.84');
-      const match = /\bp\b/.test(container.querySelector('.keywords_tag-occurrences-list').textContent);
-      expect(match).toBe(true);
+      const hasMatch = /\bp\b/.test(container.querySelector('.keywords_tag-occurrences-list').textContent);
+      expect(hasMatch).toBe(true);
       expect(container.innerHTML).toContain('<span>2</span>');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
       expect(container.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(1);
