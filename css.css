@@ -432,6 +432,8 @@ pre {
 
 .keyword-name {
   text-transform: capitalize;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .w3ba11y__section--keyword .section__header {
