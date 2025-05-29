@@ -115,6 +115,10 @@ describe('KeywordController - init', () => {
 
     const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
     expect(highlights.length).toBe(1);
+    expect(button.classList.contains('keyword-button--highlight--active')).toBe(true);
+    expect(controller.view.activeHighlightButton).toBe(button);
+    expect(controller.activeHighlightedKeyword).toBe(controller.metaKeywords.at(-1));
+    expect(controller.activeHighlightSource).toBe('list');
   });
 
   test('should analyze user added keyword', () => {
@@ -140,8 +144,11 @@ describe('KeywordController - init', () => {
 
     const analysisContainer = controller.view.analysis.container;
     expect(analysisContainer).toBeTruthy();
-    expect(analysisContainer.innerHTML).toContain('keyword');
-    expect(analysisContainer.innerHTML).toContain('2');
+    expect(analysisContainer.textContent).toContain('keyword');
+    expect(analysisContainer.textContent).toContain('2');
+    const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
+    expect(highlightButton).toBeTruthy();
+    expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
     expect(analysisContainer.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(12);
   });
 
