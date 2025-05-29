@@ -38,8 +38,8 @@ describe('KeywordHighlighter', () => {
 
   test('updateTagColors() should update colorMap and reinject style', () => {
     const original = highlighter.colorMap.p.bg;
-    highlighter.updateTagColors('p', 'bg', 'yellow');
-    expect(highlighter.colorMap.p.bg).toBe('yellow');
+    highlighter.updateTagColors('p', 'bg', '#ffea00');
+    expect(highlighter.colorMap.p.bg).toBe('#ffea00');
 
     const style = document.getElementById('w3ba11y-highlight-keyword-style-override');
     const tagStyle = style.textContent
@@ -47,7 +47,7 @@ describe('KeywordHighlighter', () => {
       .filter(tag => tag.includes('data-parent=\"p\"'))
       .join('');
 
-    expect(tagStyle).toContain('--highlight-bg-color: yellow');
+    expect(tagStyle).toContain('--highlight-bg-color: #ffea00');
     expect(tagStyle).not.toContain(`--highlight-bg-color: ${original}`);
   });
 

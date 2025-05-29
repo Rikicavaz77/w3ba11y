@@ -187,8 +187,6 @@ describe('KeywordController - events', () => {
     });
 
     it('should view details', () => {
-      controller.setupTooltipListeners = jest.fn();
-
       button.classList.add('keyword-button--view-details');
       button.dataset.section = 'result';
       inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));

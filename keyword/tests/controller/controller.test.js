@@ -127,6 +127,7 @@ describe('KeywordController', () => {
   });
   
   test('removeFilters() should reset display keywords and update UI', () => {
+    controller.displayMetaKeywords.push(new Keyword('meta2'));
     controller.renderPage = jest.fn();
     
     controller.removeFilters('meta');

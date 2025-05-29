@@ -77,7 +77,7 @@ describe('KeywordView', () => {
     expect(view.analyzeButton).toBe(dummy);
   });
 
-  it('should return active highlight button', () => {
+  test('should return active highlight button', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
@@ -162,7 +162,7 @@ describe('KeywordView', () => {
     expect(view.colorInputs.length).toBe(6);
     
     const anotherColorMap = {
-      strong: { bg: '#e6320e', color: '#000000', border: '#000000' },
+      strong: { bg: '#e6320e', color: '#000000', border: '#000000' }
     };
 
     view.renderKeywordSettings(anotherColorMap);
@@ -174,11 +174,11 @@ describe('KeywordView', () => {
 
     const box = view.body.querySelector('.keywords__input-container');
     expect(box).toBeTruthy();
-    expect(view.customKeywordInput).not.toBeNull();
+    expect(view.customKeywordInput).toBeDefined();
     expect(view.customKeywordInput.classList.contains('keywords__input-wrapper__field')).toBe(true);
-    expect(view.keywordHighlightCheckbox).not.toBeNull();
+    expect(view.keywordHighlightCheckbox).toBeDefined();
     expect(view.keywordHighlightCheckbox.classList.contains('keywords__highlight-input')).toBe(true);
-    expect(view.analyzeButton).not.toBeNull();
+    expect(view.analyzeButton).toBeDefined();
     expect(view.analyzeButton.classList.contains('keywords__analyze-button')).toBe(true);
 
     view.renderKeywordInputBox();
@@ -256,7 +256,7 @@ describe('KeywordView', () => {
       }));
     });
 
-    test('should create and render AnalysisResultView if not present', () => {
+    it('should create and render AnalysisResultView if not present', () => {
       view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
       expect(mockRender).toHaveBeenCalledWith(keywords[0]);
       expect(view.analysis).toBeDefined();
@@ -268,7 +268,7 @@ describe('KeywordView', () => {
       expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightData);
     });
 
-    test('should remove existing section before appending new one', () => {
+    it('should remove existing section before appending new one', () => {
       const dummy = document.createElement('div');
       dummy.classList.add('keywords__section--result');
       view.container.appendChild(dummy);
@@ -303,6 +303,7 @@ describe('KeywordView', () => {
     it('should not switch if tab already active', () => {
       const overviewTabButton = view.overviewTabButton;
       view.changeTab(overviewTabButton);
+      expect(view.overviewTab.classList.contains('tab--active')).toBe(true);
       expect(view.activeTabButton).toBe(overviewTabButton);
     });
   });
@@ -356,15 +357,8 @@ describe('KeywordView', () => {
   });
 
   test('render() should call internal rendering methods', () => {
-    const overviewInfo = {
-      metaTagKeywordsContent: '',
-      lang: '',
-      wordCount: 0,
-      uniqueWordCount: 0
-    };
-    const colorMap = {
-      strong: { bg: '#e6320e', color: '#000000', border: '#000000' },
-    };
+    const overviewInfo = {};
+    const colorMap = {};
 
     view.renderKeywordAnalysisOverview = jest.fn();
     view.renderKeywordSettings = jest.fn();
