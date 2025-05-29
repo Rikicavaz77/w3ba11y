@@ -40,9 +40,7 @@ describe('KeywordController - highlight()', () => {
     });
 
     it('should do nothing if keyword is empty', () => {
-      controller.view = {
-        customKeywordInput: { value: '' }
-      };
+      controller.view.customKeywordInput.value = '';
 
       const event = { target: { checked: true } };
       controller.toggleHighlight(event);
@@ -94,7 +92,7 @@ describe('KeywordController - highlight()', () => {
     it('should remove highlight if clicked button already active', () => {
       controller.view.isButtonActive = jest.fn().mockReturnValue(true);
 
-      controller.handleHighlightClick(keywordItem, controller.view.activeHighlightButton);
+      controller.handleHighlightClick(keywordItem, {});
         
       expect(controller.resetHighlightState).toHaveBeenCalled();
       expect(controller.keywordHighlighter.removeHighlight).toHaveBeenCalled();

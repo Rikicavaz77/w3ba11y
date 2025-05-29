@@ -29,17 +29,34 @@ describe('KeywordHighlighter', () => {
     expect(highlights[0].dataset.parent).toBe('p');
   });
 
-  test('removeHighlight() should restore plain text', () => {
-    highlighter.highlightKeyword('keyword');
-    highlighter.removeHighlight();
-    const highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(0);
+  describe('removeHighlight()', () => {
+    it('should restore plain text', () => {
+      highlighter.highlightKeyword('keyword');
+      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBeGreaterThan(0);
+
+      highlighter.removeHighlight();
+      highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(0);
+    });
+
+    it('should avoid dom breaking', () => {
+      let textNodes = highlighter._textProcessor.getTextNodes();
+      let initialLength = textNodes.length;
+
+      highlighter.highlightKeyword('keyword');
+      highlighter.removeHighlight();
+
+      textNodes = highlighter._textProcessor.getTextNodes();
+      let currentLength = textNodes.length;
+      expect(currentLength).toBe(initialLength);
+    });
   });
 
   test('updateTagColors() should update colorMap and reinject style', () => {
     const original = highlighter.colorMap.p.bg;
-    highlighter.updateTagColors('p', 'bg', 'yellow');
-    expect(highlighter.colorMap.p.bg).toBe('yellow');
+    highlighter.updateTagColors('p', 'bg', '#ffea00');
+    expect(highlighter.colorMap.p.bg).toBe('#ffea00');
 
     const style = document.getElementById('w3ba11y-highlight-keyword-style-override');
     const tagStyle = style.textContent
@@ -47,7 +64,7 @@ describe('KeywordHighlighter', () => {
       .filter(tag => tag.includes('data-parent=\"p\"'))
       .join('');
 
-    expect(tagStyle).toContain('--highlight-bg-color: yellow');
+    expect(tagStyle).toContain('--highlight-bg-color: #ffea00');
     expect(tagStyle).not.toContain(`--highlight-bg-color: ${original}`);
   });
 

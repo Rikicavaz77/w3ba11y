@@ -367,15 +367,15 @@ class KeywordController {
     });
   }
 
-  setupTooltipListeners(view = this.view) {
-    view.tooltipsTrigger.forEach(tooltipTrigger => {
+  setupTooltipListeners() {
+    this.view.tooltipTriggers.forEach(tooltipTrigger => {
       tooltipTrigger.addEventListener("focus", this.eventHandlers.showTooltip);
       tooltipTrigger.addEventListener("blur", this.eventHandlers.hideTooltip);
       tooltipTrigger.addEventListener("mouseenter", this.eventHandlers.showTooltip);
       tooltipTrigger.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
     });
 
-    view.tooltips.forEach(tooltip => {
+    this.view.tooltips.forEach(tooltip => {
       tooltip.addEventListener("mouseenter", this.eventHandlers.showTooltip);
       tooltip.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
     });
@@ -454,7 +454,6 @@ class KeywordController {
         if (!keywordItem) return;
         this.view.renderKeywordDetails(keywordItem, () => this.getActiveHighlightData());
         this.view.toggleSection(button.dataset.section);
-        this.setupTooltipListeners(this.view.analysis);
       });
 
       handle('.keywords__section__button--back', (button, _) => {

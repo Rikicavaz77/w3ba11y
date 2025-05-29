@@ -4,22 +4,6 @@ class KeywordAnalyzer {
     this._tagAccessor = tagAccessor;
     this._wordCounter = wordCounter;
     this.setStrategy(strategy);
-    this._tagData = {
-      title:       { weight: 7 },
-      description: { weight: 6 },
-      h1:          { weight: 6 },
-      h2:          { weight: 5 },
-      h3:          { weight: 4 },
-      h4:          { weight: 2 },
-      h5:          { weight: 2 },
-      h6:          { weight: 2 },
-      p:           { weight: 0, },
-      strong:      { weight: 0, },
-      em:          { weight: 0, },
-      a:           { weight: 2.5 },
-      li:          { weight: 0 },
-      alt:         { weight: 2.5 }
-    };
   }
 
   get root() {
@@ -33,14 +17,6 @@ class KeywordAnalyzer {
   setStrategy(strategy) {
     this._strategy = strategy;
     this._strategy.setContext(this);
-  }
-
-  countTagsOccurrences() {
-    for (const tagName of Object.keys(this._tagData)) {
-      if (this._tagData[tagName].weight) {
-        this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
-      }
-    }
   }
 
   countOccurrencesInTag(tagName, pattern) {
@@ -58,7 +34,6 @@ class KeywordAnalyzer {
 
   _prepareAnalysisData(keywords = []) {
     this._strategy.reset();
-    this.countTagsOccurrences();
 
     const hasSimple = keywords.some(k => !/\s+/.test(k.name));
     const hasCompound = keywords.some(k => /\s+/.test(k.name));
@@ -89,7 +64,6 @@ class KeywordAnalyzer {
     });
 
     keyword.calculateDensity(this._wordCounter.totalWords);
-    keyword.calculateRelevanceScore(this._tagData);
     keyword.status = 'done';
   }
   
@@ -116,4 +90,3 @@ class KeywordAnalyzer {
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = KeywordAnalyzer;
 }
-

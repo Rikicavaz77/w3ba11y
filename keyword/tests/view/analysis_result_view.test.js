@@ -18,7 +18,6 @@ describe('AnalysisResultView', () => {
     keywordItem = new Keyword('test', {
       frequency: 24,
       density: 0.84,
-      relevanceScore: 85,
       keywordOccurrences: {
         title: 1,
         description: 1,
@@ -46,8 +45,8 @@ describe('AnalysisResultView', () => {
       expect(container.innerHTML).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
       expect(container.innerHTML).toContain('24');
       expect(container.innerHTML).toContain('0.84');
-      expect(container.innerHTML).toContain('85');
-      expect(container.innerHTML).toContain('<h4 class="keywords_tag-occurrences-item__title">p</h4>');
+      const hasMatch = /\bp\b/.test(container.querySelector('.keywords_tag-occurrences-list').textContent);
+      expect(hasMatch).toBe(true);
       expect(container.innerHTML).toContain('<span>2</span>');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
       expect(container.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(1);
@@ -82,17 +81,6 @@ describe('AnalysisResultView', () => {
       view.render(keywordItem);
       const container = view.body.querySelector('.keywords__analysis-container');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
-    });
-
-    it('should return tooltip trigger and tooltip elements', () => {
-      view.render(keywordItem);
-  
-      const triggers = view.tooltipsTrigger;
-      const tooltip = view.tooltips;
-      expect(triggers.length).toBeGreaterThan(0);
-      expect(tooltip.length).toBeGreaterThan(0);
-      expect(triggers[0].classList.contains('keywords__tooltip-trigger')).toBe(true);
-      expect(tooltip[0].classList.contains('keywords__tooltip-text')).toBe(true);
     });
   }); 
 

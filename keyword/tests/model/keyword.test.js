@@ -32,17 +32,4 @@ describe('Keyword', () => {
     keyword.calculateDensity(0);
     expect(keyword.density).toBeCloseTo(0);
   });
-
-  test('calculateRelevanceScore() should compute correct score', () => {
-    const tagData = {
-      title: { weight: 10, tagOccurrences: 1 },
-      description: { weight: 8, tagOccurrences: 1 },
-      p: { weight: 2, tagOccurrences: 20 },
-    };
-    keyword.calculateRelevanceScore(tagData);
-    expect(keyword.relevanceScore).toBeCloseTo(91);
-
-    keyword.calculateRelevanceScore({});
-    expect(keyword.relevanceScore).toBeCloseTo(0);
-  });
 });
