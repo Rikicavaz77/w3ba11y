@@ -33,8 +33,6 @@ class KeywordAnalyzer {
   }
 
   _prepareAnalysisData(keywords = []) {
-    this._strategy.reset();
-
     const hasSimple = keywords.some(k => !/\s+/.test(k.name));
     const hasCompound = keywords.some(k => /\s+/.test(k.name));
 
@@ -70,6 +68,7 @@ class KeywordAnalyzer {
   analyzeKeyword(keyword) {
     this._prepareAnalysisData([keyword]);
     this._performAnalysis(keyword);
+    this._strategy.reset();
   }
 
   analyzeKeywords(keywords) {
@@ -81,6 +80,7 @@ class KeywordAnalyzer {
       });
     } finally {
       this._tagAccessor.useCache = false;
+      this._strategy.reset();
     }
   }
 }

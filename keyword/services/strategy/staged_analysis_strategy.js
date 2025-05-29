@@ -3,6 +3,8 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
+  reset() {}
+
   analyzeSimpleKeyword(textNodes, pattern, keyword) {
     textNodes.forEach(node => {
       const matches = node.nodeValue.match(pattern) || [];

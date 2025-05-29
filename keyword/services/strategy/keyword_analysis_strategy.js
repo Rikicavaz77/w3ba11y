@@ -5,6 +5,10 @@ class KeywordAnalysisStrategy {
     }
   }
 
+  reset() {
+    throw new Error("reset() must be implemented");
+  }
+
   setContext(context) {
     throw new Error('setContext() must be implemented');
   }

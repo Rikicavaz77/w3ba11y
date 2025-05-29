@@ -1,4 +1,9 @@
 class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
+  constructor() {
+    super();
+    this._ancestorCache = new WeakMap(); 
+  }
+
   setContext(context) {
     this._context = context;
   }
@@ -43,7 +48,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     return [...commonAncestors];
   }
 
-  _countOccurrencesInAncestors(ancestors, keywordOccurrences, occurrences = 1) {
+  _updateOccurrencesByAncestors(ancestors, keywordOccurrences, occurrences = 1) {
     ancestors.forEach(ancestor => {
       let tagName = ancestor.nodeName.toLowerCase();
       keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + occurrences;
@@ -55,7 +60,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
       const matches = node.nodeValue.match(pattern) || [];
       if (matches.length > 0) {
         const ancestors = this._findAncestors(node);
-        this._countOccurrencesInAncestors(ancestors, keyword.keywordOccurrences, matches.length);
+        this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, matches.length);
       }
       keyword.frequency += matches.length;
     });
@@ -77,7 +82,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
           .map(({ node }) => node);
         
         const commonAncestors = this._getCommonAncestors(matchedNodes);
-        this._countOccurrencesInAncestors(commonAncestors, keyword.keywordOccurrences);
+        this._updateOccurrencesByAncestors(commonAncestors, keyword.keywordOccurrences);
       });
     });
   } 

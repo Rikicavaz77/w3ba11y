@@ -65,10 +65,11 @@ class TextProcessor {
   }
 
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
+    const escapedKeyword = Utils.escapeRegExp(keyword);
     if (capture) {
-      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${escapedKeyword})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
     }
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${Utils.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${escapedKeyword}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
   }
 
   getTextNodeGroups() {
