@@ -3,9 +3,21 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
-  analyze(textNodes, pattern, keyword) {
+  analyzeSimpleKeyword(textNodes, pattern, keyword) {
     textNodes.forEach(node => {
       const matches = node.nodeValue.match(pattern) || [];
+      keyword.frequency += matches.length;
+    });
+
+    this._context.allowedParentTags.forEach(tagName => {
+      let count = this._context.countOccurrencesInTag(tagName, pattern);
+      keyword.keywordOccurrences[tagName] += count;
+    });
+  } 
+
+  analyzeCompoundKeyword(nodeGroups, pattern, keyword) {
+    nodeGroups.forEach(({ virtualText }) => {
+      const matches = virtualText.match(pattern) || [];
       keyword.frequency += matches.length;
     });
 
