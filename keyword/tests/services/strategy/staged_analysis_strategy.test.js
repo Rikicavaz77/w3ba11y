@@ -19,12 +19,14 @@ global.sw = {
 };
 
 describe('StagedAnalysisStrategy', () => {
-  let strategy, keyword;
+  let strategy, simpleKeyword, compoundKeyword;
 
   beforeEach(() => {
     document.body.innerHTML = `
       <h1>This is a test keyword</h1>
       <p>Another keyword appears here</p>
+      <p>Compound keyword appears in the same tag</p>
+      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
     const treeWalker = new TreeWalkerManager(document.body);
     const textProcessor = new TextProcessor(document, treeWalker);
@@ -33,17 +35,35 @@ describe('StagedAnalysisStrategy', () => {
     strategy = new StagedAnalysisStrategy();
     const analyzer = new KeywordAnalyzer(textProcessor, tagAccessor, wordCounter, strategy);
     strategy.setContext(analyzer);
-    keyword = new Keyword('keyword');
+    simpleKeyword = new Keyword('keyword');
+    compoundKeyword = new Keyword('compound keyword');
   });
 
-  test('analyze() should count keyword occurrences', () => {
-    const pattern = strategy._context._textProcessor.getKeywordPattern(keyword.name);
+  test('reset() should do nothing', () => {
+    const result = strategy.reset();
+    expect(result).toBeUndefined();
+  });
+
+  test('analyzeSimpleKeyword() should count keyword occurrences', () => {
+    const pattern = strategy._context._textProcessor.getKeywordPattern(simpleKeyword.name);
     const textNodes = strategy._context._textProcessor.getTextNodes();
-    strategy.analyze(textNodes, pattern, keyword);
-    expect(keyword.frequency).toBe(2);
-    expect(keyword.keywordOccurrences.h1).toBe(1);
-    expect(keyword.keywordOccurrences.p).toBe(1);
-    expect(keyword.keywordOccurrences.h2).toBe(0);
+    strategy.analyzeSimpleKeyword(textNodes, pattern, simpleKeyword);
+    expect(simpleKeyword.frequency).toBe(4);
+    expect(simpleKeyword.keywordOccurrences.h1).toBe(1);
+    expect(simpleKeyword.keywordOccurrences.h2).toBe(0);
+    expect(simpleKeyword.keywordOccurrences.p).toBe(3);
+    expect(simpleKeyword.keywordOccurrences.strong).toBe(1);
+    expect(simpleKeyword.keywordOccurrences.em).toBe(1);
+  });
+
+  test('analyzeCompoundKeyword() should count keyword occurrences', () => {
+    const pattern = strategy._context._textProcessor.getKeywordPattern(compoundKeyword.name);
+    const nodeGroups = strategy._context._textProcessor.getTextNodeGroups();
+    strategy.analyzeCompoundKeyword(nodeGroups, pattern, compoundKeyword);
+    expect(compoundKeyword.frequency).toBe(2);
+    expect(compoundKeyword.keywordOccurrences.p).toBe(2);
+    expect(compoundKeyword.keywordOccurrences.strong).toBe(1);
+    expect(compoundKeyword.keywordOccurrences.em).toBe(0);
   });
 
   afterAll(() => {

@@ -58,7 +58,7 @@ class KeywordView {
     return this._container.querySelector('.tab__button--settings');
   }
 
-  get tooltipsTrigger() {
+  get tooltipTriggers() {
     return this._container.querySelectorAll('.keywords__tooltip-trigger');
   }
 
@@ -148,6 +148,11 @@ class KeywordView {
           this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
         }
         return this._oneWordKeywordsListView; 
+      case 'twoWords':
+        if (!this._twoWordsKeywordsListView) {
+          this._twoWordsKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
+        }
+        return this._twoWordsKeywordsListView; 
       default:
         return null;
     }
@@ -161,6 +166,8 @@ class KeywordView {
         return this._userKeywordsListView;
       case 'oneWord':
           return this._oneWordKeywordsListView;
+      case 'twoWords':
+        return this._twoWordsKeywordsListView;
       default:
         return null;
     }

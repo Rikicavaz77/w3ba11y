@@ -4,22 +4,6 @@ class KeywordAnalyzer {
     this._tagAccessor = tagAccessor;
     this._wordCounter = wordCounter;
     this.setStrategy(strategy);
-    this._tagData = {
-      title:       { weight: 7 },
-      description: { weight: 6 },
-      h1:          { weight: 6 },
-      h2:          { weight: 5 },
-      h3:          { weight: 4 },
-      h4:          { weight: 2 },
-      h5:          { weight: 2 },
-      h6:          { weight: 2 },
-      p:           { weight: 0, },
-      strong:      { weight: 0, },
-      em:          { weight: 0, },
-      a:           { weight: 2.5 },
-      li:          { weight: 0 },
-      alt:         { weight: 2.5 }
-    };
   }
 
   get root() {
@@ -35,14 +19,6 @@ class KeywordAnalyzer {
     this._strategy.setContext(this);
   }
 
-  countTagsOccurrences() {
-    for (const tagName of Object.keys(this._tagData)) {
-      if (this._tagData[tagName].weight) {
-        this._tagData[tagName].tagOccurrences = this._tagAccessor.getTagOccurrences(tagName);
-      }
-    }
-  }
-
   countOccurrencesInTag(tagName, pattern) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return 0;
@@ -56,38 +32,55 @@ class KeywordAnalyzer {
     return count;
   }
 
-  _prepareAnalysisData() {
-    this.countTagsOccurrences();
-    this._textNodes = this._textProcessor.getTextNodes();
+  _prepareAnalysisData(keywords = []) {
+    const hasSimple = keywords.some(k => !/\s+/.test(k.name));
+    const hasCompound = keywords.some(k => /\s+/.test(k.name));
+
+    if (hasSimple) {
+      this._textNodes = this._textProcessor.getTextNodes();
+    }
+
+    if (hasCompound) {
+      this._nodeGroups = this._textProcessor.getTextNodeGroups();
+    }
   }
 
-  _performAnalysis(keyword, textNodes) {
+  _performAnalysis(keyword) {
+    const isCompound = /\s+/.test(keyword.name);
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
-    this._strategy.analyze(textNodes, pattern, keyword);
+    
+    if (isCompound) {
+      this._strategy.analyzeCompoundKeyword(this._nodeGroups, pattern, keyword);
+    } else {
+      this._strategy.analyzeSimpleKeyword(this._textNodes, pattern, keyword);
+    }
+
     ["title", "description", "alt"].forEach(tagName => {
       let count = this.countOccurrencesInTag(tagName, pattern);
       keyword.frequency += count;
       keyword.keywordOccurrences[tagName] += count;
     });
+
     keyword.calculateDensity(this._wordCounter.totalWords);
-    keyword.calculateRelevanceScore(this._tagData);
-    keyword.status = "done";
+    keyword.status = 'done';
   }
   
   analyzeKeyword(keyword) {
-    this._prepareAnalysisData();
-    this._performAnalysis(keyword, this._textNodes);
+    this._prepareAnalysisData([keyword]);
+    this._performAnalysis(keyword);
+    this._strategy.reset();
   }
 
   analyzeKeywords(keywords) {
-    this._prepareAnalysisData();
+    this._prepareAnalysisData(keywords);
     try {
       this._tagAccessor.useCache = true;
       keywords.forEach(keyword => {
-        this._performAnalysis(keyword, this._textNodes);
+        this._performAnalysis(keyword);
       });
     } finally {
       this._tagAccessor.useCache = false;
+      this._strategy.reset();
     }
   }
 }
@@ -97,4 +90,3 @@ class KeywordAnalyzer {
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = KeywordAnalyzer;
 }
-

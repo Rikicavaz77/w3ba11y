@@ -59,6 +59,7 @@ describe('KeywordController - init', () => {
       <h1>Another test heading</h1>
       <p>Keyword here too</p>
       <img src="test.jpg" alt="Image alt text">
+      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong></p>
     `;
     controller = new KeywordController(iframeDoc);
   });
@@ -68,12 +69,14 @@ describe('KeywordController - init', () => {
     expect(info).toBeInstanceOf(OverviewInfo);
     expect(info.lang).toBe('en-US');
     expect(info.metaTagKeywordsContent).toBe('seo, accessibility, keyword');
-    expect(info.wordCount).toBe(18);
-    expect(info.uniqueWordCount).toBe(13);
+    expect(info.wordCount).toBe(20);
+    expect(info.uniqueWordCount).toBe(14);
 
     expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-    expect(controller.metaKeywords[2].frequency).toBe(2);
+    expect(controller.metaKeywords[2].frequency).toBe(3);
     expect(controller.oneWordKeywords.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
+    expect(controller.twoWordsKeywords.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test', 'keyword appears', 'keyword here']));
+    expect(controller.twoWordsKeywords[0].frequency).toBe(2);
 
     expect(controller.view.container).toBeInstanceOf(HTMLElement);
     expect(document.querySelector('.keywords__section--dashboard')).toBeTruthy();
@@ -114,7 +117,11 @@ describe('KeywordController - init', () => {
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(1);
+    expect(highlights.length).toBe(2);
+    expect(button.classList.contains('keyword-button--highlight--active')).toBe(true);
+    expect(controller.view.activeHighlightButton).toBe(button);
+    expect(controller.activeHighlightedKeyword).toBe(controller.metaKeywords.at(-1));
+    expect(controller.activeHighlightSource).toBe('list');
   });
 
   test('should analyze user added keyword', () => {
@@ -131,6 +138,15 @@ describe('KeywordController - init', () => {
     expect(listContainer.querySelectorAll('.keyword-list li').length).toBe(1);
     expect(controller.userKeywords[0].name).toBe('test');
     expect(controller.userKeywords[0].frequency).toBe(3);
+
+    keywordInput.value = 'compound keyword';
+    analyzeButton.click();
+
+    expect(controller.userKeywords[1].name).toBe('compound keyword');
+    expect(controller.userKeywords[1].frequency).toBe(1);
+    expect(controller.userKeywords[1].keywordOccurrences.p).toBe(1);
+    expect(controller.userKeywords[1].keywordOccurrences.strong).toBe(1);
+    expect(controller.userKeywords[1].keywordOccurrences.em).toBe(0);
   });
 
   test('should render keyword details', () => {
@@ -140,9 +156,12 @@ describe('KeywordController - init', () => {
 
     const analysisContainer = controller.view.analysis.container;
     expect(analysisContainer).toBeTruthy();
-    expect(analysisContainer.innerHTML).toContain('keyword');
-    expect(analysisContainer.innerHTML).toContain('2');
-    expect(analysisContainer.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(12);
+    expect(analysisContainer.textContent).toContain('keyword');
+    expect(analysisContainer.textContent).toContain('2');
+    const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
+    expect(highlightButton).toBeTruthy();
+    expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
+    expect(analysisContainer.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(10);
   });
 
   afterAll(() => {
