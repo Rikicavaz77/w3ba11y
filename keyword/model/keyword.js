@@ -1,11 +1,10 @@
 class Keyword {
-  constructor(name, { status = "analyzing", frequency = 0, density = 0, keywordOccurrences = null, relevanceScore = 0 } = {}) {
+  constructor(name, { status = "analyzing", frequency = 0, density = 0, keywordOccurrences = null } = {}) {
     this._name = name;
     this._status = status;
     this._frequency = frequency;
     this._density = density;
     this._keywordOccurrences = keywordOccurrences || this._defaultKeywordOccurrences();
-    this._relevanceScore = relevanceScore;
   }
 
   _defaultKeywordOccurrences() {
@@ -69,21 +68,6 @@ class Keyword {
 
   calculateDensity(totalWords) {
     this._density = parseFloat(((this._frequency / Math.max(1, totalWords)) * 100).toFixed(2));
-  }
-
-  /* To-Do:
-    Remove score 
-  */
-  calculateRelevanceScore(tagData) {
-    let score = 0;
-    let maxScore = 0;
-    Object.entries(this.keywordOccurrences).forEach(([tag, occurrences]) => {
-      if (tagData[tag] && tagData[tag].weight && tagData[tag].tagOccurrences > 0) {
-        score += (occurrences / tagData[tag].tagOccurrences) * tagData[tag].weight;
-        maxScore += tagData[tag].weight;
-      }
-    });
-    this._relevanceScore = maxScore === 0 ? 0 : Math.ceil((score / maxScore) * 100);
   }
 }
 

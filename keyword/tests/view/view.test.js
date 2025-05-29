@@ -395,7 +395,7 @@ describe('KeywordView', () => {
 
   test('showTooltip() should make tooltip visible', () => {
     view.renderKeywordSettings({});
-    const trigger = view.tooltipsTrigger[0];
+    const trigger = view.tooltipTriggers[0];
     const tooltip = view.tooltips[0];
 
     const event = { target: trigger };
@@ -405,7 +405,7 @@ describe('KeywordView', () => {
 
   test('hideTooltip() should make tooltip not visible', () => {
     view.renderKeywordSettings({});
-    const trigger = view.tooltipsTrigger[0];
+    const trigger = view.tooltipTriggers[0];
     const tooltip = view.tooltips[0];
     tooltip.classList.remove('keywords--not-visible');
 

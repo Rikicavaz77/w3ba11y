@@ -49,7 +49,6 @@ describe('KeywordAnalyzer', () => {
     expect(keyword.keywordOccurrences.alt).toBe(1);
     expect(keyword.keywordOccurrences.h1).toBe(0);
     expect(keyword.density).toBeCloseTo(23.81);
-    expect(keyword.relevanceScore).toBeGreaterThan(0);
     expect(keyword.status).toBe('done');
   });
 
