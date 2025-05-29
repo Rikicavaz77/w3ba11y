@@ -46,10 +46,6 @@ class Keyword {
     return this._keywordOccurrences;
   }
 
-  get relevanceScore() {
-    return this._relevanceScore;
-  }
-
   set name(name) {
     this._name = name;
   }
