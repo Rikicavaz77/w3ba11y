@@ -28,6 +28,9 @@ class KeywordController {
       userAdded: "User added keywords",
       oneWord: "Most frequent 'single-word' keywords"
     };
+    this.defaultSortMap = {
+      oneWord: 'desc'
+    };
     this.metaKeywords = [];
     this.displayMetaKeywords = [];
     this.userKeywords = [];
@@ -143,7 +146,8 @@ class KeywordController {
 
       const listView = this.view.getListViewByType(type);
       if (!listView) {
-        this.renderKeywordListByType(type);
+        const sort = this.defaultSortMap[type] || null;
+        this.renderKeywordListByType(type, sort);
       } else if (listView) {
         const filterQuery = listView.searchKeywordField?.value?.trim();
         this.updateVisibleKeywords(type, filterQuery);
@@ -152,7 +156,7 @@ class KeywordController {
   }
 
   // RENDER KEYWORD LIST FUNCTION
-  renderKeywordListByType(listType) {
+  renderKeywordListByType(listType, sortDirection = null) {
     const { display } = this.getListByType(listType);
     const batchSize = this.batchSizes[listType] ?? 5;
     const keywordsData = display.slice(0, batchSize);
