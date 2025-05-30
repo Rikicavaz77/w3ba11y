@@ -171,10 +171,6 @@ class KeywordView {
       </div>
     `;
 
-    /* To-Do:
-      Refresh button 
-    */
-
     const existingKeywordSection = asideBody.querySelector('.w3ba11y__section--keyword');
     if (existingKeywordSection)
       asideBody.removeChild(existingKeywordSection);
