@@ -58,6 +58,7 @@ describe('KeywordView', () => {
   test('setters should assign values correctly', () => {
     const dummy = {};
 
+    view.iframe = dummy;
     view.header = dummy;
     view.body = dummy;
     view.tabButtons = dummy;
@@ -67,6 +68,7 @@ describe('KeywordView', () => {
     view.keywordHighlightCheckbox = dummy;
     view.analyzeButton = dummy;
 
+    expect(view.iframe).toBe(dummy);
     expect(view.header).toBe(dummy);
     expect(view.body).toBe(dummy);
     expect(view.tabButtons).toBe(dummy);

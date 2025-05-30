@@ -440,8 +440,25 @@ pre {
   padding: 0 0.5rem;
 }
 
+.keywords__main-title-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
 .w3ba11y__section--keyword .section__title {
   margin-top: 0.83em;
+}
+
+.keywords__button--refresh {
+  position: relative;
+  background-color: rgba(235, 159, 197, 0.4);
+  color: rgb(175, 11, 204);
+  padding: 0.4em;
+  margin-left: auto;
+  margin-right: 0.5em;
+  border-radius: 6px;
+  border: 2px solid rgb(175, 11, 204);
 }
 
 .w3ba11y__section--keyword .header__tabs {

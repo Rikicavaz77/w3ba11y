@@ -21,12 +21,20 @@ class TagAccessor {
     };
   }
 
-  get useCache() {
-    return this._useCache;
+  set doc(doc) {
+    this._doc = doc;
   }
 
   set useCache(useCache) {
     this._useCache = useCache;
+  }
+
+  get doc() {
+    return this._doc;
+  }
+
+  get useCache() {
+    return this._useCache;
   }
 
   resetCache() {

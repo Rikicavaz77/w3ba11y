@@ -13,6 +13,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     iframe = document.querySelector('main').shadowRoot.querySelector('iframe').contentDocument;
     controller = window.keywordController;
     if (controller)
-      controller.update(iframe);
+      controller.update(iframe, true);
   }
 });

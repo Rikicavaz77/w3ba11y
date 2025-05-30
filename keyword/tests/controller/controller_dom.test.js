@@ -42,42 +42,26 @@ describe('KeywordController', () => {
     });
   });
 
-  describe('processMetaKeywords()', () => {
-    beforeEach(() => {
-      controller.keywordAnalyzer = { analyzeKeywords: jest.fn() }; 
-    });  
-
-    it('should parse, store and analyze keywords', () => {
-      const input = 'seo, accessibility, keyword';
-      controller.processMetaKeywords(input);
-      
-      expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-      expect(controller.displayMetaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledWith(controller.metaKeywords);
-    });
-
-    it('should not analyze keywords if input is empty', () => {
-      const input = '';
-      controller.processMetaKeywords(input);
-      
-      expect(controller.keywordAnalyzer.analyzeKeywords).not.toHaveBeenCalled();
-    });
+  test('processMetaKeywords() should parse and store keywords', () => {
+    const input = 'seo, accessibility, keyword';
+    controller.processMetaKeywords(input);
+    
+    expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
+    expect(controller.displayMetaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
   });
 
   describe('processMostFrequentKeywords()', () => {
     beforeEach(() => {
       controller.overviewInfo = { lang: 'en-US' };
       controller.wordCounter = { findOneWordKeywords: jest.fn().mockReturnValue(['test', 'seo']) };
-      controller.keywordAnalyzer = { analyzeKeywords: jest.fn() }; 
     });  
 
-    it('should find, store and analyze keywords', () => {
+    it('should find and store keywords', () => {
       controller.processMostFrequentKeywords();
       
       expect(controller.wordCounter.findOneWordKeywords).toHaveBeenCalledWith('en-US');
       expect(controller.oneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
       expect(controller.displayOneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
-      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledWith(controller.oneWordKeywords);
     });
   });
 

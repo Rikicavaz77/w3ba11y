@@ -10,12 +10,12 @@ class KeywordController {
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
 
-    const treeWalker = new TreeWalkerManager(iframe.body);
-    const textProcessor = new TextProcessor(iframe, treeWalker);
-    const tagAccessor = new TagAccessor(iframe);
-    this.wordCounter = new WordCounter(textProcessor, tagAccessor);
-    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
-    this.keywordHighlighter = new KeywordHighlighter(textProcessor);
+    this.treeWalker = new TreeWalkerManager(iframe.body);
+    this.textProcessor = new TextProcessor(iframe, this.treeWalker);
+    this.tagAccessor = new TagAccessor(iframe);
+    this.wordCounter = new WordCounter(this.textProcessor, this.tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(this.textProcessor, this.tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
+    this.keywordHighlighter = new KeywordHighlighter(this.textProcessor);
 
     // Keyword Lists Info
     this.batchSizes = {
@@ -62,17 +62,37 @@ class KeywordController {
     this.bindGlobalShortcuts();
   }
 
-  update(iframe = this.view.iframe) {
+  update(iframe = this.view.iframe, fullRefresh = false) {
     if (!iframe) return;
     this.view.iframe = iframe;
+    this.treeWalker.root = iframe.body;
+    this.treeWalker.createTreeWalker();
+    this.textProcessor.doc = iframe;
+    this.textProcessor.root = iframe.body;
+    this.tagAccessor.doc = iframe;
+    this.tagAccessor.resetCache();
+    this.wordCounter.resetCache();
+
+    if (fullRefresh) {
+      this.resetHighlightState();
+      this.keywordHighlighter.removeHighlight();
+    }
 
     this.wordCounter.countWords();
-    this.createOverview();
+
+    if (!this.overviewInfo || fullRefresh) {
+      this.createOverview();
+    } else {
+      this.overviewInfo.wordCount = this.wordCounter.totalWords;
+      this.overviewInfo.uniqueWordCount = this.wordCounter.uniqueWords;
+    }
     this.view.renderKeywordAnalysisOverview(this.overviewInfo);
     this.view.renderKeywordSettings(this.keywordHighlighter.colorMap);
 
-    this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
-    this.processMostFrequentKeywords();
+    if (fullRefresh) {
+      this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
+      this.processMostFrequentKeywords();
+    }
     this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord']);
 
     this.setupTooltipListeners();
@@ -490,6 +510,10 @@ class KeywordController {
         const listType = this.getListType(target);
         if (!listType) return;
         this.removeFilters(listType);
+      });
+
+      handle('.keywords__button--refresh', () => {
+        this.update(this.view.iframe, true);
       });
     });
   }
