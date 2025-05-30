@@ -13,9 +13,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       interfaceInstance.iframeDoc.addEventListener('click', (e) => {
         let target = e.target.closest('a');
         if (target) {
+          const href = target.getAttribute('href');
+
+          if (
+            href === null ||
+            href.startsWith('javascript:') ||
+            href.startsWith('#')
+          ) {
+            return;
+          }
+
           e.preventDefault();
           document.removeEventListener('click', handleSectionClick);
-          window.top.location.href = target.href; 
+          window.top.location.href = href;
         }
         else {
           let urlCheck = false;

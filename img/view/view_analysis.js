@@ -73,7 +73,7 @@ class ImgViewAnalysis {
         <h2>Analysis</h2>
         <h3>Legend</h3>
         <p>T = Tag Image, B = Background Image</p>
-        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" class="w3ba11y__loading" width="200px" height="200px" alt="Loading images analysis">
+        <img src="${chrome.runtime.getURL('static/img/loading.gif')}" class="w3ba11y__loading" width="200px" height="200px" alt="Loading images analysis">
       </header>
       <div class="analysis__body"></div>
       <footer class="pagination">
