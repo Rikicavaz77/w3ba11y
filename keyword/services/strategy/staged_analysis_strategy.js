@@ -10,7 +10,14 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
     });
 
     this._context.allowedParentTags.forEach(tagName => {
-      this._context.countOccurrencesInTag(tagName, pattern, keyword.keywordOccurrences);
+      let count = this._context.countOccurrencesInTag(tagName, pattern);
+      keyword.keywordOccurrences[tagName] += count;
     });
   } 
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = StagedAnalysisStrategy;
 }

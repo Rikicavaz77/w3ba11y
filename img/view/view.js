@@ -107,11 +107,11 @@ class ImgView {
           </button>
           <button data-tab="results" class="tab__button tab__button--active tab__button--results">
             <span class="button__title">Results</span>
-            <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+            <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
           </button>
           <button data-tab="analysis" class="tab__button tab__button--analysis">
             <span class="button__title">Analysis</span>
-            <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+            <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
           </button>
         </div>
       </header>

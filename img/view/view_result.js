@@ -23,11 +23,11 @@ class ImgViewResult {
       <h2>Results</h2>
       <div class="hlist">
         <h3>Errors</h3>
-        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="20px" height="20px" alt="Loading images errors">
+        <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="20px" height="20px" alt="Loading images errors">
       </div>
       <div class="hlist">
         <h3>Warnings</h3>
-        <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="20px" height="20px" alt="Loading images warnings">
+        <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="20px" height="20px" alt="Loading images warnings">
       </div>`;
     
     return tabContainer;
