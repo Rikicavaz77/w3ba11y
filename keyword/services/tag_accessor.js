@@ -21,12 +21,20 @@ class TagAccessor {
     };
   }
 
-  get useCache() {
-    return this._useCache;
+  set doc(doc) {
+    this._doc = doc;
   }
 
   set useCache(useCache) {
     this._useCache = useCache;
+  }
+
+  get doc() {
+    return this._doc;
+  }
+
+  get useCache() {
+    return this._useCache;
   }
 
   resetCache() {
@@ -53,6 +61,15 @@ class TagAccessor {
 
   extractText(tagName, element) {
     const { textSource } = this._tagAccess[tagName];
-    return element?.[textSource]?.toLowerCase() ?? '';
+    const value = 
+      element?.[textSource] ??
+      (textSource === 'innerText' ? element?.textContent : undefined);
+    return value?.toLowerCase() ?? '';
   }
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = TagAccessor;
 }

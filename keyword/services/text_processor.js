@@ -6,6 +6,14 @@ class TextProcessor {
     this._allowedParentTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'li'];
   }
 
+  set doc(doc) {
+    this._doc = doc;
+  }
+
+  set root(root) {
+    this._root = root;
+  }
+
   get doc() {
     return this._doc;
   }
@@ -53,4 +61,10 @@ class TextProcessor {
     }
     return textNodes;
   }
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = TextProcessor;
 }

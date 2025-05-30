@@ -1,0 +1,32 @@
+{
+  "name": "w3ba11y",
+  "version": "0.0.2",
+  "description": "Tool to analyze and improve the accessibility and SEO optimization of websites",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rikicavaz77/w3ba11y.git"
+  },
+  "keywords": [
+    "w3ba11y",
+    "accessibility",
+    "seo"
+  ],
+  "author": "Riccardo Fabbian, Riccardo Cavalli",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rikicavaz77/w3ba11y/issues"
+  },
+  "homepage": "https://github.com/Rikicavaz77/w3ba11y#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": []
+  }
+}
