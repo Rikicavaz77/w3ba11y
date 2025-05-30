@@ -10,15 +10,18 @@ class KeywordController {
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
 
-    /* To-Do:
-      DOM copy
-    */
-    const treeWalker = new TreeWalkerManager(iframe.body);
-    const textProcessor = new TextProcessor(iframe, treeWalker);
-    const tagAccessor = new TagAccessor(iframe);
-    this.wordCounter = new WordCounter(textProcessor, tagAccessor);
-    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
-    this.keywordHighlighter = new KeywordHighlighter(textProcessor);
+    const liveDoc = iframe;
+    const staticDoc = this.cloneDocument(iframe);
+
+    const liveTreeWalker = new TreeWalkerManager(liveDoc.body);
+    const liveTextProcessor = new TextProcessor(liveDoc, liveTreeWalker);
+    this.keywordHighlighter = new KeywordHighlighter(liveTextProcessor);
+
+    const staticTreeWalker = new TreeWalkerManager(staticDoc.body);
+    const staticTextProcessor = new TextProcessor(staticDoc, staticTreeWalker); 
+    const tagAccessor = new TagAccessor(staticDoc);
+    this.wordCounter = new WordCounter(staticTextProcessor, tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(staticTextProcessor, tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
 
     // Keyword Lists Info
     this.batchSizes = {
@@ -62,6 +65,13 @@ class KeywordController {
     this.bindKeywordClickEvents();
     this.bindSearchInput();
     this.bindGlobalShortcuts();
+  }
+
+  cloneDocument(iframe) {
+    const newDoc = document.implementation.createHTMLDocument();
+    const htmlClone = iframe.documentElement.cloneNode(true);
+    newDoc.replaceChild(htmlClone, newDoc.documentElement);
+    return newDoc;
   }
 
   // CREATE OVERVIEW FUNCTION
