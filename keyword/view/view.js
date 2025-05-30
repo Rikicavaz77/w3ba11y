@@ -72,6 +72,10 @@ class KeywordView {
     return this._analyzeButton;
   }
 
+  set iframe(iframe) {
+    this._iframe = iframe;
+  }
+
   set header(header) {
     this._header = header;
   }

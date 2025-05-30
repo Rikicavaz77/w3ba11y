@@ -161,7 +161,7 @@ class KeywordListView {
 
   renderKeywords(keywords, startIndex) {
     const keywordList = this._container.querySelector(".keyword-list");
-    keywordList.innerHTML = "";
+    keywordList.innerHTML = '';
     keywords.forEach(keywordItem => {
       let item = document.createElement("li");
       item.classList.add('keyword-list-item');
@@ -186,7 +186,7 @@ class KeywordListView {
   renderPages(totalPages, currentPage = 1) {
     const range = Array.from({ length: 5 }, (_, i) => currentPage - 2 + i);
     const pages = [...new Set([1, ...range, totalPages].filter(p => p >= 1 && p <= totalPages))];
-    this._pagination.innerHTML = "";
+    this._pagination.innerHTML = '';
     pages.forEach((page, index) => {
       const item = document.createElement("li");
       item.innerHTML = `

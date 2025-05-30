@@ -40,13 +40,11 @@ class KeywordController {
   init() {
     this.createOverview();
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
-    if (this.displayMetaKeywords.length > 0) {
-      this.renderKeywordListByType("meta");
-    }
+
+    this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
     this.processMostFrequentKeywords();
-    if (this.displayOneWordKeywords.length > 0) {
-      this.renderKeywordListByType("oneWord");
-    }
+    this.analyzeAndRenderKeywordLists(['meta', 'oneWord']);
+
     this.setupTabListeners();
     this.setupTooltipListeners();
     this.bindColorPicker();
@@ -58,14 +56,25 @@ class KeywordController {
     this.bindGlobalShortcuts();
   }
 
-  update() {
-    // To-Do
+  update(iframe = this.view.iframe) {
+    if (!iframe) return;
+    this.view.iframe = iframe;
+
+    this.wordCounter.countWords();
+    this.createOverview();
+    this.view.renderKeywordAnalysisOverview(this.overviewInfo);
+    this.view.renderKeywordSettings(this.keywordHighlighter.colorMap);
+
+    this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
+    this.processMostFrequentKeywords();
+    this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord']);
+
+    this.setupTooltipListeners();
   }
 
   // CREATE OVERVIEW FUNCTION
   createOverview() {
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
-    this.processMetaKeywords(metaTagKeywordsContent);
     const lang = this.getLang(this.view.iframe);
     this.overviewInfo = new OverviewInfo(
       this.wordCounter.totalWords,
@@ -116,7 +125,6 @@ class KeywordController {
 
     this.metaKeywords = keywords;
     this.displayMetaKeywords = [...keywords];
-    this.keywordAnalyzer.analyzeKeywords(keywords);
   }
 
   processMostFrequentKeywords() {
@@ -125,7 +133,22 @@ class KeywordController {
 
     this.oneWordKeywords = keywords;
     this.displayOneWordKeywords = [...keywords];
-    this.keywordAnalyzer.analyzeKeywords(keywords);
+  }
+
+  analyzeAndRenderKeywordLists(types) {
+    types.forEach(type => {
+      const { original } = this.getListByType(type);
+      if (original.length === 0) return;
+      this.keywordAnalyzer.analyzeKeywords(original);
+
+      const listView = this.view.getListViewByType(type);
+      if (!listView) {
+        this.renderKeywordListByType(type);
+      } else if (listView) {
+        const filterQuery = listView.searchKeywordField?.value?.trim();
+        this.updateVisibleKeywords(type, filterQuery);
+      }
+    });
   }
 
   // RENDER KEYWORD LIST FUNCTION
@@ -256,12 +279,13 @@ class KeywordController {
     const keywordItem = new Keyword(keyword);
     this.userKeywords.push(keywordItem);
     this.keywordAnalyzer.analyzeKeyword(keywordItem);
-
-    if (this.userKeywords.length === 1) {
+    
+    const listView = this.view.getListViewByType('userAdded');
+    if (!listView) {
       this.displayUserKeywords.push(keywordItem);
-      this.renderKeywordListByType("userAdded");
+      this.renderKeywordListByType('userAdded');
     } else {
-      const filterQuery = this.view.getListViewByType('userAdded').searchKeywordField?.value?.trim();
+      const filterQuery = listView.searchKeywordField?.value?.trim();
       this.updateVisibleKeywords('userAdded', filterQuery);
     }
   }
