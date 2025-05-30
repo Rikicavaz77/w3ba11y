@@ -48,7 +48,7 @@ describe('KeywordController', () => {
     
     expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
     expect(controller.displayMetaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-  });
+  });  
 
   describe('processMostFrequentKeywords()', () => {
     beforeEach(() => {

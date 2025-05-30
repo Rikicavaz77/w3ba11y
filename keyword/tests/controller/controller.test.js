@@ -158,6 +158,7 @@ describe('KeywordController', () => {
 
     it('should analyze and render first keyword', () => {
       controller.view.getListViewByType = jest.fn().mockReturnValue(null);
+
       controller.analyzeKeyword();
       expect(controller.userKeywords).toHaveLength(1);
       expect(controller.userKeywords.map(k => k.name)).toEqual(['seo']);
