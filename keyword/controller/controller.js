@@ -148,7 +148,6 @@ class KeywordController {
 
   // PROCESS META KEYWORDS FUNCTION
   processMetaKeywords(rawContent) {
-    if (!rawContent) return;
     const keywords = rawContent
       .split(',')
       .map(k => k.trim())
@@ -170,16 +169,18 @@ class KeywordController {
   analyzeAndRenderKeywordLists(types) {
     types.forEach(type => {
       const { original } = this.getListByType(type);
-      if (original.length === 0) return;
       this.keywordAnalyzer.analyzeKeywords(original);
 
       const listView = this.view.getListViewByType(type);
-      if (!listView) {
+      const isEmpty = original.length === 0;
+      if (!listView && !isEmpty) {
         const sort = this.defaultSortMap[type] || null;
         this.renderKeywordListByType(type, sort);
-      } else if (listView) {
+      } else if (listView && !isEmpty) {
         const filterQuery = listView.searchKeywordField?.value?.trim();
         this.updateVisibleKeywords(type, filterQuery);
+      } else if (listView && isEmpty) {
+        this.view.removeKeywordList(type);
       }
     });
   }

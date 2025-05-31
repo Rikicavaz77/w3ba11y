@@ -58,6 +58,8 @@ class KeywordAnalyzer {
   }
 
   analyzeKeywords(keywords) {
+    if (keywords.length === 0) return;
+    
     this._prepareAnalysisData();
     try {
       this._tagAccessor.useCache = true;

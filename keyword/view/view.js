@@ -12,6 +12,7 @@ class KeywordView {
     this._customKeywordInput;
     this._keywordHighlightCheckbox;
     this._analyzeButton;
+    this._keywordListViews = {};
   }
 
   get container() {
@@ -136,37 +137,24 @@ class KeywordView {
   }
 
   createListView(keywordListInfo, getActiveHighlightData) {
-    switch (keywordListInfo.type) {
-      case 'meta':
-        if (!this._metaKeywordsListView) {
-          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._metaKeywordsListView;
-      case 'userAdded':
-        if (!this._userKeywordsListView) {
-          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._userKeywordsListView;
-      case 'oneWord':
-        if (!this._oneWordKeywordsListView) {
-          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._oneWordKeywordsListView; 
-      default:
-        return null;
+    const type = keywordListInfo.type;
+
+    if (!this._keywordListViews[type]) {
+      this._keywordListViews[type] = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
     }
+
+    return this._keywordListViews[type];
   }
 
-  getListViewByType(listType) {
-    switch (listType) {
-      case 'meta':
-        return this._metaKeywordsListView;
-      case 'userAdded':
-        return this._userKeywordsListView;
-      case 'oneWord':
-          return this._oneWordKeywordsListView;
-      default:
-        return null;
+  getListViewByType(type) {
+    return this._keywordListViews[type] ?? null;
+  }
+
+  removeKeywordList(type) {
+    const listView = this.getListViewByType(type);
+    if (listView && listView.container) {
+      listView.container.remove();
+      this._keywordListViews[type] = null;
     }
   }
 
