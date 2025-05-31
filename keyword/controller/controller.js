@@ -53,6 +53,7 @@ class KeywordController {
 
     this.setupTabListeners();
     this.setupTooltipListeners();
+    this.bindRefreshAnalysisButton();
     this.bindColorPicker();
     this.bindKeywordInputChange();
     this.bindHighlightToggle();
