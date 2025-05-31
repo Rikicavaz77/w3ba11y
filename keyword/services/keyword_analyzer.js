@@ -37,6 +37,10 @@ class KeywordAnalyzer {
   }
 
   _performAnalysis(keyword) {
+    if (keyword.status === 'done') {
+      keyword.reset();
+    }
+
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     this._strategy.analyze(this._textNodes, pattern, keyword);
     ["title", "description", "alt"].forEach(tagName => {
@@ -45,7 +49,7 @@ class KeywordAnalyzer {
       keyword.keywordOccurrences[tagName] += count;
     });
     keyword.calculateDensity(this._wordCounter.totalWords);
-    keyword.status = "done";
+    keyword.status = 'done';
   }
   
   analyzeKeyword(keyword) {

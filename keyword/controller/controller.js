@@ -72,13 +72,12 @@ class KeywordController {
     this.tagAccessor.doc = iframe;
     this.tagAccessor.resetCache();
     this.wordCounter.resetCache();
+    this.wordCounter.countWords();
 
     if (fullRefresh) {
       this.resetHighlightState();
       this.keywordHighlighter.removeHighlight();
     }
-
-    this.wordCounter.countWords();
 
     if (!this.overviewInfo || fullRefresh) {
       this.createOverview();
@@ -325,7 +324,10 @@ class KeywordController {
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
     let keyword = this.view.customKeywordInput?.value.trim();
-    if (!keyword) return; 
+    if (
+      !keyword ||
+      this.userKeywords.some(k => k.name.toLowerCase() === keyword.toLowerCase())
+    ) return; 
 
     const keywordItem = new Keyword(keyword);
     this.userKeywords.push(keywordItem);
