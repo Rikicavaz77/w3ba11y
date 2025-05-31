@@ -871,7 +871,7 @@ pre {
 
 .keywords__analysis-container {
   background-color: #fff;
-  padding: 0.3em;
+  padding: 0.5em;
   margin-bottom: 1.5em;
   border-radius: 0.625em;
   border-top-left-radius: 0;
@@ -906,8 +906,9 @@ pre {
 }
 
 .keywords_tag-occurrences-item {
+  min-height: 2.5em;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex-wrap: nowrap;
   border: 1px solid #cfcfcf;
   border-bottom: none;
@@ -919,16 +920,18 @@ pre {
 
 .keywords_tag-occurrences-item__title {
   flex: 1;
+  display: flex;
+  align-items: center;
   text-transform: capitalize;
-  padding: 0.5em;
+  padding: 0 0.5em;
 }
 
 .keywords_tag-occurrences-item__content {
   flex: 1;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 1em;
-  padding: 0.5em;
+  padding: 0 0.5em;
   border-left: 1px solid #cfcfcf;
 }
 
