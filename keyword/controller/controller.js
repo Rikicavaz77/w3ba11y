@@ -17,26 +17,11 @@ class KeywordController {
     this.keywordAnalyzer = new KeywordAnalyzer(this.textProcessor, this.tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
     this.keywordHighlighter = new KeywordHighlighter(this.textProcessor);
 
-    // Keyword Lists Info
-    this.batchSizes = {
-      meta: 5,
-      userAdded: 5,
-      oneWord: 5
+    this.keywordLists = {
+      meta: this.createKeywordList(5, 'Meta keywords'),
+      userAdded: this.createKeywordList(5, 'User added keywords'),
+      oneWord: this.createKeywordList(5, `Most frequent 'single-word' keywords`, 'desc')
     };
-    this.labelMap = {
-      meta: "Meta keywords",
-      userAdded: "User added keywords",
-      oneWord: "Most frequent 'single-word' keywords"
-    };
-    this.defaultSortMap = {
-      oneWord: 'desc'
-    };
-    this.metaKeywords = [];
-    this.displayMetaKeywords = [];
-    this.userKeywords = [];
-    this.displayUserKeywords = [];
-    this.oneWordKeywords = [];
-    this.displayOneWordKeywords = [];
 
     this.activeHighlightedKeyword = null;
     this.activeHighlightSource = null;
@@ -77,6 +62,7 @@ class KeywordController {
 
     if (fullRefresh) {
       this.resetHighlightState();
+      this.clearHighlightCheckbox();
       this.keywordHighlighter.removeHighlight();
     }
 
@@ -98,6 +84,17 @@ class KeywordController {
     this.setupTooltipListeners();
   }
 
+  // CREATE KEYWORD LIST FUNCTION
+  createKeywordList(batchSize, label, defaultSort = null) {
+    return {
+      batchSize,
+      label,
+      defaultSort,
+      original: [],
+      display: []
+    };
+  }
+
   // CREATE OVERVIEW FUNCTION
   createOverview() {
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
@@ -111,7 +108,7 @@ class KeywordController {
   }
 
   getMetaTagKeywordsContent(doc) {
-    return doc.querySelector("meta[name='keywords' i]")?.content ?? '';
+    return doc.querySelector('meta[name="keywords" i]')?.content ?? '';
   }
 
   getLang(doc) {
@@ -125,28 +122,6 @@ class KeywordController {
     };
   }
 
-  getListByType(listType) {
-    switch (listType) {
-      case 'meta':
-        return {
-          original: this.metaKeywords,
-          display: this.displayMetaKeywords
-        };
-      case 'userAdded':
-        return {
-          original: this.userKeywords,
-          display: this.displayUserKeywords
-        };
-      case 'oneWord':
-        return {
-          original: this.oneWordKeywords,
-          display: this.displayOneWordKeywords
-        };    
-      default:
-        return null;
-    }
-  }
-
   // PROCESS META KEYWORDS FUNCTION
   processMetaKeywords(rawContent) {
     const keywords = rawContent
@@ -155,28 +130,32 @@ class KeywordController {
       .filter(k => k.length > 0)
       .map(k => new Keyword(k));
 
-    this.metaKeywords = keywords;
-    this.displayMetaKeywords = [...keywords];
+    this.keywordLists.meta.original = keywords;
+    this.keywordLists.meta.display = [...keywords];
   }
 
+  // PROCESS MOST FREQUENT KEYWORDS FUNCTION
   processMostFrequentKeywords() {
     const keywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
 
-    this.oneWordKeywords = keywords;
-    this.displayOneWordKeywords = [...keywords];
+    this.keywordLists.oneWord.original = keywords;
+    this.keywordLists.oneWord.display = [...keywords];
   }
 
+  // ANALYZE AND RENDER KEYWORDS FUNCTION
   analyzeAndRenderKeywordLists(types) {
     types.forEach(type => {
-      const { original } = this.getListByType(type);
+      const list = this.keywordLists[type];
+      if (!list) return;
+
+      const { original, defaultSort } = list;
       this.keywordAnalyzer.analyzeKeywords(original);
 
       const listView = this.view.getListViewByType(type);
       const isEmpty = original.length === 0;
       if (!listView && !isEmpty) {
-        const sort = this.defaultSortMap[type] || null;
-        this.renderKeywordListByType(type, sort);
+        this.renderKeywordListByType(type, defaultSort);
       } else if (listView && !isEmpty) {
         const filterQuery = listView.searchKeywordField?.value?.trim();
         this.updateVisibleKeywords(type, filterQuery);
@@ -187,23 +166,28 @@ class KeywordController {
   }
 
   // RENDER KEYWORD LIST FUNCTION
-  renderKeywordListByType(listType, sortDirection = null) {
-    const { display } = this.getListByType(listType);
-    const batchSize = this.batchSizes[listType] ?? 5;
+  renderKeywordListByType(type, sortDirection = null) {
+    const list = this.keywordLists[type];
+    if (!list) return;
+
+    const { display, batchSize, label } = list;
     const keywordsData = display.slice(0, batchSize);
     const totalPages = Math.ceil(display.length / batchSize);
-    this.view.renderKeywordListContainer(new KeywordListInfo(
-      this.labelMap[listType] ?? "Keywords",
-      listType,
-      keywordsData,
-      totalPages,
-      sortDirection
-    ), () => this.getActiveHighlightData());
+
+    this.view.renderKeywordListContainer(
+      new KeywordListInfo(
+        label,
+        type,
+        keywordsData,
+        totalPages,
+        sortDirection
+      ), 
+      () => this.getActiveHighlightData()
+    );
   }
 
   // RENDER PAGE FUNCTION
-  renderPage(listType, listView, keywordList, currentPage) {
-    const batchSize = this.batchSizes[listType] ?? 5;
+  renderPage(listView, keywordList, batchSize, currentPage) {
     const totalPages = Math.ceil(keywordList.length / batchSize);
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
@@ -218,8 +202,12 @@ class KeywordController {
   changePage(listType, currentPage) {
     const listView = this.view.getListViewByType(listType);
     if (!listView || listView.isCurrentPage(currentPage)) return;
-    const { display } = this.getListByType(listType);
-    this.renderPage(listType, listView, display, currentPage);
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { display, batchSize } = list;
+    this.renderPage(listView, display, batchSize, currentPage);
     listView.scrollToPagination();
   }
 
@@ -233,18 +221,23 @@ class KeywordController {
 
   // HANDLE SORTING FUNCTION
   handleKeywordSorting(listType, clickedButton) {
-    const sortDirection = clickedButton.dataset.sort;
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    const { display } = this.getListByType(listType);
+    
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const sortDirection = clickedButton.dataset.sort;
+    const { display, batchSize } = list;
+
     this.sortKeywords(display, sortDirection);
     listView.updateSortButtons(clickedButton);
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
   // SEARCH FUNCTION
   filterKeywords(keywords, filterQuery) {
-    const pattern = new RegExp(`${Utils.escapeRegExp(filterQuery)}`, "i");
+    const pattern = new RegExp(`${Utils.escapeRegExp(filterQuery)}`, 'i');
     const filteredKeywords = keywords.filter(keywordItem => {
       return pattern.test(keywordItem.name);
     });
@@ -255,27 +248,38 @@ class KeywordController {
   updateVisibleKeywords(listType, filterQuery) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    const { original, display } = this.getListByType(listType);
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { original, display, batchSize } = list;
     const result = filterQuery ? this.filterKeywords(original, filterQuery) : [...original];
 
-    if (listView.sortDirection) {
-      this.sortKeywords(result, listView.sortDirection);
+    const sortDirection = listView.sortDirection;
+    if (sortDirection) {
+      this.sortKeywords(result, sortDirection);
     }
 
     display.splice(0, display.length, ...result);
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
   // REMOVE FILTERS
   removeFilters(listType) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    const { original, display } = this.getListByType(listType);
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { original, display, batchSize } = list;
+
     display.splice(0, display.length, ...original);
     listView.removeFilters();
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
+  // RESET HIGHLIGHT STATE FUNCTION
   resetHighlightState() {
     this.activeHighlightedKeyword = null;
     this.activeHighlightSource = null;
@@ -310,6 +314,7 @@ class KeywordController {
     }
   }
 
+  // CLEAR CHECKBOX FUNCTION
   clearHighlightCheckbox() {
     this.view.keywordHighlightCheckbox.checked = false;
   }
@@ -325,19 +330,20 @@ class KeywordController {
 
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
+    const { original, display } = this.keywordLists.userAdded;
     let keyword = this.view.customKeywordInput?.value.trim();
     if (
       !keyword ||
-      this.userKeywords.some(k => k.name.toLowerCase() === keyword.toLowerCase())
+      original.some(k => k.name.toLowerCase() === keyword.toLowerCase())
     ) return; 
 
     const keywordItem = new Keyword(keyword);
-    this.userKeywords.push(keywordItem);
+    original.push(keywordItem);
     this.keywordAnalyzer.analyzeKeyword(keywordItem);
     
     const listView = this.view.getListViewByType('userAdded');
     if (!listView) {
-      this.displayUserKeywords.push(keywordItem);
+      display.push(keywordItem);
       this.renderKeywordListByType('userAdded');
     } else {
       const filterQuery = listView.searchKeywordField?.value?.trim();
@@ -347,7 +353,10 @@ class KeywordController {
 
   // DELETE KEYWORD FUNCTION
   deleteKeyword(listType, keywordIndex) {
-    const { original, display } = this.getListByType(listType);
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { original, display, batchSize } = list;
 
     const keywordToRemove = display[keywordIndex];
     if (!keywordToRemove) return;
@@ -366,7 +375,7 @@ class KeywordController {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
 
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
   // GET KEYWORD INDEX FUNCTION
@@ -392,7 +401,10 @@ class KeywordController {
     const keywordIndex = this.getKeywordIndex(target);
     if (keywordIndex === undefined) return;
 
-    const { display } = this.getListByType(listType);
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { display } = list;
     return display[keywordIndex];
   }
 
