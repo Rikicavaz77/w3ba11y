@@ -416,6 +416,12 @@ class KeywordController {
     });
   }
 
+  bindRefreshAnalysisButton() {
+    this.view.refreshButton.addEventListener('click', () => {
+      this.update(this.view.iframe, true);
+    });
+  }
+
   bindColorPicker() {
     this.view.container.addEventListener('change', event => {
       if (event.target.matches('input[type="color"][data-highlight]')) {
@@ -513,10 +519,6 @@ class KeywordController {
         const listType = this.getListType(target);
         if (!listType) return;
         this.removeFilters(listType);
-      });
-
-      handle('.keywords__button--refresh', () => {
-        this.update(this.view.iframe, true);
       });
     });
   }

@@ -6,6 +6,7 @@ class KeywordView {
     this._body;
     this._overviewTab;
     this._settingsTab;
+    this._refreshButton;
     this._tabButtons;
     this._activeTabButton;
     this._colorInputs;
@@ -29,6 +30,10 @@ class KeywordView {
 
   get body() {
     return this._body;
+  }
+
+  get refreshButton() {
+    return this._refreshButton;
   }
 
   get tabButtons() {
@@ -101,6 +106,10 @@ class KeywordView {
 
   set body(body) {
     this._body = body;
+  }
+
+  set refreshButton(button) {
+    this._refreshButton = button;
   }
 
   set tabButtons(buttons) {
@@ -206,6 +215,7 @@ class KeywordView {
     this._header = keywordViewSection.querySelector('.section__header');
     this._body = keywordViewSection.querySelector('.section__body');
     this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
+    this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
     this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
 
     return asideBody.querySelector('.w3ba11y__section--keyword');
