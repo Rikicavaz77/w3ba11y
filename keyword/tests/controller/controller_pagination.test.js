@@ -82,31 +82,32 @@ describe('KeywordController - pagination', () => {
   });
   
   describe('changePage()', () => {
-    it('changePage() should call renderPage with correct arguments', () => {
+    beforeEach(() => {
+      controller.renderPage = jest.fn();
+    });
+
+    it('should call renderPage with correct arguments', () => {
       const listView = mockListView();
       controller.view = { getListViewByType: jest.fn(() => listView) };
-      const spy = jest.spyOn(controller, 'renderPage');
 
       controller.changePage('meta', 2);
 
-      expect(spy).toHaveBeenCalledWith(
+      expect(controller.renderPage).toHaveBeenCalledWith(
         'meta',
         listView,
         controller.displayMetaKeywords,
         2
       );
       expect(listView.scrollToPagination).toHaveBeenCalled();
-
-      spy.mockRestore();
     });
 
-    it('changePage() should do nothing if page is current', () => {
+    it('should do nothing if page is current', () => {
       const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
       controller.view = { getListViewByType: jest.fn(() => listView) };
 
       controller.changePage('meta', 1);
 
-      expect(listView.render).not.toHaveBeenCalled();
+      expect(controller.renderPage).not.toHaveBeenCalled();
     });
   });
 });

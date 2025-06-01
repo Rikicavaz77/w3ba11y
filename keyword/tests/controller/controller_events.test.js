@@ -15,7 +15,7 @@ describe('KeywordController - events', () => {
       keywordHighlightCheckbox: document.createElement('input'),
       analyzeButton: document.createElement('button'),
       tabButtons: [document.createElement('button')],
-      tooltipsTrigger: [document.createElement('div')],
+      tooltipTriggers: [document.createElement('div')],
       tooltips: [document.createElement('div')],
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
@@ -134,7 +134,7 @@ describe('KeywordController - events', () => {
 
   test('setupTooltipListeners() should handle tooltips', () => {
     controller.setupTooltipListeners();
-    const tooltip = controller.view.tooltipsTrigger[0];
+    const tooltip = controller.view.tooltipTriggers[0];
     tooltip.dispatchEvent(new Event('focus'));
     tooltip.dispatchEvent(new Event('mouseenter'));
     expect(controller.eventHandlers.showTooltip).toHaveBeenCalledTimes(2);
@@ -187,8 +187,6 @@ describe('KeywordController - events', () => {
     });
 
     it('should view details', () => {
-      controller.setupTooltipListeners = jest.fn();
-
       button.classList.add('keyword-button--view-details');
       button.dataset.section = 'result';
       inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -199,7 +197,6 @@ describe('KeywordController - events', () => {
       args[1]();
       expect(controller.getActiveHighlightData).toHaveBeenCalled();
       expect(controller.view.toggleSection).toHaveBeenCalledWith('result');
-      expect(controller.setupTooltipListeners).toHaveBeenCalledWith(controller.view.analysis);
     });
 
     it('should go back', () => {

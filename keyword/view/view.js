@@ -58,7 +58,7 @@ class KeywordView {
     return this._container.querySelector('.tab__button--settings');
   }
 
-  get tooltipsTrigger() {
+  get tooltipTriggers() {
     return this._container.querySelectorAll('.keywords__tooltip-trigger');
   }
 

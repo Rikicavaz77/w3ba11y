@@ -432,6 +432,8 @@ pre {
 
 .keyword-name {
   text-transform: capitalize;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .w3ba11y__section--keyword .section__header {
@@ -868,13 +870,6 @@ pre {
   margin: 1em 0;
 }
 
-.keywords__analysis-item__title-container {
-  display: flex;
-  flex-wrap: nowrap;
-  column-gap: 0.8em;
-  width: 100%;
-}
-
 .keywords__analysis-item__action-container {
   display: flex;
   column-gap: 1.5em;
@@ -886,29 +881,6 @@ pre {
   position: relative;
   padding: 0.4em;
   border: none;
-}
-
-.keywords__score-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 0.2em;
-}
-
-.keywords__score {
-  font-size: 1.5em;
-  background-color: #6B6565;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 5em;
-  height: 5em;
-  text-align: center;
-  border-radius: 50%;
-  border: 8px solid #322c2c;
 }
 
 .keywords_tag-occurrences-list {
