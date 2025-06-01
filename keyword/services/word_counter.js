@@ -77,7 +77,7 @@ class WordCounter {
       words.push(...matches);
     });
 
-    ["title", "description", "alt"].forEach(tagName => {
+    ['title', 'description', 'alt'].forEach(tagName => {
       this._collectWordsInTag(tagName, pattern, words);
     });
 
@@ -94,7 +94,7 @@ class WordCounter {
       this._extractCompoundsFromText(text, pattern, compounds, gramSize);
     });
    
-    ["title", "description", "alt"].forEach(tagName => {
+    ['title', 'description', 'alt'].forEach(tagName => {
       this._collectCompoundsInTag(tagName, pattern, compounds, gramSize);
     });
 

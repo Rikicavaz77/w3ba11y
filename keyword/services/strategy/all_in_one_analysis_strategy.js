@@ -32,17 +32,17 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
   _getCommonAncestors(nodes) {
     if (nodes.length === 0) return [];
 
-    const firstAncestors = this._findAncestors(nodes[0]);
-    const commonAncestors = new Set(firstAncestors);
+    const commonAncestors = new Set(this._findAncestors(nodes[0]));
 
     for (let i = 1; i < nodes.length; i++) {
+      if (commonAncestors.size === 0) break;
+
       const currentAncestors = new Set(this._findAncestors(nodes[i]));
 
       for (const ancestor of [...commonAncestors]) {
         if (!currentAncestors.has(ancestor)) {
           commonAncestors.delete(ancestor);
         }
-        if (commonAncestors.size === 0) break;
       }
     }
     return [...commonAncestors];
@@ -58,11 +58,12 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
   analyzeSimpleKeyword(textNodes, pattern, keyword) {
     textNodes.forEach(node => {
       const matches = node.nodeValue.match(pattern) || [];
-      if (matches.length > 0) {
-        const ancestors = this._findAncestors(node);
-        this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, matches.length);
-      }
+      if (matches.length === 0) return;
+
       keyword.frequency += matches.length;
+
+      const ancestors = this._findAncestors(node);
+      this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, matches.length);
     });
   } 
 

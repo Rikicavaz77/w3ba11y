@@ -59,7 +59,7 @@ class KeywordAnalyzer {
       this._strategy.analyzeSimpleKeyword(this._textNodes, pattern, keyword);
     }
 
-    ["title", "description", "alt"].forEach(tagName => {
+    ['title', 'description', 'alt'].forEach(tagName => {
       let count = this.countOccurrencesInTag(tagName, pattern);
       keyword.frequency += count;
       keyword.keywordOccurrences[tagName] += count;
