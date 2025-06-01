@@ -20,7 +20,8 @@ class KeywordController {
     this.keywordLists = {
       meta: this.createKeywordList(5, 'Meta keywords'),
       userAdded: this.createKeywordList(5, 'User added keywords'),
-      oneWord: this.createKeywordList(5, `Most frequent 'single-word' keywords`, 'desc')
+      oneWord: this.createKeywordList(5, `Most frequent 'single-word' keywords`, 'desc'),
+      twoWords: this.createKeywordList(5, `Most frequent 'double-word' keywords`, 'desc')
     };
 
     this.activeHighlightedKeyword = null;
@@ -34,7 +35,7 @@ class KeywordController {
 
     this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
     this.processMostFrequentKeywords();
-    this.analyzeAndRenderKeywordLists(['meta', 'oneWord']);
+    this.analyzeAndRenderKeywordLists(['meta', 'oneWord', 'twoWords']);
 
     this.setupTabListeners();
     this.setupTooltipListeners();
@@ -79,7 +80,7 @@ class KeywordController {
       this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
       this.processMostFrequentKeywords();
     }
-    this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord']);
+    this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord', 'twoWords']);
 
     this.setupTooltipListeners();
   }
@@ -136,11 +137,17 @@ class KeywordController {
 
   // PROCESS MOST FREQUENT KEYWORDS FUNCTION
   processMostFrequentKeywords() {
-    const keywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
+    const oneWordKeywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
 
-    this.keywordLists.oneWord.original = keywords;
-    this.keywordLists.oneWord.display = [...keywords];
+    this.keywordLists.oneWord.original = oneWordKeywords;
+    this.keywordLists.oneWord.display = [...oneWordKeywords];
+
+    const twoWordsKeywords = this.wordCounter.findCompoundKeywords(this.overviewInfo.lang)
+      .map(k => new Keyword(k));
+
+    this.keywordLists.twoWords.original = twoWordsKeywords;
+    this.keywordLists.twoWords.display = [...twoWordsKeywords];
   }
 
   // ANALYZE AND RENDER KEYWORD LISTS FUNCTION
@@ -166,7 +173,7 @@ class KeywordController {
         const filterQuery = listView.searchKeywordField?.value?.trim();
         this.updateVisibleKeywords(type, filterQuery);
       }
-    });
+    });   
   }
 
   // RENDER KEYWORD LIST FUNCTION
