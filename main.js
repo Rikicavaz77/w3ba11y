@@ -25,6 +25,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
           e.preventDefault();
           document.removeEventListener('click', handleSectionClick);
+          document.removeEventListener('click', handleCloseClick);
           window.top.location.href = href;
         }
         else {
@@ -37,6 +38,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         
             if (currentUrl !== newUrl && newUrl !== 'about:blank') {
               document.removeEventListener('click', handleSectionClick);
+              document.removeEventListener('click', handleCloseClick);
               chrome.runtime.sendMessage({ action: "run", location: newUrl });
               currentUrl = newUrl;
               urlCheck = true;
