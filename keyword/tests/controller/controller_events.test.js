@@ -6,11 +6,15 @@ const Keyword = require('../../model/keyword');
 global.Keyword = Keyword;
 
 describe('KeywordController - events', () => {
-  let controller;
+  let controller, iframe;
 
   beforeEach(() => {
+    iframe = document.createElement('iframe');
+
     const mockView = {
+      iframe: iframe,
       container: document.createElement('div'),
+      refreshButton: document.createElement('button'),
       customKeywordInput: document.createElement('input'),
       keywordHighlightCheckbox: document.createElement('input'),
       analyzeButton: document.createElement('button'),
@@ -53,10 +57,19 @@ describe('KeywordController - events', () => {
     controller.handleHighlightClick = jest.fn();
     controller.getActiveHighlightData = jest.fn();
     controller.resetHighlightState = jest.fn();
+    controller.update = jest.fn();
     controller.keywordHighlighter = {
       highlightKeyword: jest.fn(),
       removeHighlight: jest.fn()
     };
+  });
+
+  test('bindRefreshAnalysisButton() should attach refresh button handler', () => {
+    controller.bindRefreshAnalysisButton();
+    controller.view.refreshButton.dispatchEvent(new MouseEvent('click'));
+    expect(controller.update).toHaveBeenCalledTimes(1);
+    const arg = controller.update.mock.calls[0][0];
+    expect(arg).toBe(iframe);
   });
 
   test('bindColorPicker() should attach color input handler', () => {

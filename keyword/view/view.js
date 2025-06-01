@@ -496,6 +496,14 @@ class KeywordView {
   getSection(section) {
     return this._container.querySelector(`.keywords__section--${section}`);
   }
+
+  clearHighlightCheckbox() {
+    this._keywordHighlightCheckbox.checked = false;
+  }
+
+  clearCustomKeywordInput() {
+    this._customKeywordInput.value = '';
+  }
 }
 
 /* istanbul ignore next */

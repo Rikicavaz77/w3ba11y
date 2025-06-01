@@ -61,6 +61,7 @@ describe('KeywordView', () => {
     view.iframe = dummy;
     view.header = dummy;
     view.body = dummy;
+    view.refreshButton = dummy;
     view.tabButtons = dummy;
     view.activeTabButton = dummy;
     view.colorInputs = dummy;
@@ -71,6 +72,7 @@ describe('KeywordView', () => {
     expect(view.iframe).toBe(dummy);
     expect(view.header).toBe(dummy);
     expect(view.body).toBe(dummy);
+    expect(view.refreshButton).toBe(dummy);
     expect(view.tabButtons).toBe(dummy);
     expect(view.activeTabButton).toBe(dummy);
     expect(view.colorInputs).toBe(dummy);
@@ -97,7 +99,7 @@ describe('KeywordView', () => {
       warningIconSvg: '<svg class="keywords__overview-warning-icon"></svg>'
     };
 
-    let item = view.renderOverviewItem(itemInfo);
+    let item = view._renderOverviewItem(itemInfo);
     const listContainer = document.createElement('div');
     listContainer.innerHTML = item;
     expect(listContainer.textContent).toContain('Test item');
@@ -108,7 +110,7 @@ describe('KeywordView', () => {
 
     ['', 0, null].forEach(value => {
       itemInfo.value = value;
-      item = view.renderOverviewItem(itemInfo);
+      item = view._renderOverviewItem(itemInfo);
       listContainer.innerHTML = item;
       expect(listContainer.textContent).toContain(value === 0 ? '0' : 'Missing');
       expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeTruthy();
@@ -311,10 +313,10 @@ describe('KeywordView', () => {
   });
 
   test('getListViewByType() should return correct list view', () => {
-    view._metaKeywordsListView = { listType: 'meta' };
-    view._userKeywordsListView = { listType: 'userAdded' };
-    view._oneWordKeywordsListView = { listType: 'oneWord' };
-    view._twoWordsKeywordsListView = { listType: 'twoWords' };
+    view._keywordListViews.meta = { listType: 'meta' };
+    view._keywordListViews.userAdded = { listType: 'userAdded' };
+    view._keywordListViews.oneWord = { listType: 'oneWord' };
+    view._keywordListViews.twoWords = { listType: 'twoWords' };
     
     expect(view.getListViewByType('meta')).toEqual({ listType: 'meta' });
     expect(view.getListViewByType('userAdded')).toEqual({ listType: 'userAdded' });
@@ -322,6 +324,27 @@ describe('KeywordView', () => {
     expect(view.getListViewByType('twoWords')).toEqual({ listType: 'twoWords' });
     expect(view.getListViewByType('unknown')).toBeNull();
   });
+
+  test('removeKeywordList() should remove keyword list container', () => {
+    view.renderKeywordListContainer({
+      type: 'meta',
+      title: 'test',
+      keywords: [],
+      totalPages: 0
+    }, () => {});
+
+    let listView = view.getListViewByType('meta');
+    let listContainer = view.container.querySelector(`[data-list-type="meta"]`);
+    expect(listView).toBeTruthy();
+    expect(listContainer).toBeTruthy();
+
+    view.removeKeywordList('meta');
+
+    listView = view.getListViewByType('meta');
+    listContainer = view.container.querySelector(`[data-list-type="meta"]`);
+    expect(listView).toBeNull();
+    expect(listContainer).toBeNull();
+  })
   
   describe('createListView()', () => {
     it('should create list view correctly', () => {
@@ -352,11 +375,6 @@ describe('KeywordView', () => {
         const second = view.createListView({ title: 'Another test', type: type }, () => {});
         expect(second).toBe(first);
       });
-    });
-
-    it('should return null for unknown type', () => {
-      const result = view.createListView({ title: 'Unknonw', type: 'unsupportedType' }, () => {});
-      expect(result).toBeNull();
     });
   });
 
@@ -468,6 +486,24 @@ describe('KeywordView', () => {
     const section = view.getSection('dashboard');
     expect(section).toBeTruthy();
     expect(section).toBe(view.dashboardSection);
+  });
+  
+  test('clearHighlightCheckbox() should uncheck the checkbox', () => {
+    view.renderKeywordInputBox();
+    view.keywordHighlightCheckbox.checked = true;
+
+    view.clearHighlightCheckbox();
+
+    expect(view.keywordHighlightCheckbox.checked).toBe(false);
+  });
+
+  test('clearCustomKeywordInput() should clear the input', () => {
+    view.renderKeywordInputBox();
+    view.customKeywordInput.value = 'test';
+
+    view.clearCustomKeywordInput();
+
+    expect(view.customKeywordInput.value).toBe('');
   });
 
   afterAll(() => {

@@ -5,7 +5,7 @@ class KeywordController {
       changeTab: this.view.changeTab.bind(this.view),
       showTooltip: this.view.showTooltip.bind(this.view),
       hideTooltip: this.view.hideTooltip.bind(this.view),
-      clearHighlightCheckbox: this.clearHighlightCheckbox.bind(this),
+      clearHighlightCheckbox: this.view.clearHighlightCheckbox.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
@@ -63,7 +63,7 @@ class KeywordController {
 
     if (fullRefresh) {
       this.resetHighlightState();
-      this.clearHighlightCheckbox();
+      this.view.clearHighlightCheckbox();
       this.keywordHighlighter.removeHighlight();
     }
 
@@ -319,15 +319,10 @@ class KeywordController {
     } else {
       this.activeHighlightedKeyword = keywordItem;
       this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
-      this.clearHighlightCheckbox();
+      this.view.clearHighlightCheckbox();
       this.view.setActiveButton(clickedButton);
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
     }
-  }
-
-  // CLEAR CHECKBOX FUNCTION
-  clearHighlightCheckbox() {
-    this.view.keywordHighlightCheckbox.checked = false;
   }
 
   // UPDATE HIGHLIGHT COLORS FUNCTION
@@ -351,6 +346,13 @@ class KeywordController {
     const keywordItem = new Keyword(keyword);
     original.push(keywordItem);
     this.keywordAnalyzer.analyzeKeyword(keywordItem);
+
+    this.view.clearCustomKeywordInput();
+    if (this.view.keywordHighlightCheckbox.checked) {
+      this.activeHighlightedKeyword = keywordItem;
+      this.activeHighlightSource = 'list';
+      this.view.clearHighlightCheckbox();
+    }
     
     const listView = this.view.getListViewByType('userAdded');
     if (!listView) {

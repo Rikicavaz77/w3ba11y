@@ -72,11 +72,11 @@ describe('KeywordController - init', () => {
     expect(info.wordCount).toBe(20);
     expect(info.uniqueWordCount).toBe(14);
 
-    expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-    expect(controller.metaKeywords[2].frequency).toBe(3);
-    expect(controller.oneWordKeywords.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
-    expect(controller.twoWordsKeywords.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test', 'keyword appears', 'keyword here']));
-    expect(controller.twoWordsKeywords[0].frequency).toBe(2);
+    expect(controller.keywordLists.meta.original.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
+    expect(controller.keywordLists.meta.original[2].frequency).toBe(3);
+    expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
+    expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test', 'keyword appears', 'keyword here']));
+    expect(controller.keywordLists.twoWords.original[0].frequency).toBe(2);
 
     expect(controller.view.container).toBeInstanceOf(HTMLElement);
     expect(document.querySelector('.keywords__section--dashboard')).toBeTruthy();
@@ -120,7 +120,7 @@ describe('KeywordController - init', () => {
     expect(highlights.length).toBe(2);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(true);
     expect(controller.view.activeHighlightButton).toBe(button);
-    expect(controller.activeHighlightedKeyword).toBe(controller.metaKeywords.at(-1));
+    expect(controller.activeHighlightedKeyword).toBe(controller.keywordLists.meta.original.at(-1));
     expect(controller.activeHighlightSource).toBe('list');
   });
 
@@ -136,17 +136,17 @@ describe('KeywordController - init', () => {
     expect(document.querySelector('[data-list-type="userAdded"]')).toBeTruthy();
     const listContainer = controller.view.getListViewByType('userAdded').container;
     expect(listContainer.querySelectorAll('.keyword-list li').length).toBe(1);
-    expect(controller.userKeywords[0].name).toBe('test');
-    expect(controller.userKeywords[0].frequency).toBe(3);
+    expect(controller.keywordLists.userAdded.original[0].name).toBe('test');
+    expect(controller.keywordLists.userAdded.original[0].frequency).toBe(3);
 
     keywordInput.value = 'compound keyword';
     analyzeButton.click();
 
-    expect(controller.userKeywords[1].name).toBe('compound keyword');
-    expect(controller.userKeywords[1].frequency).toBe(1);
-    expect(controller.userKeywords[1].keywordOccurrences.p).toBe(1);
-    expect(controller.userKeywords[1].keywordOccurrences.strong).toBe(1);
-    expect(controller.userKeywords[1].keywordOccurrences.em).toBe(0);
+    expect(controller.keywordLists.userAdded.original[1].name).toBe('compound keyword');
+    expect(controller.keywordLists.userAdded.original[1].frequency).toBe(1);
+    expect(controller.keywordLists.userAdded.original[1].keywordOccurrences.p).toBe(1);
+    expect(controller.keywordLists.userAdded.original[1].keywordOccurrences.strong).toBe(1);
+    expect(controller.keywordLists.userAdded.original[1].keywordOccurrences.em).toBe(0);
   });
 
   test('should render keyword details', () => {
@@ -161,7 +161,7 @@ describe('KeywordController - init', () => {
     const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
     expect(highlightButton).toBeTruthy();
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
-    expect(analysisContainer.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(10);
+    expect(analysisContainer.querySelectorAll('.keyword-occurrences-icon--warning').length).toBe(10);
   });
 
   afterAll(() => {

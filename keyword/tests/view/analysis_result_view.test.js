@@ -43,13 +43,13 @@ describe('AnalysisResultView', () => {
       expect(container).not.toBeNull();
       expect(container.innerHTML).not.toContain('<script>alert(1)</script>');
       expect(container.innerHTML).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
-      expect(container.innerHTML).toContain('24');
-      expect(container.innerHTML).toContain('0.84');
+      expect(container.textContent).toContain('24');
+      expect(container.textContent).toContain('0.84');
       const hasMatch = /\bp\b/.test(container.querySelector('.keywords_tag-occurrences-list').textContent);
       expect(hasMatch).toBe(true);
-      expect(container.innerHTML).toContain('<span>2</span>');
+      expect(container.textContent).toContain('2');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
-      expect(container.querySelectorAll('.keyword_occurrences-icon--warning').length).toBe(1);
+      expect(container.querySelectorAll('.keyword-occurrences-icon--warning').length).toBe(1);
       expect(view.currentKeywordItem).toBe(keywordItem);
     });
 

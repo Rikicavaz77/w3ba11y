@@ -42,17 +42,30 @@ describe('KeywordController', () => {
     });
   });
 
-  test('processMetaKeywords() should parse and store keywords', () => {
-    const input = 'seo, accessibility, keyword';
-    controller.processMetaKeywords(input);
-    
-    expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-    expect(controller.displayMetaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-  });  
+  describe('processMetaKeywords()', () => {
+    beforeEach(() => {
+      controller.keywordLists = {
+        meta: {}
+      };
+    });  
+
+    it('should parse and store keywords', () => {
+      const input = 'seo, accessibility, keyword';
+      controller.processMetaKeywords(input);
+      
+      expect(controller.keywordLists.meta.original.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
+      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
+    });  
+  });
 
   describe('processMostFrequentKeywords()', () => {
     beforeEach(() => {
       controller.overviewInfo = { lang: 'en-US' };
+
+      controller.keywordLists = {
+        oneWord: {},
+        twoWords: {}
+      };
 
       controller.wordCounter = { 
         findOneWordKeywords: jest.fn().mockReturnValue(['test', 'seo']),
@@ -65,10 +78,10 @@ describe('KeywordController', () => {
       
       expect(controller.wordCounter.findOneWordKeywords).toHaveBeenCalledWith('en-US');
       expect(controller.wordCounter.findCompoundKeywords).toHaveBeenCalledWith('en-US');
-      expect(controller.oneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
-      expect(controller.displayOneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
-      expect(controller.twoWordsKeywords.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
-      expect(controller.displayTwoWordsKeywords.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
+      expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(['test', 'seo']);
+      expect(controller.keywordLists.oneWord.display.map(k => k.name)).toEqual(['test', 'seo']);
+      expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
+      expect(controller.keywordLists.twoWords.display.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
     });
   });
 
@@ -128,16 +141,13 @@ describe('KeywordController', () => {
     });
 
     it('should return correct keyword from display', () => {  
-      controller.displayMetaKeywords = [new Keyword('access'), new Keyword('accessibility'), new Keyword('account')];
-
-      const spy = jest.spyOn(controller, 'getListByType');
+      controller.keywordLists = {
+        meta: { display: [new Keyword('access'), new Keyword('accessibility'), new Keyword('account')] }
+      };
 
       const result = controller.getKeywordItem(target);
-      expect(spy).toHaveBeenCalledWith('meta');
       expect(result).toBeInstanceOf(Keyword);
       expect(result.name).toBe('accessibility');
-
-      spy.mockRestore();
     });
 
     it('should return undefined if no listItem or container', () => {
