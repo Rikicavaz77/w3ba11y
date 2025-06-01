@@ -96,7 +96,7 @@ describe('KeywordView', () => {
       tooltip: 'Tooltip text',
       value: 'test', 
       iconSvg: '<svg></svg>',
-      warningIconSvg: '<svg class="keywords__overview-warning-icon"></svg>'
+      warningIconSvg: '<svg class="keywords__overview-icon--warning"></svg>'
     };
 
     let item = view._renderOverviewItem(itemInfo);
@@ -106,14 +106,14 @@ describe('KeywordView', () => {
     expect(listContainer.textContent).toContain('Tooltip text');
     expect(listContainer.textContent).toContain('test');
     expect(listContainer.querySelector('#test-item-tooltip')).toBeTruthy();
-    expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeNull();
+    expect(listContainer.querySelector('.keywords__overview-icon--warning')).toBeNull();
 
     ['', 0, null].forEach(value => {
       itemInfo.value = value;
       item = view._renderOverviewItem(itemInfo);
       listContainer.innerHTML = item;
       expect(listContainer.textContent).toContain(value === 0 ? '0' : 'Missing');
-      expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeTruthy();
+      expect(listContainer.querySelector('.keywords__overview-icon--warning')).toBeTruthy();
     });
   });
 
@@ -132,7 +132,7 @@ describe('KeywordView', () => {
     expect(overview.textContent).toContain('en-US');
     expect(overview.textContent).toContain('2000');
     expect(overview.textContent).toContain('1000');
-    expect(overview.querySelectorAll('.keywords__overview-warning-icon').length).toBe(0);
+    expect(overview.querySelectorAll('.keywords__overview-icon--warning').length).toBe(0);
 
     const anotherOverviewInfo = {
       metaTagKeywordsContent: '',

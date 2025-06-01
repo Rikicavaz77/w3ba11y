@@ -94,6 +94,61 @@ describe('KeywordController - init', () => {
     expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
   });
 
+  describe('update', () => {
+    beforeEach(() => {
+      iframeDoc.head.innerHTML = `
+        <title>This is a test</title>
+        <meta name="description" content="keyword appears here">
+      `;
+      iframeDoc.documentElement.lang = 'en-US';
+      iframeDoc.body.innerHTML = `
+        <h1>Test heading</h1>
+        <h1>Another test heading</h1>
+        <h2>test heading</h2>
+        <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong></p>
+      `;
+    });
+
+    it('should update controller correctly with full refresh', () => {
+      controller.update(iframeDoc, true);
+
+      const info = controller.overviewInfo;
+      expect(info.lang).toBe('en-US');
+      expect(info.metaTagKeywordsContent).toBe('');
+      expect(info.wordCount).toBe(16);
+      expect(info.uniqueWordCount).toBe(10);
+
+      expect(controller.keywordLists.meta.original.length).toBe(0);
+      expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
+      expect(controller.keywordLists.oneWord.original[0].frequency).toBe(4);
+      expect(controller.keywordLists.oneWord.original[0].keywordOccurrences.h2).toBe(1);
+      expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test']));
+      expect(controller.keywordLists.twoWords.original[0].frequency).toBe(3);
+
+      expect(controller.activeHighlightedKeyword).toBeNull();
+      expect(controller.activeHighlightSource).toBeNull();
+      expect(controller.view.activeHighlightButton).toBeNull();
+      expect(controller.view.keywordHighlightCheckbox.checked).toBe(false);
+
+      const overview = controller.view.body.querySelector('.keywords__overview-container');
+      expect(overview.querySelectorAll('.keywords__overview-icon--warning').length).toBe(1);
+
+      const listContainer = document.querySelector('[data-list-type="meta"]');
+      expect(listContainer).toBeNull();
+    });
+
+    it('should update controller correctly with partial refresh', () => {
+      controller.update(iframeDoc);
+
+      const info = controller.overviewInfo;
+      expect(info.wordCount).toBe(16);
+      expect(info.uniqueWordCount).toBe(10);
+
+      expect(controller.keywordLists.meta.original.length).toBeGreaterThan(0);
+      expect(controller.keywordLists.meta.original[2].frequency).toBe(2);
+    });
+  });
+
   test('should highlight keyword on input and checkbox', () => {
     const keywordInput = controller.view.customKeywordInput;
     const checkbox = controller.view.keywordHighlightCheckbox;

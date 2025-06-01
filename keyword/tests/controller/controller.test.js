@@ -58,7 +58,9 @@ describe('KeywordController', () => {
       getListViewByType: jest.fn().mockReturnValue(mockListView),
       customKeywordInput: { value: '  seo  ' },
       keywordHighlightCheckbox: { checked: false },
-      clearCustomKeywordInput: jest.fn()
+      clearHighlightCheckbox: jest.fn(),
+      clearCustomKeywordInput: jest.fn(),
+      removeKeywordList: jest.fn()
     };
   });
 
@@ -70,16 +72,17 @@ describe('KeywordController', () => {
 
   describe('analyzeAndRenderKeywordLists()', () => {
     beforeEach(() => {
-      controller.view.getListViewByType = jest.fn().mockReturnValue(null);
-
       controller.keywordAnalyzer = {
         analyzeKeywords: jest.fn()
       };
 
       controller.renderKeywordListByType = jest.fn();
+      controller.updateVisibleKeywords = jest.fn();
     }); 
 
     it('should analyze and render keyword lists for the first time', () => {
+      controller.view.getListViewByType = jest.fn().mockReturnValue(null);
+
       controller.analyzeAndRenderKeywordLists(['meta', 'oneWord']);
       
       expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledTimes(2);
@@ -91,6 +94,31 @@ describe('KeywordController', () => {
       calls = controller.renderKeywordListByType.mock.calls;
       expect(calls[0][0]).toBe('meta');
       expect(calls[1][0]).toBe('oneWord');
+    });
+
+    it('should analyze and update visible keywords', () => {
+      controller.analyzeAndRenderKeywordLists(['meta', 'oneWord']);
+      
+      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledTimes(2);
+      let calls = controller.keywordAnalyzer.analyzeKeywords.mock.calls;
+      expect(calls[0][0]).toBe(controller.keywordLists.meta.original);
+      expect(calls[1][0]).toBe(controller.keywordLists.oneWord.original);
+
+      expect(controller.updateVisibleKeywords).toHaveBeenCalledTimes(2);
+      calls = controller.updateVisibleKeywords.mock.calls;
+      expect(calls[0][0]).toBe('meta');
+      expect(calls[0][1]).toBe('exist');
+      expect(calls[1][0]).toBe('oneWord');
+      expect(calls[1][1]).toBe('exist');
+    });
+
+    it('should remove existing list', () => {
+      controller.keywordLists.meta.original = [];
+      controller.keywordLists.meta.display = [];
+
+      controller.analyzeAndRenderKeywordLists(['meta']);
+      
+      expect(controller.view.removeKeywordList).toHaveBeenCalledWith('meta');
     });
   });
 
@@ -229,10 +257,30 @@ describe('KeywordController', () => {
       expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('userAdded', 'exist');
     });
 
+    it('should analyze and render keyword with highlight button active', () => {
+      controller.view.keywordHighlightCheckbox = { checked: true };
+      controller.analyzeKeyword();
+      expect(controller.keywordAnalyzer.analyzeKeyword).toHaveBeenCalledWith(expect.any(Keyword));
+      expect(controller.view.clearCustomKeywordInput).toHaveBeenCalled();
+      expect(controller.activeHighlightedKeyword.name).toBe('seo');
+      expect(controller.activeHighlightSource).toBe('list');
+      expect(controller.view.clearHighlightCheckbox).toHaveBeenCalled();
+    });
+
     it('should do nothing if keyword is empty', () => {
       controller.view.customKeywordInput.value = '    ';
       controller.analyzeKeyword();
       expect(controller.keywordLists.userAdded.original).toHaveLength(0);
+      expect(controller.keywordAnalyzer.analyzeKeyword).not.toHaveBeenCalled();
+      expect(controller.view.clearCustomKeywordInput).not.toHaveBeenCalled();
+    });
+
+    it('should do nothing if keyword already exists', () => {
+      const keyword = new Keyword('seo');
+      controller.keywordLists.userAdded.original.push(keyword);
+      controller.keywordLists.userAdded.display.push(keyword);
+      controller.analyzeKeyword();
+      expect(controller.keywordLists.userAdded.original).toHaveLength(1);
       expect(controller.keywordAnalyzer.analyzeKeyword).not.toHaveBeenCalled();
       expect(controller.view.clearCustomKeywordInput).not.toHaveBeenCalled();
     });
