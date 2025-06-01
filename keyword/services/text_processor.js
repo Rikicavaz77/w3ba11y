@@ -73,10 +73,48 @@ class TextProcessor {
   }
 
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
+    const escapedKeyword = Utils.escapeRegExp(keyword);
     if (capture) {
-      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${Utils.escapeRegExp(keyword)})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${escapedKeyword})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
     }
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${Utils.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${escapedKeyword}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+  }
+
+  getTextNodeGroups() {
+    const nodeGroups = [];
+    let currentGroup = [];
+    let currentBlockParent = null;
+    let virtualText = "";
+    this._treeWalker.resetWalker();
+    let node;
+    while ((node = this._treeWalker.nextNode())) {
+      const text = node.nodeValue;
+      const parent = this.getBlockParent(node);
+
+      if (currentBlockParent === parent) {
+        if (virtualText.length > 0 && !virtualText.endsWith(' ') && !text.startsWith(' ')) {
+          virtualText += ' ';
+        }
+        const start = virtualText.length;
+        virtualText += text;
+        const end = virtualText.length;
+        currentGroup.push({ node, start, end });
+      } else {
+        if (currentGroup.length > 0) {
+          nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
+        }
+        virtualText = text;
+        const start = 0;
+        const end = virtualText.length;
+        currentGroup = [{ node, start, end }];
+        currentBlockParent = parent;
+      }
+    }
+    if (currentGroup.length > 0) {
+      nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
+    }
+
+    return nodeGroups;
   }
 
   getTextNodeGroups() {
