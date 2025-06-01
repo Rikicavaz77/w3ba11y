@@ -1,18 +1,18 @@
 class KeywordListInfo {
-  constructor(title, type, keywords, totalPages, sortDirection = null) {
-    this._title = title;
+  constructor(type, title, keywords, totalPages, sortDirection = null) {
     this._type = type;
+    this._title = title;
     this._keywords = keywords;
     this._totalPages = totalPages;
     this._sortDirection = sortDirection;
   } 
 
-  get title() {
-    return this._title;
-  }
-
   get type() {
     return this._type;
+  }
+
+  get title() {
+    return this._title;
   }
 
   get keywords() {

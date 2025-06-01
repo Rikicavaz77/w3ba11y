@@ -180,8 +180,8 @@ class KeywordController {
 
     this.view.renderKeywordListContainer(
       new KeywordListInfo(
-        label,
         type,
+        label,
         keywordsData,
         totalPages,
         defaultSort
