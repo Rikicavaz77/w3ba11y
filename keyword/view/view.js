@@ -136,10 +136,10 @@ class KeywordView {
     this._analyzeButton = analyzeButton;
   }
 
-  _performListViewCreation({ title, type, sortDirection }, getActive) {
+  _performListViewCreation({ type, title, sortDirection }, getActive) {
     return new KeywordListView({
-      title,
       listType: type,
+      title,
       initialSortDirection: sortDirection,
       getActiveHighlightData: getActive
     });
@@ -218,10 +218,10 @@ class KeywordView {
     this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
     this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
 
-    return asideBody.querySelector('.w3ba11y__section--keyword');
+    return keywordViewSection;
   }
 
-  renderOverviewItem({ title, tooltip, value, iconSvg, warningIconSvg }) {
+  _renderOverviewItem({ title, tooltip, value, iconSvg, warningIconSvg }) {
     const id = title.toLowerCase().replace(/\s+/g, '-');
     return `
       <li class="keywords__overview-item">
@@ -256,9 +256,9 @@ class KeywordView {
   renderKeywordAnalysisOverview(overviewInfo) {
     let overviewContainer = this._body.querySelector('.keywords__overview-container');
     if (!overviewContainer) {
-      overviewContainer = document.createElement("div");
-      overviewContainer.classList.add("keywords__overview-container", "tab", "tab--active", "tab--overview");
-      overviewContainer.dataset.tab = "overview";
+      overviewContainer = document.createElement('div');
+      overviewContainer.classList.add('keywords__overview-container', 'tab', 'tab--active', 'tab--overview');
+      overviewContainer.dataset.tab = 'overview';
       this._overviewTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
@@ -269,7 +269,7 @@ class KeywordView {
     `;
     overviewContainer.innerHTML = `
       <ul class="keywords__overview-list">
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Meta Keywords',
           tooltip: `Google no longer uses meta keywords as a ranking factor. However, including them can be useful for compatibility or documentation reasons.`,
           value: overviewInfo.metaTagKeywordsContent?.trim() ?? '', 
@@ -280,7 +280,7 @@ class KeywordView {
           `,
           warningIconSvg: warningIconSvg
         })}
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Lang',
           tooltip: `The language specified in the html tag.`,
           value: overviewInfo.lang?.trim() ?? '',
@@ -291,7 +291,7 @@ class KeywordView {
           `,
           warningIconSvg: warningIconSvg
         })}
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Word Count',
           tooltip: `The total number of words in the page's Document Object Model (DOM).`,
           value: overviewInfo.wordCount ?? 0,
@@ -303,7 +303,7 @@ class KeywordView {
           `,
           warningIconSvg: warningIconSvg
         })}
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Unique Word Count',
           tooltip: `The total number of unique words in the page's Document Object Model (DOM).`,
           value: overviewInfo.uniqueWordCount ?? 0,
@@ -321,9 +321,9 @@ class KeywordView {
   renderKeywordSettings(colorMap) {
     let settingsContainer = this._body.querySelector('.keywords__settings-container');
     if (!settingsContainer) {
-      settingsContainer = document.createElement("div");
-      settingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
-      settingsContainer.dataset.tab = "settings";
+      settingsContainer = document.createElement('div');
+      settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings');
+      settingsContainer.dataset.tab = 'settings';
       this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
@@ -360,8 +360,8 @@ class KeywordView {
               </div>
             </li>
           `; 
-        })
-        .join('')}
+        }).join('')
+      }
       </ul>
     `;
 
@@ -371,8 +371,8 @@ class KeywordView {
   renderKeywordInputBox() { 
     let keywordInputContainer = this._body.querySelector('.keywords__input-container');
     if (!keywordInputContainer) {
-      keywordInputContainer = document.createElement("div");
-      keywordInputContainer.classList.add("keywords__input-container");
+      keywordInputContainer = document.createElement('div');
+      keywordInputContainer.classList.add('keywords__input-container');
       this._body.appendChild(keywordInputContainer);
     }
     keywordInputContainer.innerHTML = `
@@ -403,16 +403,16 @@ class KeywordView {
     const keywordListView = this.createListView(keywordListInfo, getActiveHighlightData);
     if (!keywordListView) return;
 
-    let allKeywordListContainer = this._container.querySelector(".keyword-all-lists__container");
+    let allKeywordListContainer = this._container.querySelector('.keyword-all-lists__container');
     if (!allKeywordListContainer) {
-      allKeywordListContainer = document.createElement("div");
-      allKeywordListContainer.classList.add("keyword-all-lists__container");
+      allKeywordListContainer = document.createElement('div');
+      allKeywordListContainer.classList.add('keyword-all-lists__container');
       this._body.appendChild(allKeywordListContainer);
     }
 
     const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}"]`);
     if (!existing) {
-      if (keywordListInfo.type === "userAdded") {
+      if (keywordListInfo.type === 'userAdded') {
         allKeywordListContainer.prepend(keywordListView.container);
       } else {
         allKeywordListContainer.appendChild(keywordListView.container);
@@ -443,7 +443,7 @@ class KeywordView {
   toggleSection(section) {
     this.getAllSection().forEach(section => section.classList.remove('keywords__section--active'));
     this.getSection(section)?.classList.add('keywords__section--active');
-    const anchor = document.querySelector(".w3ba11y__header");
+    const anchor = document.querySelector('.w3ba11y__header');
     if (anchor) {
       anchor.scrollIntoView();
     }

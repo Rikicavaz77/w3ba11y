@@ -1,7 +1,7 @@
 class KeywordListView {
-  constructor({ title, listType, initialSortDirection = null, getActiveHighlightData }) {
-    this._title = title;
+  constructor({ listType, title, initialSortDirection = null, getActiveHighlightData }) {
     this._listType = listType;
+    this._title = title;
     this._searchKeywordField = null;
     this._currentSortButton = null;
     this._sortDirection = initialSortDirection;
@@ -13,12 +13,12 @@ class KeywordListView {
     this._container = this.generateKeywordListViewSection();
   }
 
-  get title() {
-    return this._title;
-  }
-  
   get listType() {
     return this._listType;
+  }
+
+  get title() {
+    return this._title;
   }
 
   get container() {
@@ -53,12 +53,12 @@ class KeywordListView {
     return this._currentPage;
   }
 
-  set title(title) {
-    this._title = title;
-  }
-  
   set listType(listType) {
     this._listType = listType;
+  }
+
+  set title(title) {
+    this._title = title;
   }
 
   set container(container) {
@@ -98,8 +98,8 @@ class KeywordListView {
   }
 
   generateKeywordListViewSection() {
-    const keywordListContainer = document.createElement("div");
-    keywordListContainer.classList.add("keyword-list__container");
+    const keywordListContainer = document.createElement('div');
+    keywordListContainer.classList.add('keyword-list__container');
     keywordListContainer.dataset.listType = this._listType;
     keywordListContainer.innerHTML = `
       <h3>${this._title}</h3>
@@ -159,7 +159,7 @@ class KeywordListView {
   scrollToPagination() {
     if (this._pagination) {
       this._pagination.scrollIntoView({
-        block: "nearest"
+        block: 'nearest'
       });
     }
   }
@@ -200,15 +200,17 @@ class KeywordListView {
   }
 
   renderKeywords(keywords, startIndex) {
-    const keywordList = this._container.querySelector(".keyword-list");
+    const keywordList = this._container.querySelector('.keyword-list');
     keywordList.innerHTML = '';
     keywords.forEach(keywordItem => {
-      const item = document.createElement("li");
+      const item = document.createElement('li');
       item.classList.add('keyword-list-item');
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
+
       const safeName = Utils.escapeHTML(keywordItem.name);
-      const safeFrequency = Number.parseInt(keywordItem.frequency, 10) || 0;
+      const safeFrequency = Number.isFinite(+keywordItem.frequency) ? keywordItem.frequency : 0;
       const highlightClass = this._getHighlightClass(keywordItem);
+
       item.innerHTML = `
         <h4 class="keyword-item__title keyword-name">${safeName} (${safeFrequency})</h4>
         <div class="keyword-item__actions">
@@ -232,15 +234,16 @@ class KeywordListView {
     const pages = [...new Set([1, ...range, totalPages].filter(p => p >= 1 && p <= totalPages))];
     this._pagination.innerHTML = '';
     pages.forEach((page, index) => {
-      const item = document.createElement("li");
+      const item = document.createElement('li');
       item.innerHTML = `
         <button class="keywords__pagination__button ${page === currentPage ? 'keywords__pagination__button--active' : ''}" data-page="${page}" aria-label="Go to page ${page}">${page}</button>
       `;
       this._pagination.appendChild(item);
+
       const nextPage = pages[index + 1] ?? null;
       if (nextPage && nextPage !== page + 1) {
-        const item = document.createElement("li");
-        item.textContent = "...";
+        const item = document.createElement('li');
+        item.textContent = '...';
         this._pagination.appendChild(item);
       }
     });

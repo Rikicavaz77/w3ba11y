@@ -196,8 +196,8 @@ class KeywordController {
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
-    let start = (currentPage - 1) * batchSize;
-    let end = start + batchSize;
+    const start = (currentPage - 1) * batchSize;
+    const end = start + batchSize;
     const keywordsData = keywordList.slice(start, end);
     listView.render(keywordsData, totalPages, currentPage, start);
   }
@@ -292,7 +292,7 @@ class KeywordController {
 
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
-    let keyword = this.view.customKeywordInput?.value.trim();
+    const keyword = this.view.customKeywordInput?.value.trim();
     if (!keyword) return;
 
     if (event.target.checked) {
@@ -335,7 +335,7 @@ class KeywordController {
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
     const { original, display } = this.keywordLists.userAdded;
-    let keyword = this.view.customKeywordInput?.value.trim();
+    const keyword = this.view.customKeywordInput?.value.trim();
     if (
       !keyword ||
       original.some(k => k.name.toLowerCase() === keyword.toLowerCase())
