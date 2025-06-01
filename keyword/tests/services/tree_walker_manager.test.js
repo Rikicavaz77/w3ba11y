@@ -39,4 +39,12 @@ describe('TreeWalkerManager', () => {
     manager.resetWalker();
     expect(manager._walker.currentNode).toBe(root);
   });
+
+  test('setters should assign values correctly', () => {
+    const dummy = {};
+
+    manager.root = dummy;
+
+    expect(manager.root).toBe(dummy);
+  });
 });
