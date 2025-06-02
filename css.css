@@ -583,11 +583,11 @@ pre {
 }
 
 .keywords__overview-item-title {
-  font-size: 0.875em;
+  font-size: 0.875rem;
 }
 
 .keywords__overview-item-body__text {
-  font-size: 0.7em;
+  font-size: 0.7rem;
   font-weight: 500;
 }
 
@@ -601,7 +601,7 @@ pre {
 }
 
 .keywords__settings-title {
-  font-size: 1.2em;
+  font-size: 1.2rem;
 }
 
 .keywords__settings-item__title-container {
@@ -611,7 +611,7 @@ pre {
 }
 
 .keywords__settings-item__title {
-  font-size: 1em;
+  font-size: 1rem;
   text-transform: capitalize;
 }
 
