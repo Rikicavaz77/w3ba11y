@@ -138,8 +138,8 @@ pre {
 .w3ba11y__settings-icon,
 .w3ba11y__close-icon {
   color: #565252;
-  width: 2rem;
-  height: 2rem;
+  width: 2em;
+  height: 2em;
 }
 
 .w3ba11y__body {
@@ -681,7 +681,6 @@ pre {
   text-align: center;
   padding: 0.4rem;
   border-radius: 6px;
-  z-index: 1;
 }
 
 .keywords__tooltip-text::before {
@@ -755,7 +754,7 @@ pre {
   font-size: 2rem;
   display: flex;
   justify-content: center;
-  padding: 0.1em;
+  padding: 0.2rem;
   border-radius: 6px;
   border: 3px solid rgb(30, 48, 90);
   overflow: hidden;

@@ -8,7 +8,7 @@ class KeywordListView {
     this._getActiveHighlightData = getActiveHighlightData;
     this._pagination;
     this._paginationButtons;
-    this._currentPageButton;
+    this._currentPageButton = null;
     this._currentPage = 1;
     this._container = this.generateKeywordListViewSection();
   }
