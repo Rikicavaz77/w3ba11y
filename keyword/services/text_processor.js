@@ -1,8 +1,10 @@
 class TextProcessor {
-  constructor(doc, treeWalker) {
+  constructor(doc, treeWalker, useCache = false) {
     this._doc = doc;
     this._root = doc.body;
     this._treeWalker = treeWalker;
+    this._cachedTextNodes = null;
+    this._useCache = useCache;
     this._allowedParentTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'li'];
   }
 
@@ -16,6 +18,14 @@ class TextProcessor {
 
   get treeWalker() {
     return this._treeWalker;
+  }
+
+  get useCache() {
+    return this._useCache;
+  }
+
+  set useCache(useCache) {
+    this._useCache = useCache;
   }
 
   get allowedParentTags() {
@@ -44,13 +54,21 @@ class TextProcessor {
     return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${Utils.escapeRegExp(keyword)}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
   }
 
+  resetCache() {
+    this._cachedTextNodes = null;
+  }
+
   getTextNodes() {
+    if (this._useCache && this._cachedTextNodes) return this._cachedTextNodes;
+
     const textNodes = [];
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
       textNodes.push(node);
     }
+
+    if (this._useCache) this._cachedTextNodes = textNodes;
     return textNodes;
   }
 }
