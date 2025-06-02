@@ -67,7 +67,12 @@ describe('KeywordController', () => {
   describe('processMostFrequentKeywords()', () => {
     beforeEach(() => {
       controller.overviewInfo = { lang: 'en-US' };
-      controller.wordCounter = { findOneWordKeywords: jest.fn().mockReturnValue(['test', 'seo']) };
+
+      controller.wordCounter = { 
+        findOneWordKeywords: jest.fn().mockReturnValue(['test', 'seo']),
+        findCompoundKeywords: jest.fn().mockReturnValue(['test keyword', 'seo optimization'])
+      };
+
       controller.keywordAnalyzer = { analyzeKeywords: jest.fn() }; 
     });  
 
@@ -75,9 +80,13 @@ describe('KeywordController', () => {
       controller.processMostFrequentKeywords();
       
       expect(controller.wordCounter.findOneWordKeywords).toHaveBeenCalledWith('en-US');
+      expect(controller.wordCounter.findCompoundKeywords).toHaveBeenCalledWith('en-US');
       expect(controller.oneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
       expect(controller.displayOneWordKeywords.map(k => k.name)).toEqual(['test', 'seo']);
       expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledWith(controller.oneWordKeywords);
+      expect(controller.twoWordsKeywords.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
+      expect(controller.displayTwoWordsKeywords.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
+      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledWith(controller.twoWordsKeywords);
     });
   });
 

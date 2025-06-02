@@ -20,11 +20,20 @@ class WordCounter {
     return this._uniqueWords;
   }
 
-  get treeWalker() {
-    return this._textProcessor.treeWalker;
+  _getBaseLang(lang) {
+    return lang.split('-')[0].toLowerCase();
   }
 
-  _countWordsInTag(tagName, pattern, words) {
+  _getStopwords(lang, strict = true) {
+    const baseLang = this._getBaseLang(lang);
+    let stopwords = this._stopwords[baseLang] || new Set();
+    if (strict && baseLang !== 'en') {
+      stopwords = new Set([...stopwords, ...this._stopwords['en']]);
+    }
+    return stopwords;
+  }
+
+  _collectWordsInTag(tagName, pattern, words) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return;
     tags = Array.isArray(tags) ? tags : [tags];
@@ -35,24 +44,61 @@ class WordCounter {
     });
   }
 
+  _extractCompoundsFromText(text, pattern, compounds, gramSize) {
+    const splitPattern = this._textProcessor.getCompoundSplitPattern();
+    const tokenBlocks = text.split(splitPattern).filter(Boolean);
+    tokenBlocks.forEach(block => {
+      const matches = block.match(pattern) || [];
+      for (let i = 0; i <= matches.length - gramSize; i++) {
+        const compound = matches.slice(i, i + gramSize);
+        compounds.push(compound.join(' '));
+      }
+    });
+  }
+
+  _collectCompoundsInTag(tagName, pattern, compounds, gramSize) {
+    let tags = this._tagAccessor.getTag(tagName);
+    if (!tags) return;
+    tags = Array.isArray(tags) ? tags : [tags];
+    tags.forEach(tag => {
+      const text = this._tagAccessor.extractText(tagName, tag);
+      this._extractCompoundsFromText(text, pattern, compounds, gramSize);
+    });
+  }
+
   _collectWords(forceRefresh = false) {
     if (!forceRefresh && this._cachedWords) return this._cachedWords;
 
     const pattern = this._textProcessor.getWordsPattern();
+    const textNodes = this._textProcessor.getTextNodes();
     const words = [];
-    this.treeWalker.resetWalker();
-    let node;
-    while ((node = this.treeWalker.nextNode())) {
+    textNodes.forEach(node => {
       const matches = node.nodeValue.toLowerCase().match(pattern) || [];
       words.push(...matches);
-    }
+    });
 
     ["title", "description", "alt"].forEach(tagName => {
-      this._countWordsInTag(tagName, pattern, words);
+      this._collectWordsInTag(tagName, pattern, words);
     });
 
     this._cachedWords = words;
     return words;
+  }
+
+  _collectCompounds(gramSize) {
+    const pattern = this._textProcessor.getWordsPattern();
+    const nodeGroups = this._textProcessor.getTextNodeGroups();
+    const compounds = [];
+    nodeGroups.forEach(({ virtualText }) => {
+      const text = virtualText.toLowerCase();
+      this._extractCompoundsFromText(text, pattern, compounds, gramSize);
+    });
+   
+    ["title", "description", "alt"].forEach(tagName => {
+      this._collectCompoundsInTag(tagName, pattern, compounds, gramSize);
+    });
+
+    return compounds;
   }
 
   _countOccurrences(words) {
@@ -79,12 +125,7 @@ class WordCounter {
   }
 
   findOneWordKeywords(lang = 'en') {
-    const baseLang = lang.split('-')[0].toLowerCase();
-    let stopwords = this._stopwords[baseLang] || new Set();
-    if (baseLang === 'it') {
-      stopwords = new Set([...stopwords, ...this._stopwords['en']]);
-    }
-
+    const stopwords = this._getStopwords(lang);
     const words = this._collectWords();
     const filteredWords = words.filter(word => !stopwords.has(word));
     const wordsMap = this._countOccurrences(filteredWords);
@@ -94,6 +135,32 @@ class WordCounter {
       .map(([key, _]) => key);
     return relevantWords;
   }
+
+  findCompoundKeywords(lang = 'en', gramSize = 2) {
+    const mainStopwords = this._getStopwords(lang, false);
+    let secondaryStopwords;
+    if (this._getBaseLang(lang) !== 'en') {
+      secondaryStopwords = this._getStopwords('en', false);
+    }
+    const compounds = this._collectCompounds(gramSize);
+    const filteredWords = compounds.filter(compound => {
+      const words = compound.split(' ');
+      return words.every(word => !mainStopwords.has(word)) &&
+      (!secondaryStopwords || words.filter(word => secondaryStopwords.has(word)).length <= gramSize / 2);
+    });
+    const wordsMap = this._countOccurrences(filteredWords);
+    const relevantWords = [...wordsMap.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([key, _]) => key);
+    return relevantWords;
+  }
+}
+
+/* istanbul ignore next */
+// Export for use in Node environment (testing with Jest). Ignored in browsers
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+  module.exports = WordCounter;
 }
 
 /* istanbul ignore next */

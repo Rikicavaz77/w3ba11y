@@ -18,6 +18,8 @@ describe('KeywordController', () => {
     controller.displayUserKeywords = [...controller.userKeywords];
     controller.oneWordKeywords = [new Keyword('oneWord1')];
     controller.displayOneWordKeywords = [...controller.oneWordKeywords];
+    controller.twoWordsKeywords = [new Keyword('twoWords1')];
+    controller.displayTwoWordsKeywords = [...controller.twoWordsKeywords];
     controller.batchSizes = { meta: 5 };
     controller.labelMap = { meta: 'Meta keywords' };
     controller.activeHighlightedKeyword = controller.metaKeywords[0];
@@ -40,7 +42,7 @@ describe('KeywordController', () => {
 
   describe('getListByType()', () => {
     it('should return the correct list', () => {
-      ['meta', 'userAdded', 'oneWord'].forEach(type => {
+      ['meta', 'userAdded', 'oneWord', 'twoWords'].forEach(type => {
         const { original, display } = controller.getListByType(type);
         expect(original[0].name).toContain(type);
         expect(display[0].name).toContain(type);
