@@ -312,10 +312,12 @@ describe('KeywordView', () => {
     view._metaKeywordsListView = { listType: 'meta' };
     view._userKeywordsListView = { listType: 'userAdded' };
     view._oneWordKeywordsListView = { listType: 'oneWord' };
+    view._twoWordsKeywordsListView = { listType: 'twoWords' };
     
     expect(view.getListViewByType('meta')).toEqual({ listType: 'meta' });
     expect(view.getListViewByType('userAdded')).toEqual({ listType: 'userAdded' });
     expect(view.getListViewByType('oneWord')).toEqual({ listType: 'oneWord' });
+    expect(view.getListViewByType('twoWords')).toEqual({ listType: 'twoWords' });
     expect(view.getListViewByType('unknown')).toBeNull();
   });
   
@@ -330,7 +332,7 @@ describe('KeywordView', () => {
         expect(typeof result._getActiveHighlightData).toBe('function');
       });
 
-      ['oneWord'].forEach(type => {
+      ['oneWord', 'twoWords'].forEach(type => {
         const result = view.createListView({ title: 'Test', type: type, sortDirection: 'desc' }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
@@ -343,7 +345,7 @@ describe('KeywordView', () => {
     });
 
     it('should return existing list view if already created', () => {
-      ['meta', 'userAdded', 'oneWord'].forEach(type => {
+      ['meta', 'userAdded', 'oneWord', 'twoWords'].forEach(type => {
         const first = view.createListView({ title: 'Test', type: type }, () => {});
         const second = view.createListView({ title: 'Another test', type: type }, () => {});
         expect(second).toBe(first);

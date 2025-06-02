@@ -74,6 +74,7 @@ describe('KeywordController - init', () => {
     expect(controller.metaKeywords.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
     expect(controller.metaKeywords[2].frequency).toBe(2);
     expect(controller.oneWordKeywords.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
+    expect(controller.twoWordsKeywords.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test', 'keyword appears', 'keyword here']));
 
     expect(controller.view.container).toBeInstanceOf(HTMLElement);
     expect(document.querySelector('.keywords__section--dashboard')).toBeTruthy();
