@@ -67,10 +67,12 @@ describe('KeywordController', () => {
   describe('processMostFrequentKeywords()', () => {
     beforeEach(() => {
       controller.overviewInfo = { lang: 'en-US' };
+
       controller.wordCounter = { 
         findOneWordKeywords: jest.fn().mockReturnValue(['test', 'seo']),
         findCompoundKeywords: jest.fn().mockReturnValue(['test keyword', 'seo optimization'])
       };
+
       controller.keywordAnalyzer = { analyzeKeywords: jest.fn() }; 
     });  
 

@@ -118,6 +118,7 @@ describe('KeywordController - init', () => {
 
     const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
     expect(highlights.length).toBe(2);
+
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(true);
     expect(controller.view.activeHighlightButton).toBe(button);
     expect(controller.activeHighlightedKeyword).toBe(controller.metaKeywords.at(-1));
