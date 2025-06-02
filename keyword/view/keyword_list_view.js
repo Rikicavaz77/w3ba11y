@@ -97,6 +97,10 @@ class KeywordListView {
     return this._currentPage === page;
   }
 
+  getSearchQuery() {
+    return this._searchKeywordField?.value.trim() || '';
+  }
+
   generateKeywordListViewSection() {
     const keywordListContainer = document.createElement('div');
     keywordListContainer.classList.add('keyword-list__container');

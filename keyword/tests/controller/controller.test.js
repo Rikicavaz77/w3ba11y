@@ -48,7 +48,7 @@ describe('KeywordController', () => {
     mockListView = {
       updateSortButtons: jest.fn(),
       removeFilters: jest.fn(),
-      searchKeywordField: { value: '  exist  ' },
+      getSearchQuery: jest.fn().mockReturnValue('exist'),
       sortDirection: 'desc',
       currentPage: 1
     }
@@ -56,7 +56,7 @@ describe('KeywordController', () => {
       renderKeywordListContainer: jest.fn(),
       clearActiveButton: jest.fn(),
       getListViewByType: jest.fn().mockReturnValue(mockListView),
-      customKeywordInput: { value: '  seo  ' },
+      getCustomKeywordValue: jest.fn().mockReturnValue('seo'),
       keywordHighlightCheckbox: { checked: false },
       clearHighlightCheckbox: jest.fn(),
       clearCustomKeywordInput: jest.fn(),
@@ -268,7 +268,7 @@ describe('KeywordController', () => {
     });
 
     it('should do nothing if keyword is empty', () => {
-      controller.view.customKeywordInput.value = '    ';
+      controller.view.getCustomKeywordValue = jest.fn().mockReturnValue('');
       controller.analyzeKeyword();
       expect(controller.keywordLists.userAdded.original).toHaveLength(0);
       expect(controller.keywordAnalyzer.analyzeKeyword).not.toHaveBeenCalled();

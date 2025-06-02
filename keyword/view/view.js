@@ -136,6 +136,10 @@ class KeywordView {
     this._analyzeButton = analyzeButton;
   }
 
+  getCustomKeywordValue() {
+    return this._customKeywordInput?.value.trim() || '';
+  }
+
   _performListViewCreation({ type, title, sortDirection }, getActive) {
     return new KeywordListView({
       listType: type,

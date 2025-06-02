@@ -7,6 +7,7 @@ class KeywordController {
       hideTooltip: this.view.hideTooltip.bind(this.view),
       clearHighlightCheckbox: this.view.clearHighlightCheckbox.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
+      updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
 
@@ -74,7 +75,6 @@ class KeywordController {
       this.overviewInfo.uniqueWordCount = this.wordCounter.uniqueWords;
     }
     this.view.renderKeywordAnalysisOverview(this.overviewInfo);
-    this.view.renderKeywordSettings(this.keywordHighlighter.colorMap);
 
     if (fullRefresh) {
       this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
@@ -170,7 +170,7 @@ class KeywordController {
       if (!listView) {
         this.renderKeywordListByType(type);
       } else {
-        const filterQuery = listView.searchKeywordField?.value?.trim();
+        const filterQuery = listView.getSearchQuery();
         this.updateVisibleKeywords(type, filterQuery);
       }
     });   
@@ -299,7 +299,7 @@ class KeywordController {
 
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
-    const keyword = this.view.customKeywordInput?.value.trim();
+    const keyword = this.view.getCustomKeywordValue();
     if (!keyword) return;
 
     if (event.target.checked) {
@@ -311,7 +311,7 @@ class KeywordController {
     }
   }
 
-  // HANDLE HIGHLIGHT FUNCTION
+  // HANDLE HIGHLIGHT CLICK FUNCTION
   handleHighlightClick(keywordItem, clickedButton) {
     if (this.view.isButtonActive(clickedButton)) {
       this.resetHighlightState();
@@ -337,7 +337,7 @@ class KeywordController {
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
     const { original, display } = this.keywordLists.userAdded;
-    const keyword = this.view.customKeywordInput?.value.trim();
+    const keyword = this.view.getCustomKeywordValue();
     if (
       !keyword ||
       original.some(k => k.name.toLowerCase() === keyword.toLowerCase())
@@ -359,7 +359,7 @@ class KeywordController {
       display.push(keywordItem);
       this.renderKeywordListByType('userAdded');
     } else {
-      const filterQuery = listView.searchKeywordField?.value?.trim();
+      const filterQuery = listView.getSearchQuery();
       this.updateVisibleKeywords('userAdded', filterQuery);
     }
   }
@@ -430,6 +430,8 @@ class KeywordController {
 
   setupTooltipListeners() {
     this.view.tooltipTriggers.forEach(tooltipTrigger => {
+      if (tooltipTrigger.dataset.listenerAttached) return;
+      tooltipTrigger.dataset.listenerAttached = 'true';
       tooltipTrigger.addEventListener('focus', this.eventHandlers.showTooltip);
       tooltipTrigger.addEventListener('blur', this.eventHandlers.hideTooltip);
       tooltipTrigger.addEventListener('mouseenter', this.eventHandlers.showTooltip);
@@ -437,6 +439,8 @@ class KeywordController {
     });
 
     this.view.tooltips.forEach(tooltip => {
+      if (tooltip.dataset.listenerAttached) return;
+      tooltip.dataset.listenerAttached = 'true';
       tooltip.addEventListener('mouseenter', this.eventHandlers.showTooltip);
       tooltip.addEventListener('mouseleave', this.eventHandlers.hideTooltip);
     });
@@ -444,15 +448,13 @@ class KeywordController {
 
   bindRefreshAnalysisButton() {
     this.view.refreshButton.addEventListener('click', () => {
-      this.update(this.view.iframe, true);
+      this.update(this.view.iframe, false);
     });
   }
 
   bindColorPicker() {
-    this.view.container.addEventListener('change', event => {
-      if (event.target.matches('input[type="color"][data-highlight]')) {
-        this.updateHighlightColors(event);
-      }
+    this.view.colorInputs.forEach(input => {
+      input.addEventListener('change', this.eventHandlers.updateHighlightColors);
     });
   }
 

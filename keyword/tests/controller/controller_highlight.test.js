@@ -13,7 +13,7 @@ describe('KeywordController - highlight()', () => {
       controller.resetHighlightState = jest.fn();
 
       controller.view = {
-        customKeywordInput: { value: '    testKeyword     ' }
+        getCustomKeywordValue: jest.fn().mockReturnValue('testKeyword')
       };
 
       controller.keywordHighlighter = {
@@ -40,7 +40,7 @@ describe('KeywordController - highlight()', () => {
     });
 
     it('should do nothing if keyword is empty', () => {
-      controller.view.customKeywordInput.value = '';
+      controller.view.getCustomKeywordValue = jest.fn().mockReturnValue('');
 
       const event = { target: { checked: true } };
       controller.toggleHighlight(event);

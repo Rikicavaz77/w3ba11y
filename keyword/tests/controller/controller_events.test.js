@@ -21,6 +21,7 @@ describe('KeywordController - events', () => {
       tabButtons: [document.createElement('button')],
       tooltipTriggers: [document.createElement('div')],
       tooltips: [document.createElement('div')],
+      colorInputs: [document.createElement('input')],
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
@@ -30,7 +31,8 @@ describe('KeywordController - events', () => {
       toggleSection: jest.fn(),
       analysis: {
         currentKeywordItem: new Keyword('analysis keyword')
-      }
+      },
+      getCustomKeywordValue: jest.fn().mockReturnValue('test')
     };
 
     controller = Object.create(KeywordController.prototype);
@@ -41,10 +43,10 @@ describe('KeywordController - events', () => {
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
       clearHighlightCheckbox: jest.fn(),
+      updateHighlightColors: jest.fn(),
       analyzeKeyword: jest.fn()
     };
 
-    controller.updateHighlightColors = jest.fn();
     controller.getListType = jest.fn().mockReturnValue('meta');
     controller.getKeywordIndex = jest.fn().mockReturnValue(0);
     controller.updateVisibleKeywords = jest.fn();
@@ -74,18 +76,11 @@ describe('KeywordController - events', () => {
 
   test('bindColorPicker() should attach color input handler', () => {
     controller.bindColorPicker();
-    const input = document.createElement('input');
-    input.type = 'color';
-    input.dataset.highlight = 'true';
-    input.dataset.tag = 'p';
-    input.dataset.prop = 'bg';
+    const input = controller.view.colorInputs[0];
     input.value = '#ffff00';
-    controller.view.container.appendChild(input);
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    expect(controller.updateHighlightColors).toHaveBeenCalledTimes(1);
-    const arg = controller.updateHighlightColors.mock.calls[0][0];
-    expect(arg.target.dataset.tag).toBe('p');
-    expect(arg.target.dataset.prop).toBe('bg');
+    input.dispatchEvent(new Event('change'));
+    expect(controller.eventHandlers.updateHighlightColors).toHaveBeenCalledTimes(1);
+    const arg = controller.eventHandlers.updateHighlightColors.mock.calls[0][0];
     expect(arg.target.value).toBe('#ffff00');
   });
 
@@ -100,7 +95,6 @@ describe('KeywordController - events', () => {
     controller.eventHandlers.toggleHighlight = controller.toggleHighlight.bind(controller);
 
     controller.bindHighlightToggle();
-    controller.view.customKeywordInput.value = '  test  ';
     controller.view.keywordHighlightCheckbox.checked = true;
     controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change'));
     expect(controller.resetHighlightState).toHaveBeenCalled();
