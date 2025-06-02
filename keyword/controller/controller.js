@@ -50,6 +50,10 @@ class KeywordController {
     if (this.displayOneWordKeywords.length > 0) {
       this.renderKeywordListByType('oneWord', 'desc');
     }
+    this.processMostFrequentKeywords();
+    if (this.displayOneWordKeywords.length > 0) {
+      this.renderKeywordListByType("oneWord");
+    }
     this.setupTabListeners();
     this.setupTooltipListeners();
     this.bindColorPicker();
