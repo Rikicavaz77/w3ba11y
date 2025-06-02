@@ -46,7 +46,7 @@ describe('AllInOneAnalysisStrategy', () => {
   });
 
   describe('findAncestors()', () => {
-    it('should find all valid ancenstors', () => {
+    it('should find all valid ancestors', () => {
       const p = document.createElement('p');
       const strong = document.createElement('strong');
       const em = document.createElement('em');
