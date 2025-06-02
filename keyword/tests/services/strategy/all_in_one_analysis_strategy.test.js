@@ -60,7 +60,7 @@ describe('AllInOneAnalysisStrategy', () => {
       expect(ancestors).toContain(p, strong, em);
     });
 
-    it('should return an empty array if no valid ancenstors', () => {
+    it('should return an empty array if no valid ancestors', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       div.appendChild(span);
