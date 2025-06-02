@@ -42,7 +42,7 @@ class Interface {
         <body>
           <aside>
             <header class="w3ba11y__header">
-              <img class="w3ba11y__logo" src="${chrome.runtime.getURL('/static/img/logo.png')}" alt="Logo">
+              <img class="w3ba11y__logo" src="${chrome.runtime.getURL('static/img/logo.png')}" alt="Logo">
               <h1>w3ba11y</h1>
               <div class="w3ba11y__sidebar-actions">
                 <button class="w3ba11y__close-button">
@@ -60,15 +60,15 @@ class Interface {
                 <div>
                   <button data-section="img" data-loading="true" class="section__button section__button--img">
                     <span class="button__title">Images</span>
-                    <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
                   </button>
                   <button data-section="h" data-loading="true" class="section__button section__button--h">
                     <span class="button__title">Headings</span>
-                    <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
                   </button>
                   <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
                     <span class="button__title">Keywords</span>
-                    <img src="${chrome.runtime.getURL('/static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
                   </button>
                 </div>
               </section>
