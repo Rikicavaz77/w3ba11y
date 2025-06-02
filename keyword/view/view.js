@@ -173,6 +173,19 @@ class KeywordView {
     }
   }
 
+  getListViewByType(listType) {
+    switch (listType) {
+      case 'meta':
+        return this._metaKeywordsListView;
+      case 'userAdded':
+        return this._userKeywordsListView;
+      case 'oneWord':
+          return this._oneWordKeywordsListView;
+      default:
+        return null;
+    }
+  }
+
   generateKeywordViewSection() {
     const asideBody = document.querySelector('aside .w3ba11y__body');
     if (!asideBody) {
