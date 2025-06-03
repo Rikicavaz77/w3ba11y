@@ -2,18 +2,19 @@ class KeywordView {
   constructor(iframe) {
     this._container = this.generateKeywordViewSection();
     this._iframe = iframe;
-    this._header;
-    this._body;
-    this._overviewTab;
-    this._settingsTab;
-    this._refreshButton;
-    this._tabButtons;
-    this._activeTabButton;
-    this._colorInputs;
-    this._customKeywordInput;
-    this._keywordHighlightCheckbox;
-    this._analyzeButton;
+    this._header = null;
+    this._body = null;
+    this._refreshButton = null;
+    this._tabButtons = null;
+    this._activeTabButton = null;
+    this._overviewTab = null;
+    this._settingsTab = null;
+    this._colorInputs = null;
+    this._customKeywordInput = null;
+    this._keywordHighlightCheckbox = null;
+    this._analyzeButton = null;
     this._keywordListViews = {};
+    this._analysisResultView = null;
   }
 
   get container() {
@@ -72,10 +73,6 @@ class KeywordView {
     return this._container.querySelectorAll('.keywords__tooltip-text');
   }
 
-  get analysis() {
-    return this._analysisResultView;
-  }
-
   get colorInputs() {
     return this._colorInputs;
   }
@@ -94,6 +91,10 @@ class KeywordView {
 
   get activeHighlightButton() {
     return this._container.querySelector('.keyword-button--highlight--active');
+  }
+
+  get analysis() {
+    return this._analysisResultView;
   }
 
   set iframe(iframe) {
@@ -405,7 +406,6 @@ class KeywordView {
 
   renderKeywordListContainer(keywordListInfo, getActiveHighlightData) {
     const keywordListView = this.createListView(keywordListInfo, getActiveHighlightData);
-    if (!keywordListView) return;
 
     let allKeywordListContainer = this._container.querySelector('.keyword-all-lists__container');
     if (!allKeywordListContainer) {
