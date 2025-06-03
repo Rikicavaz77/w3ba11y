@@ -19,12 +19,14 @@ global.sw = {
 };
 
 describe('AllInOneAnalysisStrategy', () => {
-  let strategy, keyword;
+  let strategy, simpleKeyword, compoundKeyword;
 
   beforeEach(() => {
     document.body.innerHTML = `
       <h1>This is a test keyword</h1>
       <p>Another keyword appears here</p>
+      <p>Compound keyword appears in the same tag</p>
+      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
     const treeWalker = new TreeWalkerManager(document.body);
     const textProcessor = new TextProcessor(document, treeWalker);
@@ -33,17 +35,114 @@ describe('AllInOneAnalysisStrategy', () => {
     strategy = new AllInOneAnalysisStrategy();
     const analyzer = new KeywordAnalyzer(textProcessor, tagAccessor, wordCounter, strategy);
     strategy.setContext(analyzer);
-    keyword = new Keyword('keyword');
+    simpleKeyword = new Keyword('keyword');
+    compoundKeyword = new Keyword('compound keyword');
   });
 
-  test('analyze() should count keyword occurrences', () => {
-    const pattern = strategy._context._textProcessor.getKeywordPattern(keyword.name);
+  test('reset() should restore cache', () => {
+    const ancestorCache = strategy._ancestorCache;
+    const currentAncestorCache = strategy.reset();
+    expect(currentAncestorCache).not.toBe(ancestorCache);
+  });
+
+  describe('findAncestors()', () => {
+    it('should find all valid ancestors', () => {
+      const p = document.createElement('p');
+      const strong = document.createElement('strong');
+      const em = document.createElement('em');
+      strong.appendChild(em);
+      p.appendChild(strong);
+      const textNode = document.createTextNode('Javascript');
+      em.appendChild(textNode);
+
+      strategy.reset();
+      const ancestors = strategy._findAncestors(textNode);
+      expect(ancestors).toContain(p, strong, em);
+    });
+
+    it('should return an empty array if no valid ancestors', () => {
+      const div = document.createElement('div');
+      const span = document.createElement('span');
+      div.appendChild(span);
+      const textNode = document.createTextNode('Javascript');
+      span.appendChild(textNode);
+
+      strategy.reset();
+      const ancestors = strategy._findAncestors(textNode);
+      expect(ancestors).toEqual([]);
+    });
+  }); 
+
+  describe('getCommonAncestors()', () => {
+    it('should return valid common ancestors', () => {
+      const p = document.createElement('p');
+      const strong = document.createElement('strong');
+      const em = document.createElement('em');
+      strong.appendChild(em);
+      p.appendChild(strong);
+      const firstTextNode = document.createTextNode('Javascript ');
+      const secondTextNode = document.createTextNode('Tutorial');
+      em.appendChild(firstTextNode);
+      strong.appendChild(secondTextNode);
+      const textNodes = [firstTextNode, secondTextNode];
+  
+      strategy.reset();
+      const commonAncestors = strategy._getCommonAncestors(textNodes);
+      expect(commonAncestors).toContain(p, strong);
+      expect(commonAncestors).not.toContain(em);
+    });
+
+    it('should return an empty array if no valid common ancenstors', () => {
+      const div = document.createElement('div');
+      const span = document.createElement('span');
+      div.appendChild(span);
+      const firstTextNode = document.createTextNode('Javascript ');
+      const secondTextNode = document.createTextNode('Tutorial');
+      span.appendChild(firstTextNode);
+      div.appendChild(secondTextNode);
+      const textNodes = [firstTextNode, secondTextNode];
+  
+      strategy.reset();
+      const commonAncestors = strategy._getCommonAncestors(textNodes);
+      expect(commonAncestors).toEqual([]);
+    });
+  });
+
+  test('updateOccurrencesByAncestors() should update keyword occurrences correctly', () => {
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    const ancestors = [p, strong];
+    const keywordOccurrences = {};
+
+    strategy._updateOccurrencesByAncestors(ancestors, keywordOccurrences, 8);
+    expect(keywordOccurrences.p).toBe(8);
+    expect(keywordOccurrences.strong).toBe(8);
+
+    strategy._updateOccurrencesByAncestors(ancestors, keywordOccurrences);
+    expect(keywordOccurrences.p).toBe(9);
+    expect(keywordOccurrences.strong).toBe(9);
+  });
+
+  test('analyzeSimpleKeyword() should count keyword occurrences', () => {
+    const pattern = strategy._context._textProcessor.getKeywordPattern(simpleKeyword.name);
     const textNodes = strategy._context._textProcessor.getTextNodes();
-    strategy.analyze(textNodes, pattern, keyword);
-    expect(keyword.frequency).toBe(2);
-    expect(keyword.keywordOccurrences.h1).toBe(1);
-    expect(keyword.keywordOccurrences.p).toBe(1);
-    expect(keyword.keywordOccurrences.h2).toBe(0);
+    strategy.analyzeSimpleKeyword(textNodes, pattern, simpleKeyword);
+    expect(simpleKeyword.frequency).toBe(4);
+    expect(simpleKeyword.keywordOccurrences.h1).toBe(1);
+    expect(simpleKeyword.keywordOccurrences.h2).toBe(0);
+    expect(simpleKeyword.keywordOccurrences.p).toBe(3);
+    expect(simpleKeyword.keywordOccurrences.strong).toBe(1);
+    expect(simpleKeyword.keywordOccurrences.em).toBe(1);
+  });
+
+  test('analyzeCompoundKeyword() should count keyword occurrences', () => {
+    const pattern = strategy._context._textProcessor.getKeywordPattern(compoundKeyword.name);
+    const nodeGroups = strategy._context._textProcessor.getTextNodeGroups();
+    strategy.analyzeCompoundKeyword(nodeGroups, pattern, compoundKeyword);
+    expect(compoundKeyword.frequency).toBe(2);
+    expect(compoundKeyword.keywordOccurrences.p).toBe(2);
+    expect(compoundKeyword.keywordOccurrences.strong).toBe(1);
+    expect(compoundKeyword.keywordOccurrences.em).toBe(0);
   });
 
   afterAll(() => {

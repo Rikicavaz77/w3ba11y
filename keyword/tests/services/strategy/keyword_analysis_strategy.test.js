@@ -10,6 +10,14 @@ describe('KeywordAnalysisStrategy', () => {
     );
   });
 
+  test('should throw error if reset is not implemented', () => {
+    class DummyStrategy extends KeywordAnalysisStrategy {}
+    const strategy = Object.create(DummyStrategy.prototype);
+    expect(() => strategy.reset()).toThrow(
+      'reset() must be implemented'
+    );
+  });
+
   test('should throw error if setContext is not implemented', () => {
     class DummyStrategy extends KeywordAnalysisStrategy {}
     const strategy = Object.create(DummyStrategy.prototype);
@@ -18,11 +26,19 @@ describe('KeywordAnalysisStrategy', () => {
     );
   });
 
-  test('should throw error if analyze is not implemented', () => {
+  test('should throw error if analyzeSimpleKeyword is not implemented', () => {
     class DummyStrategy extends KeywordAnalysisStrategy {}
     const strategy = Object.create(DummyStrategy.prototype);
-    expect(() => strategy.analyze()).toThrow(
-      'analyze() must be implemented'
+    expect(() => strategy.analyzeSimpleKeyword()).toThrow(
+      'analyzeSimpleKeyword() must be implemented'
+    );
+  });
+
+  test('should throw error if analyzeCompoundKeyword is not implemented', () => {
+    class DummyStrategy extends KeywordAnalysisStrategy {}
+    const strategy = Object.create(DummyStrategy.prototype);
+    expect(() => strategy.analyzeCompoundKeyword()).toThrow(
+      'analyzeCompoundKeyword() must be implemented'
     );
   });
 });
