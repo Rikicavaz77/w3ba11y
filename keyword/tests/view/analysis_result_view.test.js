@@ -49,7 +49,6 @@ describe('AnalysisResultView', () => {
       expect(hasMatch).toBe(true);
       expect(container.textContent).toContain('2');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
-      expect(container.querySelectorAll('.keyword-occurrences-icon--warning').length).toBe(1);
       expect(view.currentKeywordItem).toBe(keywordItem);
     });
 

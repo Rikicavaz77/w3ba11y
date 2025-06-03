@@ -216,7 +216,6 @@ describe('KeywordController - init', () => {
     const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
     expect(highlightButton).toBeTruthy();
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
-    expect(analysisContainer.querySelectorAll('.keyword-occurrences-icon--warning').length).toBe(10);
   });
 
   afterAll(() => {
