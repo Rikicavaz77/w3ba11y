@@ -15,18 +15,54 @@ describe('KeywordHighlighter', () => {
       <p>This is a test keyword.</p>
       <script>document.getElementById("keyword");</script>
       <p>Another keyword appears here.</p>
+      <p>Compound keyword appears in the same tag</p>
+      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
     const treeWalker = new TreeWalkerManager(document.body);
     const textProcessor = new TextProcessor(document, treeWalker);
     highlighter = new KeywordHighlighter(textProcessor);
   });
 
-  test('highlightKeyword() should wrap matched text in span', () => {
-    highlighter.highlightKeyword('keyword');
-    const highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(2);
-    expect(highlights[0].textContent.toLowerCase()).toBe('keyword');
-    expect(highlights[0].dataset.parent).toBe('p');
+  describe('highlightKeyword()', () => {
+    it('should highlight simple keyword', () => {
+      highlighter.highlightKeyword('keyword');
+      const highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(4);
+      expect(highlights[0].textContent.toLowerCase()).toBe('keyword');
+      expect(highlights[0].dataset.parent).toBe('p');
+    });
+
+    it('should highlight compound keyword in the same tag', () => {
+      highlighter.highlightKeyword('test keyword');
+      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(1);
+      expect(highlights[0].textContent.toLowerCase()).toBe('test keyword');
+      expect(highlights[0].dataset.parent).toBe('p');
+
+      highlighter.highlightKeyword('same tag');
+      highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(1);
+      expect(highlights[0].textContent.toLowerCase()).toBe('same tag');
+      expect(highlights[0].dataset.parent).toBe('p');
+
+      highlighter.highlightKeyword('different tags');
+      highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(1);
+      expect(highlights[0].textContent.toLowerCase()).toBe('different tags');
+      expect(highlights[0].dataset.parent).toBe('p');
+    });
+
+    it('should highlight compound keyword in different tags', () => {
+      highlighter.highlightKeyword('compound keyword');
+      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(3);
+      expect(highlights[0].textContent.toLowerCase()).toBe('compound keyword');
+      expect(highlights[0].dataset.parent).toBe('p');
+      expect(highlights[1].textContent.toLowerCase()).toBe('compound ');
+      expect(highlights[1].dataset.parent).toBe('strong');
+      expect(highlights[2].textContent.toLowerCase()).toBe('keyword');
+      expect(highlights[2].dataset.parent).toBe('em');
+    });
   });
 
   describe('removeHighlight()', () => {
