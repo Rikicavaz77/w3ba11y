@@ -76,7 +76,6 @@ describe('AnalysisResultView', () => {
         keyword: keywordItem,
         source: 'list'
       });
-      expect(view.body).toBe('ciao');
       view._getActiveHighlightData = mockGetActiveHighlightData;
       view.render(keywordItem);
       const container = view.body.querySelector('.keywords__analysis-container');
