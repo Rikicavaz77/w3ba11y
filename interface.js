@@ -56,6 +56,20 @@ class Interface {
             <div class="w3ba11y__body">
               <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
                 <h2 class="section__title">Analysis</h2>
+                <div class="w3ba11y__feature-access-container">
+                  <button data-section="img" data-loading="true" class="section__button section__button--img">
+                    <span class="button__title">Images</span>
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                  </button>
+                  <button data-section="h" data-loading="true" class="section__button section__button--h">
+                    <span class="button__title">Headings</span>
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
+                  </button>
+                  <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
+                    <span class="button__title">Keywords</span>
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
+                  </button>
+                </div>
                 <div class="warning-message-container">
                   <strong>**Warning:</strong>
                   <ul class="warning-message-list">
@@ -72,20 +86,6 @@ class Interface {
                       Keyword frequency is calculated by analyzing the entire page, including hidden elements and non-visual content. As a result, some relevant keywords may not be immediately visible after using the highlighter.
                     </li>
                   </ul> 
-                </div>
-                <div>
-                  <button data-section="img" data-loading="true" class="section__button section__button--img">
-                    <span class="button__title">Images</span>
-                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
-                  </button>
-                  <button data-section="h" data-loading="true" class="section__button section__button--h">
-                    <span class="button__title">Headings</span>
-                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
-                  </button>
-                  <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
-                    <span class="button__title">Keywords</span>
-                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
-                  </button>
                 </div>
               </section>
             </div>

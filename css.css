@@ -145,11 +145,17 @@ pre {
 .w3ba11y__body {
   flex: 1 0 auto;
 }
+.w3ba11y__feature-access-container {
+  flex: 1 0 auto;
+}
 
 .w3ba11y__section {
   display: none;
   flex-direction: column;
   gap: 0;
+}
+.w3ba11y__section--general {
+  height: 100%;
 }
 .w3ba11y__section--active {
   display: flex;
@@ -455,6 +461,11 @@ pre {
 
 .keywords__icon--delete {
   color: #c40a0a;
+}
+
+.keyword-frequency-icon--error {
+  color: rgb(218, 19, 19);
+  margin-left: 0.5rem;
 }
 
 .keyword-name {
@@ -831,6 +842,8 @@ pre {
 
 .keyword-item__title {
   font-size: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .keyword-item__actions {
@@ -890,6 +903,11 @@ pre {
   margin: 1rem 0;
 }
 
+.keywords__analysis-item__content {
+  display: flex;
+  align-items: center;
+}
+
 .keywords__analysis-item__action-container {
   display: flex;
   column-gap: 1.5rem;
@@ -909,9 +927,8 @@ pre {
 }
 
 .keywords__tag-occurrences-item {
-  min-height: 2.5rem;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   flex-wrap: nowrap;
   border: 1px solid #cfcfcf;
   border-bottom: none;
@@ -923,21 +940,17 @@ pre {
 
 .keywords__tag-occurrences-item__title {
   flex: 1;
-  display: flex;
-  align-items: center;
   text-transform: capitalize;
-  padding: 0 0.5rem;
+  padding: 0.5rem;
 }
 
 .keywords__tag-occurrences-item__content {
   flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0 0.5rem;
+  padding: 0.5rem;
   border-left: 1px solid #cfcfcf;
 }
 
-.keyword-occurrences-icon--warning {
-  color: rgb(218, 145, 19);
+.keyword-frequency-icon--error {
+  color: rgb(218, 19, 19);
+  margin-left: 0.5rem;
 }

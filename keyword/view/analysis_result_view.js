@@ -52,6 +52,15 @@ class AnalysisResultView {
     return isHighlighted ? 'keyword-button--highlight--active' : '';
   }
 
+  _renderWarningIconIfNeeded(frequency) {
+    if (frequency !== 0) return '';
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keyword-frequency-icon--error keywords__icon--medium keywords__icon--inline" aria-hidden="true">
+        <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+      </svg>
+    `;
+  }
+
   render(keywordItem) {
     let analysisResultContainer = this._body.querySelector('.keywords__analysis-container');
     if (!analysisResultContainer) {
@@ -61,6 +70,9 @@ class AnalysisResultView {
     }
     this._currentKeywordItem = keywordItem;
     const highlightClass = this._getHighlightClass();
+    const safeFrequency = Number.isFinite(+keywordItem.frequency) ? keywordItem.frequency : 0;
+    const safeDensity = Number.isFinite(+keywordItem.density) ? keywordItem.density : 0;
+
     analysisResultContainer.innerHTML = `
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Keyword:</h3>
@@ -74,11 +86,15 @@ class AnalysisResultView {
       </div>
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Frequency:</h3>
-        <p>${Number.isFinite(+keywordItem.frequency) ? keywordItem.frequency : 0}</p>
+        <span class="keywords__analysis-item__content">
+          ${safeFrequency} ${this._renderWarningIconIfNeeded(safeFrequency)}
+        </span>
       </div>
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Density:</h3>
-        <p>${Number.isFinite(+keywordItem.density) ? keywordItem.density : 0}%</p>
+        <span class="keywords__analysis-item__content">
+          ${safeDensity}% ${this._renderWarningIconIfNeeded(safeDensity)}
+        </span>
       </div>
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Tag occurrences:</h3>
@@ -89,17 +105,7 @@ class AnalysisResultView {
             return `
               <li class="keywords__tag-occurrences-item">
                 <h4 class="keywords__tag-occurrences-item__title">${key}</h4>
-                <div class="keywords__tag-occurrences-item__content">
-                  <span class="keyword-count">${safeValue}</span>
-                  ${safeValue === 0 ? 
-                    `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keyword-occurrences-icon--warning keywords__icon--medium keywords__icon--middle-align" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
-                    </svg>
-                    ` 
-                    : ''
-                  }
-                </div>
+                <span class="keywords__tag-occurrences-item__content">${safeValue}</span>
               </li>
             `;
           }).join('')
