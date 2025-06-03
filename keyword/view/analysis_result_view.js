@@ -1,10 +1,10 @@
 class AnalysisResultView {
   constructor(getActiveHighlightData) {
-    this._container = this.generateAnalysisResultViewSection();
+    this._getActiveHighlightData = getActiveHighlightData;
     this._header = null;
     this._body = null;
     this._currentKeywordItem = null;
-    this._getActiveHighlightData = getActiveHighlightData;
+    this._container = this.generateAnalysisResultViewSection();
   }
 
   get container() {

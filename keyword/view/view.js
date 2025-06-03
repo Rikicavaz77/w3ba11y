@@ -1,6 +1,5 @@
 class KeywordView {
   constructor(iframe) {
-    this._container = this.generateKeywordViewSection();
     this._iframe = iframe;
     this._header = null;
     this._body = null;
@@ -15,6 +14,7 @@ class KeywordView {
     this._analyzeButton = null;
     this._keywordListViews = {};
     this._analysisResultView = null;
+    this._container = this.generateKeywordViewSection();
   }
 
   get container() {
