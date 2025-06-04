@@ -111,7 +111,6 @@ describe('KeywordController - events', () => {
 
   test('bindAnalyzeKeyword() should trigger analysis', () => {
     controller.bindAnalyzeKeyword();
-    controller.view.customKeywordInput.value = '  test  ';
     controller.view.analyzeButton.click();
     expect(controller.eventHandlers.analyzeKeyword).toHaveBeenCalled();
   });
@@ -139,15 +138,48 @@ describe('KeywordController - events', () => {
     expect(controller.eventHandlers.changeTab).toHaveBeenCalled();
   });
 
-  test('setupTooltipListeners() should handle tooltips', () => {
-    controller.setupTooltipListeners();
-    const tooltip = controller.view.tooltipTriggers[0];
-    tooltip.dispatchEvent(new Event('focus'));
-    tooltip.dispatchEvent(new Event('mouseenter'));
-    expect(controller.eventHandlers.showTooltip).toHaveBeenCalledTimes(2);
-    tooltip.dispatchEvent(new Event('blur'));
-    tooltip.dispatchEvent(new Event('mouseleave'));
-    expect(controller.eventHandlers.hideTooltip).toHaveBeenCalledTimes(2);
+  describe('setupTooltipListeners()', () => {
+    let tooltipTrigger, tooltip;
+
+    beforeEach(() => {
+      tooltipTrigger = controller.view.tooltipTriggers[0];
+      tooltip = controller.view.tooltips[0];
+    });
+
+    it('should handle tooltip events', () => {
+      controller.setupTooltipListeners();
+      expect(tooltipTrigger.dataset.listenerAttached).toBe('true');
+      expect(tooltip.dataset.listenerAttached).toBe('true');
+
+      tooltipTrigger.dispatchEvent(new Event('focus'));
+      tooltipTrigger.dispatchEvent(new Event('mouseenter'));
+      tooltip.dispatchEvent(new Event('mouseenter'));
+      expect(controller.eventHandlers.showTooltip).toHaveBeenCalledTimes(3);
+
+      tooltipTrigger.dispatchEvent(new Event('blur'));
+      tooltipTrigger.dispatchEvent(new Event('mouseleave'));
+      tooltip.dispatchEvent(new Event('mouseleave'));
+      expect(controller.eventHandlers.hideTooltip).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle tooltip listener attachment', () => {
+      const triggerSpy = jest.spyOn(tooltipTrigger, 'addEventListener');
+      const tooltipSpy = jest.spyOn(tooltip, 'addEventListener');
+
+      controller.setupTooltipListeners();
+      expect(triggerSpy).toHaveBeenCalledTimes(4);
+      expect(tooltipSpy).toHaveBeenCalledTimes(2);
+
+      triggerSpy.mockClear();
+      tooltipSpy.mockClear();
+
+      controller.setupTooltipListeners();
+      expect(triggerSpy).not.toHaveBeenCalled();
+      expect(tooltipSpy).not.toHaveBeenCalled();
+
+      triggerSpy.mockRestore();
+      tooltipSpy.mockRestore();
+    });
   });
 
   describe('bindKeywordClickEvents()', () => {
@@ -213,18 +245,20 @@ describe('KeywordController - events', () => {
       expect(controller.view.toggleSection).toHaveBeenCalledWith('dashboard');
     });
 
-    it('should change page', () => {
-      button.classList.add('keywords__pagination__button');
-      button.dataset.page = 2;
-      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(controller.changePage).toHaveBeenCalledWith('meta', 2);
-    });
-
-    it('should not change page if page is not a number', () => {
-      button.classList.add('keywords__pagination__button');
-      button.dataset.page = 'invalid';
-      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(controller.changePage).not.toHaveBeenCalled();
+    describe('change page', () => {
+      it('should change page', () => {
+        button.classList.add('keywords__pagination__button');
+        button.dataset.page = 2;
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.changePage).toHaveBeenCalledWith('meta', 2);
+      });
+  
+      it('should not change page if page is not a number', () => {
+        button.classList.add('keywords__pagination__button');
+        button.dataset.page = 'invalid';
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.changePage).not.toHaveBeenCalled();
+      });
     });
 
     it('should sort keywords', () => {

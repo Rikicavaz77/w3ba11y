@@ -182,7 +182,9 @@ describe('KeywordController', () => {
       controller.keywordLists.meta.display = [];
   
       controller.updateVisibleKeywords('meta', 'access');
-      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['access', 'accessibility']);
+      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
+        'access', 'accessibility'
+      ]);
       const [ sortedKeywords, direction ] = controller.sortKeywords.mock.calls[0];
       expect(sortedKeywords.map(k => k.name)).toEqual(['access', 'accessibility']);
       expect(direction).toBe('desc');
@@ -195,11 +197,15 @@ describe('KeywordController', () => {
     });
 
     it('should restore original array if filter not set', () => {
-      controller.keywordLists.meta.original = [new Keyword('access'), new Keyword('accessibility'), new Keyword('account')];
+      controller.keywordLists.meta.original = [
+        new Keyword('access'), new Keyword('accessibility'), new Keyword('account')
+      ];
       controller.keywordLists.meta.display = [new Keyword('account')];
   
       controller.updateVisibleKeywords('meta', '');
-      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['access', 'accessibility', 'account']);
+      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
+        'access', 'accessibility', 'account'
+      ]);
     });
   });
   
@@ -240,7 +246,6 @@ describe('KeywordController', () => {
 
     it('should analyze and render first keyword', () => {
       controller.view.getListViewByType = jest.fn().mockReturnValue(null);
-
       controller.analyzeKeyword();
       expect(controller.keywordLists.userAdded.original).toHaveLength(1);
       expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual(['seo']);
@@ -302,7 +307,9 @@ describe('KeywordController', () => {
     it('should remove keyword from arrays', () => {
       controller.deleteKeyword('userAdded', 1);
 
-      expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual(['userAdded1', 'last userAdded keyword']);
+      expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual([
+        'userAdded1', 'last userAdded keyword'
+      ]);
       expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual(['userAdded1']);
       expect(controller.resetHighlightState).not.toHaveBeenCalled();
       expect(controller.renderPage).toHaveBeenCalledWith(
@@ -318,7 +325,9 @@ describe('KeywordController', () => {
 
       controller.deleteKeyword('userAdded', 1);
 
-      expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual(['userAdded1', 'last userAdded keyword']);
+      expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual([
+        'userAdded1', 'last userAdded keyword'
+      ]);
       expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual(['userAdded1']);
       expect(controller.resetHighlightState).toHaveBeenCalled();
       expect(controller.renderPage).toHaveBeenCalledWith(
@@ -332,8 +341,12 @@ describe('KeywordController', () => {
     it('should not remove keyword if keywordIndex is invalid', () => {
       controller.deleteKeyword('userAdded', 5);
 
-      expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual(['userAdded1', 'another userAdded keyword', 'last userAdded keyword']);
-      expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual(['userAdded1', 'another userAdded keyword']);
+      expect(controller.keywordLists.userAdded.original.map(k => k.name)).toEqual([
+        'userAdded1', 'another userAdded keyword', 'last userAdded keyword'
+      ]);
+      expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual([
+        'userAdded1', 'another userAdded keyword'
+      ]);
       expect(controller.renderPage).not.toHaveBeenCalled();
     });
 

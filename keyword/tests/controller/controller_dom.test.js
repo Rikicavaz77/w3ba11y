@@ -53,8 +53,12 @@ describe('KeywordController', () => {
       const input = 'seo, accessibility, keyword';
       controller.processMetaKeywords(input);
       
-      expect(controller.keywordLists.meta.original.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
-      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
+      expect(controller.keywordLists.meta.original.map(k => k.name)).toEqual([
+        'seo', 'accessibility', 'keyword'
+      ]);
+      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
+        'seo', 'accessibility', 'keyword'
+      ]);
     });  
   });
 
@@ -78,10 +82,18 @@ describe('KeywordController', () => {
       
       expect(controller.wordCounter.findOneWordKeywords).toHaveBeenCalledWith('en-US');
       expect(controller.wordCounter.findCompoundKeywords).toHaveBeenCalledWith('en-US');
-      expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(['test', 'seo']);
-      expect(controller.keywordLists.oneWord.display.map(k => k.name)).toEqual(['test', 'seo']);
-      expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
-      expect(controller.keywordLists.twoWords.display.map(k => k.name)).toEqual(['test keyword', 'seo optimization']);
+      expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual([
+        'test', 'seo'
+      ]);
+      expect(controller.keywordLists.oneWord.display.map(k => k.name)).toEqual([
+        'test', 'seo'
+      ]);
+      expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual([
+        'test keyword', 'seo optimization'
+      ]);
+      expect(controller.keywordLists.twoWords.display.map(k => k.name)).toEqual([
+        'test keyword', 'seo optimization'
+      ]);
     });
   });
 
@@ -142,7 +154,9 @@ describe('KeywordController', () => {
 
     it('should return correct keyword from display', () => {  
       controller.keywordLists = {
-        meta: { display: [new Keyword('access'), new Keyword('accessibility'), new Keyword('account')] }
+        meta: { 
+          display: [new Keyword('access'), new Keyword('accessibility'), new Keyword('account')] 
+        }
       };
 
       const result = controller.getKeywordItem(target);
