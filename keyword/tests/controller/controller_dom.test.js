@@ -59,7 +59,24 @@ describe('KeywordController', () => {
       expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
         'seo', 'accessibility', 'keyword'
       ]);
-    });  
+    });
+    
+    it('should create an empty array if no valid keywords', () => {
+      let input = '';
+      controller.processMetaKeywords(input);
+      expect(controller.keywordLists.meta.original).toEqual([]);
+      expect(controller.keywordLists.meta.display).toEqual([]);
+
+      input = ',';
+      controller.processMetaKeywords(input);
+      expect(controller.keywordLists.meta.original).toEqual([]);
+      expect(controller.keywordLists.meta.display).toEqual([]);
+
+      input = '   ,   ';
+      controller.processMetaKeywords(input);
+      expect(controller.keywordLists.meta.original).toEqual([]);
+      expect(controller.keywordLists.meta.display).toEqual([]);
+    });
   });
 
   describe('processMostFrequentKeywords()', () => {
