@@ -18,15 +18,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (
             href === null ||
             href.startsWith('javascript:') ||
+            href.startsWith('mailto:') ||
+            href.startsWith('tel:') ||
+            href.startsWith('blob:') ||
+            href.startsWith('ftp:') ||
             href.startsWith('#')
           ) {
             return;
           }
 
           e.preventDefault();
+
           document.removeEventListener('click', handleSectionClick);
           document.removeEventListener('click', handleCloseClick);
-          window.top.location.href = href;
+          window.top.location.href = target.href; 
         }
         else {
           let urlCheck = false;
@@ -105,7 +110,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       break;
     case 'stop':
-      window.top.location.href = window.location.href;
+      try {
+        window.location.reload();
+      } catch (e) {
+        window.top.location.href = window.location.href;
+      }
       break;
   }
 });
