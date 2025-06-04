@@ -72,26 +72,40 @@ describe('KeywordController - init', () => {
     expect(info.wordCount).toBe(20);
     expect(info.uniqueWordCount).toBe(14);
 
-    expect(controller.keywordLists.meta.original.map(k => k.name)).toEqual(['seo', 'accessibility', 'keyword']);
+    expect(controller.keywordLists.meta.original.map(k => k.name)).toEqual([
+      'seo', 'accessibility', 'keyword'
+    ]);
     expect(controller.keywordLists.meta.original[2].frequency).toBe(3);
-    expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
-    expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test', 'keyword appears', 'keyword here']));
+    expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(expect.arrayContaining([
+      'test', 'heading', 'keyword', 'here'
+    ]));
+    expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(expect.arrayContaining([
+      'test heading', 'another test', 'keyword appears', 'keyword here', 'image alt'
+    ]));
     expect(controller.keywordLists.twoWords.original[0].frequency).toBe(2);
 
     expect(controller.view.container).toBeInstanceOf(HTMLElement);
     expect(document.querySelector('.keywords__section--dashboard')).toBeTruthy();
-    expect(document.querySelector('.keywords__overview-container')).toBeTruthy();
+    
+    const overviewContainer = document.querySelector('.keywords__overview-container');
+    expect(overviewContainer).toBeTruthy();
+    expect(overviewContainer.querySelectorAll('.keywords__overview-icon--warning').length).toBe(0);
+
     expect(document.querySelector('.keywords__settings-container')).toBeTruthy();
     expect(document.querySelector('.keywords__input-container')).toBeTruthy();
+    
     expect(document.querySelector('.keyword-all-lists__container')).toBeTruthy();
     let listContainer = document.querySelector('[data-list-type="meta"]');
     expect(listContainer).toBeTruthy();
     let button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
     expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
+    expect(listContainer.querySelectorAll('.keyword-icon--error').length).toBe(2);
+
     listContainer = document.querySelector('[data-list-type="oneWord"]');
     expect(listContainer).toBeTruthy();
     button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
     expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
+    expect(listContainer.querySelectorAll('.keyword-icon--error').length).toBe(0);
   });
 
   describe('update', () => {
@@ -100,7 +114,6 @@ describe('KeywordController - init', () => {
         <title>This is a test</title>
         <meta name="description" content="keyword appears here">
       `;
-      iframeDoc.documentElement.lang = 'en-US';
       iframeDoc.body.innerHTML = `
         <h1>Test heading</h1>
         <h1>Another test heading</h1>
@@ -119,19 +132,22 @@ describe('KeywordController - init', () => {
       expect(info.uniqueWordCount).toBe(10);
 
       expect(controller.keywordLists.meta.original.length).toBe(0);
-      expect(controller.keywordLists.oneWord.original.map(k => k.name)).toEqual(expect.arrayContaining(['test', 'heading', 'keyword', 'here']));
+      expect(controller.keywordLists.oneWord.original[0].name).toBe('test');
       expect(controller.keywordLists.oneWord.original[0].frequency).toBe(4);
       expect(controller.keywordLists.oneWord.original[0].keywordOccurrences.h2).toBe(1);
-      expect(controller.keywordLists.twoWords.original.map(k => k.name)).toEqual(expect.arrayContaining(['test heading', 'another test']));
+      expect(controller.keywordLists.twoWords.original[0].name).toBe('test heading');
       expect(controller.keywordLists.twoWords.original[0].frequency).toBe(3);
+      expect(controller.keywordLists.twoWords.original.map(k => k.name)).not.toEqual(
+        expect.arrayContaining(['image alt'])
+      );
 
       expect(controller.activeHighlightedKeyword).toBeNull();
       expect(controller.activeHighlightSource).toBeNull();
       expect(controller.view.activeHighlightButton).toBeNull();
       expect(controller.view.keywordHighlightCheckbox.checked).toBe(false);
 
-      const overview = controller.view.body.querySelector('.keywords__overview-container');
-      expect(overview.querySelectorAll('.keywords__overview-icon--warning').length).toBe(1);
+      const overviewContainer = controller.view.body.querySelector('.keywords__overview-container');
+      expect(overviewContainer.querySelectorAll('.keywords__overview-icon--warning').length).toBe(1);
 
       const listContainer = document.querySelector('[data-list-type="meta"]');
       expect(listContainer).toBeNull();
@@ -141,8 +157,15 @@ describe('KeywordController - init', () => {
       controller.update(iframeDoc);
 
       const info = controller.overviewInfo;
+      expect(info.metaTagKeywordsContent).not.toBe('');
       expect(info.wordCount).toBe(16);
       expect(info.uniqueWordCount).toBe(10);
+
+      const overviewContainer = controller.view.body.querySelector('.keywords__overview-container');
+      expect(overviewContainer.textContent).toContain('seo, accessibility, keyword');
+      expect(overviewContainer.textContent).toContain('16');
+      expect(overviewContainer.textContent).toContain('10');
+      expect(overviewContainer.querySelectorAll('.keywords__overview-icon--warning').length).toBe(0);
 
       expect(controller.keywordLists.meta.original.length).toBeGreaterThan(0);
       expect(controller.keywordLists.meta.original[2].frequency).toBe(2);
@@ -153,7 +176,7 @@ describe('KeywordController - init', () => {
     const keywordInput = controller.view.customKeywordInput;
     const checkbox = controller.view.keywordHighlightCheckbox;
 
-    keywordInput.value = 'test';
+    keywordInput.value = '  test  ';
     checkbox.checked = true;
 
     checkbox.dispatchEvent(new Event('change', { bubbles: true }));
@@ -185,7 +208,7 @@ describe('KeywordController - init', () => {
 
     expect(document.querySelector('[data-list-type="userAdded"]')).toBeNull();
 
-    keywordInput.value = 'test';
+    keywordInput.value = '  test  ';
     analyzeButton.click();
 
     expect(document.querySelector('[data-list-type="userAdded"]')).toBeTruthy();
@@ -213,9 +236,18 @@ describe('KeywordController - init', () => {
     expect(analysisContainer).toBeTruthy();
     expect(analysisContainer.textContent).toContain('keyword');
     expect(analysisContainer.textContent).toContain('2');
+
     const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
     expect(highlightButton).toBeTruthy();
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
+
+    highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    expect(highlights.length).toBe(2);
+    expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(true);
+    expect(controller.view.activeHighlightButton).toBe(highlightButton);
+    expect(controller.activeHighlightedKeyword).toBe(controller.keywordLists.meta.original.at(-1));
+    expect(controller.activeHighlightSource).toBe('result');
   });
 
   afterAll(() => {
