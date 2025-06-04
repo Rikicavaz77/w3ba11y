@@ -46,7 +46,7 @@ describe('AllInOneAnalysisStrategy', () => {
   });
 
   describe('findAncestors()', () => {
-    it('should find all valid ancestors', () => {
+    it('should find all valid ancenstors', () => {
       const p = document.createElement('p');
       const strong = document.createElement('strong');
       const em = document.createElement('em');
@@ -60,7 +60,7 @@ describe('AllInOneAnalysisStrategy', () => {
       expect(ancestors).toContain(p, strong, em);
     });
 
-    it('should return an empty array if no valid ancestors', () => {
+    it('should return an empty array if no valid ancenstors', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       div.appendChild(span);

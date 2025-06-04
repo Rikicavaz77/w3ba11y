@@ -46,6 +46,10 @@ class KeywordAnalyzer {
   }
 
   _performAnalysis(keyword) {
+    if (keyword.status === 'done') {
+      keyword.reset();
+    }
+
     const isCompound = /\s+/.test(keyword.name);
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     
@@ -55,7 +59,7 @@ class KeywordAnalyzer {
       this._strategy.analyzeSimpleKeyword(this._textNodes, pattern, keyword);
     }
 
-    ["title", "description", "alt"].forEach(tagName => {
+    ['title', 'description', 'alt'].forEach(tagName => {
       let count = this.countOccurrencesInTag(tagName, pattern);
       keyword.frequency += count;
       keyword.keywordOccurrences[tagName] += count;
@@ -72,6 +76,8 @@ class KeywordAnalyzer {
   }
 
   analyzeKeywords(keywords) {
+    if (keywords.length === 0) return;
+    
     this._prepareAnalysisData(keywords);
     try {
       this._tagAccessor.useCache = true;

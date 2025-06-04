@@ -6,6 +6,14 @@ class OverviewInfo {
     this._lang = lang;
   } 
 
+  set wordCount(wordCount) {
+    this._wordCount = wordCount;
+  }
+
+  set uniqueWordCount(uniqueWordCount) {
+    this._uniqueWordCount = uniqueWordCount;
+  }
+
   get wordCount() {
     return this._wordCount;
   }

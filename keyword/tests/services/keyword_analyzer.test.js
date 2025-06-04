@@ -70,38 +70,56 @@ describe('KeywordAnalyzer', () => {
     });
   });
 
-  test('analyzeKeyword() should update keyword data correctly', () => {
-    const spy = jest.spyOn(analyzer._strategy, 'reset');
+  describe('analyzeKeyword()', () => {
+    let keywords;
 
-    const keywords = [new Keyword('keyword'), new Keyword('compound keyword')];
+    beforeEach(() => {
+      keywords = [new Keyword('keyword'), new Keyword('compound keyword')];
+    });
 
-    analyzer.analyzeKeyword(keywords[0]);
-    expect(keywords[0].frequency).toBe(7);
-    expect(keywords[0].keywordOccurrences.title).toBe(1);
-    expect(keywords[0].keywordOccurrences.description).toBe(1);
-    expect(keywords[0].keywordOccurrences.h1).toBe(0);
-    expect(keywords[0].keywordOccurrences.p).toBe(4);
-    expect(keywords[0].keywordOccurrences.alt).toBe(1);
-    expect(keywords[0].density).toBeCloseTo(20);
-    expect(keywords[0].status).toBe('done');
+    it('should update keyword data correctly', () => {
+      const spy = jest.spyOn(analyzer._strategy, 'reset');
+  
+      analyzer.analyzeKeyword(keywords[0]);
+      expect(keywords[0].frequency).toBe(7);
+      expect(keywords[0].keywordOccurrences.title).toBe(1);
+      expect(keywords[0].keywordOccurrences.description).toBe(1);
+      expect(keywords[0].keywordOccurrences.h1).toBe(0);
+      expect(keywords[0].keywordOccurrences.p).toBe(4);
+      expect(keywords[0].keywordOccurrences.alt).toBe(1);
+      expect(keywords[0].density).toBeCloseTo(20);
+      expect(keywords[0].status).toBe('done');
+  
+      analyzer.analyzeKeyword(keywords[1]);
+      expect(keywords[1].frequency).toBe(2);
+      expect(keywords[1].keywordOccurrences.title).toBe(0);
+      expect(keywords[1].keywordOccurrences.description).toBe(0);
+      expect(keywords[1].keywordOccurrences.h1).toBe(0);
+      expect(keywords[1].keywordOccurrences.p).toBe(2);
+      expect(keywords[1].keywordOccurrences.strong).toBe(1);
+      expect(keywords[1].keywordOccurrences.em).toBe(0);
+      expect(keywords[1].keywordOccurrences.alt).toBe(0);
+      expect(keywords[1].density).toBeCloseTo(5.71);
+      expect(keywords[1].status).toBe('done');
+  
+      expect(analyzer._textNodes).toBeDefined();
+      expect(analyzer._nodeGroups).toBeDefined();
+      expect(spy).toHaveBeenCalledTimes(2);
+  
+      spy.mockRestore();
+    });
 
-    analyzer.analyzeKeyword(keywords[1]);
-    expect(keywords[1].frequency).toBe(2);
-    expect(keywords[1].keywordOccurrences.title).toBe(0);
-    expect(keywords[1].keywordOccurrences.description).toBe(0);
-    expect(keywords[1].keywordOccurrences.h1).toBe(0);
-    expect(keywords[1].keywordOccurrences.p).toBe(2);
-    expect(keywords[1].keywordOccurrences.strong).toBe(1);
-    expect(keywords[1].keywordOccurrences.em).toBe(0);
-    expect(keywords[1].keywordOccurrences.alt).toBe(0);
-    expect(keywords[1].density).toBeCloseTo(5.71);
-    expect(keywords[1].status).toBe('done');
+    it('should reanalyze keyword correctly', () => {  
+      analyzer.analyzeKeyword(keywords[0]);
+      expect(keywords[0].frequency).toBe(7);
 
-    expect(analyzer._textNodes).toBeDefined();
-    expect(analyzer._nodeGroups).toBeDefined();
-    expect(spy).toHaveBeenCalledTimes(2);
-
-    spy.mockRestore();
+      const span = document.createElement('span');
+      span.textContent = 'Keyword here';
+      document.body.appendChild(span);
+  
+      analyzer.analyzeKeyword(keywords[0]);
+      expect(keywords[0].frequency).toBe(8);
+    });
   });
 
   test('analyzeKeywords() should process multiple keywords', () => {

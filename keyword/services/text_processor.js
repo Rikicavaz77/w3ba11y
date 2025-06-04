@@ -11,6 +11,14 @@ class TextProcessor {
     ];
   }
 
+  set doc(doc) {
+    this._doc = doc;
+  }
+
+  set root(root) {
+    this._root = root;
+  }
+
   get doc() {
     return this._doc;
   }
@@ -76,7 +84,7 @@ class TextProcessor {
     const nodeGroups = [];
     let currentGroup = [];
     let currentBlockParent = null;
-    let virtualText = "";
+    let virtualText = '';
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {

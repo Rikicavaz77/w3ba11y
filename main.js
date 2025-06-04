@@ -18,14 +18,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (
             href === null ||
             href.startsWith('javascript:') ||
+            href.startsWith('mailto:') ||
+            href.startsWith('tel:') ||
+            href.startsWith('blob:') ||
+            href.startsWith('ftp:') ||
             href.startsWith('#')
           ) {
             return;
           }
 
           e.preventDefault();
+
           document.removeEventListener('click', handleSectionClick);
-          window.top.location.href = href;
+          document.removeEventListener('click', handleCloseClick);
+          window.top.location.href = target.href; 
         }
         else {
           let urlCheck = false;
@@ -37,6 +43,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         
             if (currentUrl !== newUrl && newUrl !== 'about:blank') {
               document.removeEventListener('click', handleSectionClick);
+              document.removeEventListener('click', handleCloseClick);
               chrome.runtime.sendMessage({ action: "run", location: newUrl });
               currentUrl = newUrl;
               urlCheck = true;
@@ -60,6 +67,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (target) {
       interfaceInstance.getAllSection().forEach(section => section.classList.remove('w3ba11y__section--active'));
       interfaceInstance.getSection(target.dataset.section)?.classList.add('w3ba11y__section--active');
+      const anchor = interfaceInstance.header;
+      if (anchor) {
+        anchor.scrollIntoView();
+      }
     }
   };
 
@@ -103,7 +114,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       break;
     case 'stop':
-      window.top.location.href = window.location.href;
+      try {
+        window.location.reload();
+      } catch (e) {
+        window.top.location.href = window.location.href;
+      }
       break;
   }
 });

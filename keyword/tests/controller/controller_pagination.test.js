@@ -21,15 +21,19 @@ describe('KeywordController - pagination', () => {
 
   beforeEach(() => {
     controller = Object.create(KeywordController.prototype);
-    controller.displayMetaKeywords = makeKeywords(12);
-    controller.batchSizes = { meta: 5 };
+    controller.keywordLists = {
+      meta: { 
+        batchSize: 5,
+        display: makeKeywords(12)
+      }
+    };
   });
 
   describe('renderPage()', () => {
     it('should render correct slice for page 2', () => {
       const listView = mockListView({ currentPage: 2 });
   
-      controller.renderPage('meta', listView, controller.displayMetaKeywords, 2);
+      controller.renderPage(listView, controller.keywordLists.meta.display, 5, 2);
   
       expect(listView.render).toHaveBeenCalledWith(
         [
@@ -48,7 +52,7 @@ describe('KeywordController - pagination', () => {
     it('should render correct slice for page 3', () => {
       const listView = mockListView({ currentPage: 3 });
   
-      controller.renderPage('meta', listView, controller.displayMetaKeywords, 3);
+      controller.renderPage(listView, controller.keywordLists.meta.display, 5, 3);
   
       expect(listView.render).toHaveBeenCalledWith(
         [
@@ -64,7 +68,7 @@ describe('KeywordController - pagination', () => {
     it('should adjust currentPage if incorrect', () => {
       const listView = mockListView({ currentPage: 4 });
   
-      controller.renderPage('meta', listView, controller.displayMetaKeywords, 4);
+      controller.renderPage(listView, controller.keywordLists.meta.display, 5, 4);
   
       expect(listView.render).toHaveBeenCalledWith(
         [
@@ -93,9 +97,9 @@ describe('KeywordController - pagination', () => {
       controller.changePage('meta', 2);
 
       expect(controller.renderPage).toHaveBeenCalledWith(
-        'meta',
         listView,
-        controller.displayMetaKeywords,
+        controller.keywordLists.meta.display,
+        5, 
         2
       );
       expect(listView.scrollToPagination).toHaveBeenCalled();

@@ -27,7 +27,9 @@ describe('TextProcessor', () => {
   test('getTextNodes() should return valid text nodes', () => {
     const textNodes = processor.getTextNodes();
     const values = textNodes.map(n => n.nodeValue.trim());
-    expect(values).toEqual(['Main heading', 'This is a test.', 'Another', 'test', 'Another', 'test']);
+    expect(values).toEqual([
+      'Main heading', 'This is a test.', 'Another', 'test', 'Another', 'test'
+    ]);
   });
 
   test('getTextNodeGroups() should group text nodes by block parent', () => {

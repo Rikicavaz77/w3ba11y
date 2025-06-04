@@ -6,17 +6,22 @@ const Keyword = require('../../model/keyword');
 global.Keyword = Keyword;
 
 describe('KeywordController - events', () => {
-  let controller;
+  let controller, iframe;
 
   beforeEach(() => {
+    iframe = document.createElement('iframe');
+
     const mockView = {
+      iframe: iframe,
       container: document.createElement('div'),
+      refreshButton: document.createElement('button'),
       customKeywordInput: document.createElement('input'),
       keywordHighlightCheckbox: document.createElement('input'),
       analyzeButton: document.createElement('button'),
       tabButtons: [document.createElement('button')],
       tooltipTriggers: [document.createElement('div')],
       tooltips: [document.createElement('div')],
+      colorInputs: [document.createElement('input')],
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
@@ -26,7 +31,8 @@ describe('KeywordController - events', () => {
       toggleSection: jest.fn(),
       analysis: {
         currentKeywordItem: new Keyword('analysis keyword')
-      }
+      },
+      getCustomKeywordValue: jest.fn().mockReturnValue('test')
     };
 
     controller = Object.create(KeywordController.prototype);
@@ -37,10 +43,10 @@ describe('KeywordController - events', () => {
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
       clearHighlightCheckbox: jest.fn(),
+      updateHighlightColors: jest.fn(),
       analyzeKeyword: jest.fn()
     };
 
-    controller.updateHighlightColors = jest.fn();
     controller.getListType = jest.fn().mockReturnValue('meta');
     controller.getKeywordIndex = jest.fn().mockReturnValue(0);
     controller.updateVisibleKeywords = jest.fn();
@@ -53,26 +59,28 @@ describe('KeywordController - events', () => {
     controller.handleHighlightClick = jest.fn();
     controller.getActiveHighlightData = jest.fn();
     controller.resetHighlightState = jest.fn();
+    controller.update = jest.fn();
     controller.keywordHighlighter = {
       highlightKeyword: jest.fn(),
       removeHighlight: jest.fn()
     };
   });
 
+  test('bindRefreshAnalysisButton() should attach refresh button handler', () => {
+    controller.bindRefreshAnalysisButton();
+    controller.view.refreshButton.dispatchEvent(new MouseEvent('click'));
+    expect(controller.update).toHaveBeenCalledTimes(1);
+    const arg = controller.update.mock.calls[0][0];
+    expect(arg).toBe(iframe);
+  });
+
   test('bindColorPicker() should attach color input handler', () => {
     controller.bindColorPicker();
-    const input = document.createElement('input');
-    input.type = 'color';
-    input.dataset.highlight = 'true';
-    input.dataset.tag = 'p';
-    input.dataset.prop = 'bg';
+    const input = controller.view.colorInputs[0];
     input.value = '#ffff00';
-    controller.view.container.appendChild(input);
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    expect(controller.updateHighlightColors).toHaveBeenCalledTimes(1);
-    const arg = controller.updateHighlightColors.mock.calls[0][0];
-    expect(arg.target.dataset.tag).toBe('p');
-    expect(arg.target.dataset.prop).toBe('bg');
+    input.dispatchEvent(new Event('change'));
+    expect(controller.eventHandlers.updateHighlightColors).toHaveBeenCalledTimes(1);
+    const arg = controller.eventHandlers.updateHighlightColors.mock.calls[0][0];
     expect(arg.target.value).toBe('#ffff00');
   });
 
@@ -87,7 +95,6 @@ describe('KeywordController - events', () => {
     controller.eventHandlers.toggleHighlight = controller.toggleHighlight.bind(controller);
 
     controller.bindHighlightToggle();
-    controller.view.customKeywordInput.value = '  test  ';
     controller.view.keywordHighlightCheckbox.checked = true;
     controller.view.keywordHighlightCheckbox.dispatchEvent(new Event('change'));
     expect(controller.resetHighlightState).toHaveBeenCalled();
@@ -104,7 +111,6 @@ describe('KeywordController - events', () => {
 
   test('bindAnalyzeKeyword() should trigger analysis', () => {
     controller.bindAnalyzeKeyword();
-    controller.view.customKeywordInput.value = '  test  ';
     controller.view.analyzeButton.click();
     expect(controller.eventHandlers.analyzeKeyword).toHaveBeenCalled();
   });
@@ -132,15 +138,48 @@ describe('KeywordController - events', () => {
     expect(controller.eventHandlers.changeTab).toHaveBeenCalled();
   });
 
-  test('setupTooltipListeners() should handle tooltips', () => {
-    controller.setupTooltipListeners();
-    const tooltip = controller.view.tooltipTriggers[0];
-    tooltip.dispatchEvent(new Event('focus'));
-    tooltip.dispatchEvent(new Event('mouseenter'));
-    expect(controller.eventHandlers.showTooltip).toHaveBeenCalledTimes(2);
-    tooltip.dispatchEvent(new Event('blur'));
-    tooltip.dispatchEvent(new Event('mouseleave'));
-    expect(controller.eventHandlers.hideTooltip).toHaveBeenCalledTimes(2);
+  describe('setupTooltipListeners()', () => {
+    let tooltipTrigger, tooltip;
+
+    beforeEach(() => {
+      tooltipTrigger = controller.view.tooltipTriggers[0];
+      tooltip = controller.view.tooltips[0];
+    });
+
+    it('should handle tooltip events', () => {
+      controller.setupTooltipListeners();
+      expect(tooltipTrigger.dataset.listenerAttached).toBe('true');
+      expect(tooltip.dataset.listenerAttached).toBe('true');
+
+      tooltipTrigger.dispatchEvent(new Event('focus'));
+      tooltipTrigger.dispatchEvent(new Event('mouseenter'));
+      tooltip.dispatchEvent(new Event('mouseenter'));
+      expect(controller.eventHandlers.showTooltip).toHaveBeenCalledTimes(3);
+
+      tooltipTrigger.dispatchEvent(new Event('blur'));
+      tooltipTrigger.dispatchEvent(new Event('mouseleave'));
+      tooltip.dispatchEvent(new Event('mouseleave'));
+      expect(controller.eventHandlers.hideTooltip).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle tooltip listener attachment', () => {
+      const triggerSpy = jest.spyOn(tooltipTrigger, 'addEventListener');
+      const tooltipSpy = jest.spyOn(tooltip, 'addEventListener');
+
+      controller.setupTooltipListeners();
+      expect(triggerSpy).toHaveBeenCalledTimes(4);
+      expect(tooltipSpy).toHaveBeenCalledTimes(2);
+
+      triggerSpy.mockClear();
+      tooltipSpy.mockClear();
+
+      controller.setupTooltipListeners();
+      expect(triggerSpy).not.toHaveBeenCalled();
+      expect(tooltipSpy).not.toHaveBeenCalled();
+
+      triggerSpy.mockRestore();
+      tooltipSpy.mockRestore();
+    });
   });
 
   describe('bindKeywordClickEvents()', () => {
@@ -206,18 +245,20 @@ describe('KeywordController - events', () => {
       expect(controller.view.toggleSection).toHaveBeenCalledWith('dashboard');
     });
 
-    it('should change page', () => {
-      button.classList.add('keywords__pagination__button');
-      button.dataset.page = 2;
-      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(controller.changePage).toHaveBeenCalledWith('meta', 2);
-    });
-
-    it('should not change page if page is not a number', () => {
-      button.classList.add('keywords__pagination__button');
-      button.dataset.page = 'invalid';
-      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(controller.changePage).not.toHaveBeenCalled();
+    describe('change page', () => {
+      it('should change page', () => {
+        button.classList.add('keywords__pagination__button');
+        button.dataset.page = 2;
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.changePage).toHaveBeenCalledWith('meta', 2);
+      });
+  
+      it('should not change page if page is not a number', () => {
+        button.classList.add('keywords__pagination__button');
+        button.dataset.page = 'invalid';
+        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(controller.changePage).not.toHaveBeenCalled();
+      });
     });
 
     it('should sort keywords', () => {

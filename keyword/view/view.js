@@ -1,17 +1,20 @@
 class KeywordView {
   constructor(iframe) {
-    this._container = this.generateKeywordViewSection();
     this._iframe = iframe;
-    this._header;
-    this._body;
-    this._overviewTab;
-    this._settingsTab;
-    this._tabButtons;
-    this._activeTabButton;
-    this._colorInputs;
-    this._customKeywordInput;
-    this._keywordHighlightCheckbox;
-    this._analyzeButton;
+    this._header = null;
+    this._body = null;
+    this._refreshButton = null;
+    this._tabButtons = null;
+    this._activeTabButton = null;
+    this._overviewTab = null;
+    this._settingsTab = null;
+    this._colorInputs = null;
+    this._customKeywordInput = null;
+    this._keywordHighlightCheckbox = null;
+    this._analyzeButton = null;
+    this._keywordListViews = {};
+    this._analysisResultView = null;
+    this._container = this.generateKeywordViewSection();
   }
 
   get container() {
@@ -28,6 +31,10 @@ class KeywordView {
 
   get body() {
     return this._body;
+  }
+
+  get refreshButton() {
+    return this._refreshButton;
   }
 
   get tabButtons() {
@@ -66,10 +73,6 @@ class KeywordView {
     return this._container.querySelectorAll('.keywords__tooltip-text');
   }
 
-  get analysis() {
-    return this._analysisResultView;
-  }
-
   get colorInputs() {
     return this._colorInputs;
   }
@@ -90,12 +93,24 @@ class KeywordView {
     return this._container.querySelector('.keyword-button--highlight--active');
   }
 
+  get analysis() {
+    return this._analysisResultView;
+  }
+
+  set iframe(iframe) {
+    this._iframe = iframe;
+  }
+
   set header(header) {
     this._header = header;
   }
 
   set body(body) {
     this._body = body;
+  }
+
+  set refreshButton(button) {
+    this._refreshButton = button;
   }
 
   set tabButtons(buttons) {
@@ -122,54 +137,38 @@ class KeywordView {
     this._analyzeButton = analyzeButton;
   }
 
-  _performListViewCreation({ title, type, sortDirection }, getActive) {
+  getCustomKeywordValue() {
+    return this._customKeywordInput?.value.trim() || '';
+  }
+
+  _performListViewCreation({ type, title, sortDirection }, getActive) {
     return new KeywordListView({
-      title,
       listType: type,
+      title,
       initialSortDirection: sortDirection,
       getActiveHighlightData: getActive
     });
   }
 
   createListView(keywordListInfo, getActiveHighlightData) {
-    switch (keywordListInfo.type) {
-      case 'meta':
-        if (!this._metaKeywordsListView) {
-          this._metaKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._metaKeywordsListView;
-      case 'userAdded':
-        if (!this._userKeywordsListView) {
-          this._userKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._userKeywordsListView;
-      case 'oneWord':
-        if (!this._oneWordKeywordsListView) {
-          this._oneWordKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._oneWordKeywordsListView; 
-      case 'twoWords':
-        if (!this._twoWordsKeywordsListView) {
-          this._twoWordsKeywordsListView = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
-        }
-        return this._twoWordsKeywordsListView; 
-      default:
-        return null;
+    const type = keywordListInfo.type;
+
+    if (!this._keywordListViews[type]) {
+      this._keywordListViews[type] = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
     }
+
+    return this._keywordListViews[type];
   }
 
-  getListViewByType(listType) {
-    switch (listType) {
-      case 'meta':
-        return this._metaKeywordsListView;
-      case 'userAdded':
-        return this._userKeywordsListView;
-      case 'oneWord':
-          return this._oneWordKeywordsListView;
-      case 'twoWords':
-        return this._twoWordsKeywordsListView;
-      default:
-        return null;
+  getListViewByType(type) {
+    return this._keywordListViews[type] ?? null;
+  }
+
+  removeKeywordList(type) {
+    const listView = this.getListViewByType(type);
+    if (listView && listView.container) {
+      listView.container.remove();
+      this._keywordListViews[type] = null;
     }
   }
 
@@ -184,7 +183,15 @@ class KeywordView {
     keywordViewSection.innerHTML = `
       <div class="keywords__section keywords__section--active keywords__section--dashboard">
         <header class="section__header">
-          <h2 class="section__title">Keywords Analysis</h2>
+          <div class="keywords__main-title-container section__title">
+            <h2>Keywords Analysis</h2>
+            <button class="keywords__button--refresh" type="button">
+              <span class="visually-hidden">Refresh analysis</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__icon--medium keywords__icon--middle-align">
+                <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
           <div class="header__tabs">
             <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
               <span class="visually-hidden">Back to general</span>
@@ -213,12 +220,13 @@ class KeywordView {
     this._header = keywordViewSection.querySelector('.section__header');
     this._body = keywordViewSection.querySelector('.section__body');
     this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
+    this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
     this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
 
-    return asideBody.querySelector('.w3ba11y__section--keyword');
+    return keywordViewSection;
   }
 
-  renderOverviewItem({ title, tooltip, value, iconSvg, warningIconSvg }) {
+  _renderOverviewItem({ title, tooltip, value, iconSvg, warningIconSvg }) {
     const id = title.toLowerCase().replace(/\s+/g, '-');
     return `
       <li class="keywords__overview-item">
@@ -253,9 +261,9 @@ class KeywordView {
   renderKeywordAnalysisOverview(overviewInfo) {
     let overviewContainer = this._body.querySelector('.keywords__overview-container');
     if (!overviewContainer) {
-      overviewContainer = document.createElement("div");
-      overviewContainer.classList.add("keywords__overview-container", "tab", "tab--active", "tab--overview");
-      overviewContainer.dataset.tab = "overview";
+      overviewContainer = document.createElement('div');
+      overviewContainer.classList.add('keywords__overview-container', 'tab', 'tab--active', 'tab--overview');
+      overviewContainer.dataset.tab = 'overview';
       this._overviewTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
@@ -266,7 +274,7 @@ class KeywordView {
     `;
     overviewContainer.innerHTML = `
       <ul class="keywords__overview-list">
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Meta Keywords',
           tooltip: `Google no longer uses meta keywords as a ranking factor. However, including them can be useful for compatibility or documentation reasons.`,
           value: overviewInfo.metaTagKeywordsContent?.trim() ?? '', 
@@ -277,7 +285,7 @@ class KeywordView {
           `,
           warningIconSvg: warningIconSvg
         })}
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Lang',
           tooltip: `The language specified in the html tag.`,
           value: overviewInfo.lang?.trim() ?? '',
@@ -288,7 +296,7 @@ class KeywordView {
           `,
           warningIconSvg: warningIconSvg
         })}
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Word Count',
           tooltip: `The total number of words in the page's Document Object Model (DOM).`,
           value: overviewInfo.wordCount ?? 0,
@@ -300,7 +308,7 @@ class KeywordView {
           `,
           warningIconSvg: warningIconSvg
         })}
-        ${this.renderOverviewItem({
+        ${this._renderOverviewItem({
           title: 'Unique Word Count',
           tooltip: `The total number of unique words in the page's Document Object Model (DOM).`,
           value: overviewInfo.uniqueWordCount ?? 0,
@@ -318,9 +326,9 @@ class KeywordView {
   renderKeywordSettings(colorMap) {
     let settingsContainer = this._body.querySelector('.keywords__settings-container');
     if (!settingsContainer) {
-      settingsContainer = document.createElement("div");
-      settingsContainer.classList.add("keywords__settings-container", "tab", "tab--settings");
-      settingsContainer.dataset.tab = "settings";
+      settingsContainer = document.createElement('div');
+      settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings');
+      settingsContainer.dataset.tab = 'settings';
       this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
@@ -357,8 +365,8 @@ class KeywordView {
               </div>
             </li>
           `; 
-        })
-        .join('')}
+        }).join('')
+      }
       </ul>
     `;
 
@@ -368,8 +376,8 @@ class KeywordView {
   renderKeywordInputBox() { 
     let keywordInputContainer = this._body.querySelector('.keywords__input-container');
     if (!keywordInputContainer) {
-      keywordInputContainer = document.createElement("div");
-      keywordInputContainer.classList.add("keywords__input-container");
+      keywordInputContainer = document.createElement('div');
+      keywordInputContainer.classList.add('keywords__input-container');
       this._body.appendChild(keywordInputContainer);
     }
     keywordInputContainer.innerHTML = `
@@ -377,7 +385,7 @@ class KeywordView {
       <div class="keywords__analyze-box">
         <div class="keywords__input-wrapper">
           <span class="keywords__input-wrapper__prefix">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__icon--middle-align keywords__icon--small" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__icon--block keywords__icon--small" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
             </svg>                
           </span>
@@ -398,18 +406,17 @@ class KeywordView {
 
   renderKeywordListContainer(keywordListInfo, getActiveHighlightData) {
     const keywordListView = this.createListView(keywordListInfo, getActiveHighlightData);
-    if (!keywordListView) return;
 
-    let allKeywordListContainer = this._container.querySelector(".keyword-all-lists__container");
+    let allKeywordListContainer = this._container.querySelector('.keyword-all-lists__container');
     if (!allKeywordListContainer) {
-      allKeywordListContainer = document.createElement("div");
-      allKeywordListContainer.classList.add("keyword-all-lists__container");
+      allKeywordListContainer = document.createElement('div');
+      allKeywordListContainer.classList.add('keyword-all-lists__container');
       this._body.appendChild(allKeywordListContainer);
     }
 
     const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}"]`);
     if (!existing) {
-      if (keywordListInfo.type === "userAdded") {
+      if (keywordListInfo.type === 'userAdded') {
         allKeywordListContainer.prepend(keywordListView.container);
       } else {
         allKeywordListContainer.appendChild(keywordListView.container);
@@ -440,7 +447,7 @@ class KeywordView {
   toggleSection(section) {
     this.getAllSection().forEach(section => section.classList.remove('keywords__section--active'));
     this.getSection(section)?.classList.add('keywords__section--active');
-    const anchor = document.querySelector(".w3ba11y__header");
+    const anchor = document.querySelector('.w3ba11y__header');
     if (anchor) {
       anchor.scrollIntoView();
     }
@@ -492,6 +499,14 @@ class KeywordView {
 
   getSection(section) {
     return this._container.querySelector(`.keywords__section--${section}`);
+  }
+
+  clearHighlightCheckbox() {
+    this._keywordHighlightCheckbox.checked = false;
+  }
+
+  clearCustomKeywordInput() {
+    this._customKeywordInput.value = '';
   }
 }
 

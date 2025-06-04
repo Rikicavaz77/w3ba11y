@@ -5,40 +5,27 @@ class KeywordController {
       changeTab: this.view.changeTab.bind(this.view),
       showTooltip: this.view.showTooltip.bind(this.view),
       hideTooltip: this.view.hideTooltip.bind(this.view),
-      clearHighlightCheckbox: this.clearHighlightCheckbox.bind(this),
+      clearHighlightCheckbox: this.view.clearHighlightCheckbox.bind(this.view),
       toggleHighlight: this.toggleHighlight.bind(this),
+      updateHighlightColors: this.updateHighlightColors.bind(this),
       analyzeKeyword: this.analyzeKeyword.bind(this)
     };
 
-    const treeWalker = new TreeWalkerManager(iframe.body);
-    const textProcessor = new TextProcessor(iframe, treeWalker);
-    const tagAccessor = new TagAccessor(iframe);
-    this.wordCounter = new WordCounter(textProcessor, tagAccessor);
-    this.keywordAnalyzer = new KeywordAnalyzer(textProcessor, tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy());
-    this.keywordHighlighter = new KeywordHighlighter(textProcessor);
+    this.treeWalker = new TreeWalkerManager(iframe.body);
+    this.textProcessor = new TextProcessor(iframe, this.treeWalker);
+    this.tagAccessor = new TagAccessor(iframe);
+    this.wordCounter = new WordCounter(this.textProcessor, this.tagAccessor);
+    this.keywordAnalyzer = new KeywordAnalyzer(
+      this.textProcessor, this.tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy()
+    );
+    this.keywordHighlighter = new KeywordHighlighter(this.textProcessor);
 
-    // Keyword Lists Info
-    this.batchSizes = {
-      meta: 5,
-      userAdded: 5,
-      oneWord: 5,
-      twoWords: 5
+    this.keywordLists = {
+      meta: this.createKeywordList(5, 'Meta keywords'),
+      userAdded: this.createKeywordList(5, 'User added keywords'),
+      oneWord: this.createKeywordList(5, `Most frequent 'single-word' keywords`, 'desc'),
+      twoWords: this.createKeywordList(5, `Most frequent 'double-word' keywords`, 'desc')
     };
-    this.labelMap = {
-      meta: "Meta keywords",
-      userAdded: "User added keywords",
-      oneWord: "Most frequent 'single-word' keywords",
-      twoWords: "Most frequent 'double-word' keywords"
-    };
-    this.metaKeywords = [];
-    this.displayMetaKeywords = [];
-    this.userKeywords = [];
-    this.displayUserKeywords = [];
-    // Most-relevant keywords
-    this.oneWordKeywords = [];
-    this.displayOneWordKeywords = [];
-    this.twoWordsKeywords = [];
-    this.displayTwoWordsKeywords = [];
 
     this.activeHighlightedKeyword = null;
     this.activeHighlightSource = null;
@@ -48,18 +35,14 @@ class KeywordController {
   init() {
     this.createOverview();
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
-    if (this.displayMetaKeywords.length > 0) {
-      this.renderKeywordListByType('meta');
-    }
+
+    this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
     this.processMostFrequentKeywords();
-    if (this.displayOneWordKeywords.length > 0) {
-      this.renderKeywordListByType('oneWord', 'desc');
-    }
-    if (this.displayTwoWordsKeywords.length > 0) {
-      this.renderKeywordListByType('twoWords', 'desc');
-    }
+    this.analyzeAndRenderKeywordLists(['meta', 'oneWord', 'twoWords']);
+
     this.setupTabListeners();
     this.setupTooltipListeners();
+    this.bindRefreshAnalysisButton();
     this.bindColorPicker();
     this.bindKeywordInputChange();
     this.bindHighlightToggle();
@@ -69,10 +52,55 @@ class KeywordController {
     this.bindGlobalShortcuts();
   }
 
+  update(iframe, fullRefresh = false) {
+    if (!iframe) return;
+    this.view.iframe = iframe;
+    this.treeWalker.root = iframe.body;
+    this.treeWalker.createTreeWalker();
+    this.textProcessor.doc = iframe;
+    this.textProcessor.root = iframe.body;
+    this.tagAccessor.doc = iframe;
+    this.tagAccessor.resetCache();
+    this.wordCounter.resetCache();
+    this.wordCounter.countWords();
+
+    if (fullRefresh) {
+      this.resetHighlightState();
+      this.view.clearHighlightCheckbox();
+      this.keywordHighlighter.removeHighlight();
+    }
+
+    if (!this.overviewInfo || fullRefresh) {
+      this.createOverview();
+    } else {
+      this.overviewInfo.wordCount = this.wordCounter.totalWords;
+      this.overviewInfo.uniqueWordCount = this.wordCounter.uniqueWords;
+    }
+    this.view.renderKeywordAnalysisOverview(this.overviewInfo);
+
+    if (fullRefresh) {
+      this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
+      this.processMostFrequentKeywords();
+    }
+    this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord', 'twoWords']);
+
+    this.setupTooltipListeners();
+  }
+
+  // CREATE KEYWORD LIST FUNCTION
+  createKeywordList(batchSize, label, defaultSort = null) {
+    return {
+      batchSize,
+      label,
+      defaultSort,
+      original: [],
+      display: []
+    };
+  }
+
   // CREATE OVERVIEW FUNCTION
   createOverview() {
     const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
-    this.processMetaKeywords(metaTagKeywordsContent);
     const lang = this.getLang(this.view.iframe);
     this.overviewInfo = new OverviewInfo(
       this.wordCounter.totalWords,
@@ -83,7 +111,7 @@ class KeywordController {
   }
 
   getMetaTagKeywordsContent(doc) {
-    return doc.querySelector("meta[name='keywords' i]")?.content ?? '';
+    return doc.querySelector('meta[name="keywords" i]')?.content ?? '';
   }
 
   getLang(doc) {
@@ -97,87 +125,88 @@ class KeywordController {
     };
   }
 
-  getListByType(listType) {
-    switch (listType) {
-      case 'meta':
-        return {
-          original: this.metaKeywords,
-          display: this.displayMetaKeywords
-        };
-      case 'userAdded':
-        return {
-          original: this.userKeywords,
-          display: this.displayUserKeywords
-        };
-      case 'oneWord':
-        return {
-          original: this.oneWordKeywords,
-          display: this.displayOneWordKeywords
-        }; 
-      case 'twoWords':
-        return {
-          original: this.twoWordsKeywords,
-          display: this.displayTwoWordsKeywords
-        };    
-      default:
-        return null;
-    }
-  }
-
   // PROCESS META KEYWORDS FUNCTION
   processMetaKeywords(rawContent) {
-    if (!rawContent) return;
     const keywords = rawContent
       .split(',')
       .map(k => k.trim())
       .filter(k => k.length > 0)
       .map(k => new Keyword(k));
 
-    this.metaKeywords = keywords;
-    this.displayMetaKeywords = [...keywords];
-    this.keywordAnalyzer.analyzeKeywords(keywords);
+    this.keywordLists.meta.original = keywords;
+    this.keywordLists.meta.display = [...keywords];
   }
 
+  // PROCESS MOST FREQUENT KEYWORDS FUNCTION
   processMostFrequentKeywords() {
     const oneWordKeywords = this.wordCounter.findOneWordKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
 
-    this.oneWordKeywords = oneWordKeywords;
-    this.displayOneWordKeywords = [...oneWordKeywords];
-    this.keywordAnalyzer.analyzeKeywords(oneWordKeywords);
+    this.keywordLists.oneWord.original = oneWordKeywords;
+    this.keywordLists.oneWord.display = [...oneWordKeywords];
 
     const twoWordsKeywords = this.wordCounter.findCompoundKeywords(this.overviewInfo.lang)
       .map(k => new Keyword(k));
 
-    this.twoWordsKeywords = twoWordsKeywords;
-    this.displayTwoWordsKeywords = [...twoWordsKeywords];
-    this.keywordAnalyzer.analyzeKeywords(twoWordsKeywords);
+    this.keywordLists.twoWords.original = twoWordsKeywords;
+    this.keywordLists.twoWords.display = [...twoWordsKeywords];
+  }
+
+  // ANALYZE AND RENDER KEYWORD LISTS FUNCTION
+  analyzeAndRenderKeywordLists(types) {
+    types.forEach(type => {
+      const list = this.keywordLists[type];
+      if (!list) return;
+
+      const { original } = list;
+      this.keywordAnalyzer.analyzeKeywords(original);
+
+      const listView = this.view.getListViewByType(type);
+      const isEmpty = original.length === 0;
+
+      if (isEmpty) {
+        if (listView) this.view.removeKeywordList(type);
+        return;
+      }
+
+      if (!listView) {
+        this.renderKeywordListByType(type);
+      } else {
+        const filterQuery = listView.getSearchQuery();
+        this.updateVisibleKeywords(type, filterQuery);
+      }
+    });   
   }
 
   // RENDER KEYWORD LIST FUNCTION
-  renderKeywordListByType(listType, sortDirection = null) {
-    const { display } = this.getListByType(listType);
-    const batchSize = this.batchSizes[listType] ?? 5;
+  renderKeywordListByType(type) {
+    const list = this.keywordLists[type];
+    if (!list) return;
+
+    const { display, batchSize, label, defaultSort } = list;
     const keywordsData = display.slice(0, batchSize);
     const totalPages = Math.ceil(display.length / batchSize);
-    this.view.renderKeywordListContainer(new KeywordListInfo(
-      this.labelMap[listType] ?? "Keywords",
-      listType,
-      keywordsData,
-      totalPages,
-      sortDirection
-    ), () => this.getActiveHighlightData());
+
+    this.view.renderKeywordListContainer(
+      new KeywordListInfo(
+        type,
+        label,
+        keywordsData,
+        totalPages,
+        defaultSort
+      ), 
+      () => this.getActiveHighlightData()
+    );
   }
 
   // RENDER PAGE FUNCTION
-  renderPage(listType, listView, keywordList, currentPage) {
-    const batchSize = this.batchSizes[listType] ?? 5;
+  renderPage(listView, keywordList, batchSize, currentPage) {
     const totalPages = Math.ceil(keywordList.length / batchSize);
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
-    let start = (currentPage - 1) * batchSize;
-    let end = start + batchSize;
+    const start = (currentPage - 1) * batchSize;
+    const end = start + batchSize;
     const keywordsData = keywordList.slice(start, end);
     listView.render(keywordsData, totalPages, currentPage, start);
   }
@@ -186,8 +215,12 @@ class KeywordController {
   changePage(listType, currentPage) {
     const listView = this.view.getListViewByType(listType);
     if (!listView || listView.isCurrentPage(currentPage)) return;
-    const { display } = this.getListByType(listType);
-    this.renderPage(listType, listView, display, currentPage);
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { display, batchSize } = list;
+    this.renderPage(listView, display, batchSize, currentPage);
     listView.scrollToPagination();
   }
 
@@ -195,24 +228,29 @@ class KeywordController {
   sortKeywords(keywords, sortDirection) {
     keywords.sort((a, b) => {
       const compare = a.frequency - b.frequency;
-      return (sortDirection === "asc") ? compare : -compare;
+      return (sortDirection === 'asc') ? compare : -compare;
     });
   }
 
   // HANDLE SORTING FUNCTION
   handleKeywordSorting(listType, clickedButton) {
-    const sortDirection = clickedButton.dataset.sort;
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    const { display } = this.getListByType(listType);
+    
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const sortDirection = clickedButton.dataset.sort;
+    const { display, batchSize } = list;
+
     this.sortKeywords(display, sortDirection);
     listView.updateSortButtons(clickedButton);
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
   // SEARCH FUNCTION
   filterKeywords(keywords, filterQuery) {
-    const pattern = new RegExp(`${Utils.escapeRegExp(filterQuery)}`, "i");
+    const pattern = new RegExp(`${Utils.escapeRegExp(filterQuery)}`, 'i');
     const filteredKeywords = keywords.filter(keywordItem => {
       return pattern.test(keywordItem.name);
     });
@@ -223,27 +261,38 @@ class KeywordController {
   updateVisibleKeywords(listType, filterQuery) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    const { original, display } = this.getListByType(listType);
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { original, display, batchSize } = list;
     const result = filterQuery ? this.filterKeywords(original, filterQuery) : [...original];
 
-    if (listView.sortDirection) {
-      this.sortKeywords(result, listView.sortDirection);
+    const sortDirection = listView.sortDirection;
+    if (sortDirection) {
+      this.sortKeywords(result, sortDirection);
     }
 
     display.splice(0, display.length, ...result);
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
-  // REMOVE FILTERS
+  // REMOVE FILTERS FUNCTION
   removeFilters(listType) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
-    const { original, display } = this.getListByType(listType);
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { original, display, batchSize } = list;
+
     display.splice(0, display.length, ...original);
     listView.removeFilters();
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
+  // RESET HIGHLIGHT STATE FUNCTION
   resetHighlightState() {
     this.activeHighlightedKeyword = null;
     this.activeHighlightSource = null;
@@ -252,7 +301,7 @@ class KeywordController {
 
   // TOGGLE HIGHLIGHT FUNCTION
   toggleHighlight(event) {
-    let keyword = this.view.customKeywordInput?.value.trim();
+    const keyword = this.view.getCustomKeywordValue();
     if (!keyword) return;
 
     if (event.target.checked) {
@@ -264,7 +313,7 @@ class KeywordController {
     }
   }
 
-  // HANDLE HIGHLIGHT FUNCTION
+  // HANDLE HIGHLIGHT CLICK FUNCTION
   handleHighlightClick(keywordItem, clickedButton) {
     if (this.view.isButtonActive(clickedButton)) {
       this.resetHighlightState();
@@ -272,14 +321,10 @@ class KeywordController {
     } else {
       this.activeHighlightedKeyword = keywordItem;
       this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
-      this.clearHighlightCheckbox();
+      this.view.clearHighlightCheckbox();
       this.view.setActiveButton(clickedButton);
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
     }
-  }
-
-  clearHighlightCheckbox() {
-    this.view.keywordHighlightCheckbox.checked = false;
   }
 
   // UPDATE HIGHLIGHT COLORS FUNCTION
@@ -293,25 +338,40 @@ class KeywordController {
 
   // ANALYZE KEYWORD FUNCTION
   analyzeKeyword() {
-    let keyword = this.view.customKeywordInput?.value.trim();
-    if (!keyword) return; 
+    const { original, display } = this.keywordLists.userAdded;
+    const keyword = this.view.getCustomKeywordValue();
+    if (
+      !keyword ||
+      original.some(k => k.name.toLowerCase() === keyword.toLowerCase())
+    ) return; 
 
     const keywordItem = new Keyword(keyword);
-    this.userKeywords.push(keywordItem);
+    original.push(keywordItem);
     this.keywordAnalyzer.analyzeKeyword(keywordItem);
 
-    if (this.userKeywords.length === 1) {
-      this.displayUserKeywords.push(keywordItem);
-      this.renderKeywordListByType("userAdded");
+    this.view.clearCustomKeywordInput();
+    if (this.view.keywordHighlightCheckbox.checked) {
+      this.activeHighlightedKeyword = keywordItem;
+      this.activeHighlightSource = 'list';
+      this.view.clearHighlightCheckbox();
+    }
+    
+    const listView = this.view.getListViewByType('userAdded');
+    if (!listView) {
+      display.push(keywordItem);
+      this.renderKeywordListByType('userAdded');
     } else {
-      const filterQuery = this.view.getListViewByType('userAdded').searchKeywordField?.value?.trim();
+      const filterQuery = listView.getSearchQuery();
       this.updateVisibleKeywords('userAdded', filterQuery);
     }
   }
 
   // DELETE KEYWORD FUNCTION
   deleteKeyword(listType, keywordIndex) {
-    const { original, display } = this.getListByType(listType);
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { original, display, batchSize } = list;
 
     const keywordToRemove = display[keywordIndex];
     if (!keywordToRemove) return;
@@ -330,7 +390,7 @@ class KeywordController {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
 
-    this.renderPage(listType, listView, display, listView.currentPage);
+    this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
   // GET KEYWORD INDEX FUNCTION
@@ -356,7 +416,10 @@ class KeywordController {
     const keywordIndex = this.getKeywordIndex(target);
     if (keywordIndex === undefined) return;
 
-    const { display } = this.getListByType(listType);
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { display } = list;
     return display[keywordIndex];
   }
 
@@ -369,36 +432,44 @@ class KeywordController {
 
   setupTooltipListeners() {
     this.view.tooltipTriggers.forEach(tooltipTrigger => {
-      tooltipTrigger.addEventListener("focus", this.eventHandlers.showTooltip);
-      tooltipTrigger.addEventListener("blur", this.eventHandlers.hideTooltip);
-      tooltipTrigger.addEventListener("mouseenter", this.eventHandlers.showTooltip);
-      tooltipTrigger.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
+      if (tooltipTrigger.dataset.listenerAttached) return;
+      tooltipTrigger.dataset.listenerAttached = 'true';
+      tooltipTrigger.addEventListener('focus', this.eventHandlers.showTooltip);
+      tooltipTrigger.addEventListener('blur', this.eventHandlers.hideTooltip);
+      tooltipTrigger.addEventListener('mouseenter', this.eventHandlers.showTooltip);
+      tooltipTrigger.addEventListener('mouseleave', this.eventHandlers.hideTooltip);
     });
 
     this.view.tooltips.forEach(tooltip => {
-      tooltip.addEventListener("mouseenter", this.eventHandlers.showTooltip);
-      tooltip.addEventListener("mouseleave", this.eventHandlers.hideTooltip);
+      if (tooltip.dataset.listenerAttached) return;
+      tooltip.dataset.listenerAttached = 'true';
+      tooltip.addEventListener('mouseenter', this.eventHandlers.showTooltip);
+      tooltip.addEventListener('mouseleave', this.eventHandlers.hideTooltip);
+    });
+  }
+
+  bindRefreshAnalysisButton() {
+    this.view.refreshButton.addEventListener('click', () => {
+      this.update(this.view.iframe, false);
     });
   }
 
   bindColorPicker() {
-    this.view.container.addEventListener('change', event => {
-      if (event.target.matches('input[type="color"][data-highlight]')) {
-        this.updateHighlightColors(event);
-      }
+    this.view.colorInputs.forEach(input => {
+      input.addEventListener('change', this.eventHandlers.updateHighlightColors);
     });
   }
 
   bindKeywordInputChange() {
-    this.view.customKeywordInput.addEventListener("input", this.eventHandlers.clearHighlightCheckbox);
+    this.view.customKeywordInput.addEventListener('input', this.eventHandlers.clearHighlightCheckbox);
   }
 
   bindHighlightToggle() {
-    this.view.keywordHighlightCheckbox.addEventListener("change", this.eventHandlers.toggleHighlight);
+    this.view.keywordHighlightCheckbox.addEventListener('change', this.eventHandlers.toggleHighlight);
   }
 
   bindAnalyzeKeyword() {
-    this.view.analyzeButton.addEventListener("click", this.eventHandlers.analyzeKeyword);
+    this.view.analyzeButton.addEventListener('click', this.eventHandlers.analyzeKeyword);
   }
 
   bindSearchInput() {
@@ -414,8 +485,8 @@ class KeywordController {
   }
 
   bindGlobalShortcuts() {
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" || event.key === "Esc") {
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' || event.key === 'Esc') {
         this.view.hideAllTooltips();
       }
     });
