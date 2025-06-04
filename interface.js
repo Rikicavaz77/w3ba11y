@@ -19,6 +19,10 @@ class Interface {
     return document.querySelector('aside');
   }
 
+  get header() {
+    return document.querySelector('.w3ba11y__header');
+  }
+
   get iframe() {
     return this._iframe;
   }
