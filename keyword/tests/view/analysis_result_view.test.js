@@ -34,6 +34,14 @@ describe('AnalysisResultView', () => {
     expect(view.body).toBeInstanceOf(HTMLElement);
   });
 
+  test('renderWarningIconIfNeeded() should handle warning icon creation', () => {
+    let icon = view._renderWarningIconIfNeeded(0);
+    expect(icon).toContain('keyword-icon--error');
+
+    icon = view._renderWarningIconIfNeeded(10);
+    expect(icon).toBe('');
+  });
+
   describe('render()', () => {
     it('should populate analysis container with keyword data', () => {    
       keywordItem.name = '<script>alert(1)</script>';
@@ -49,15 +57,32 @@ describe('AnalysisResultView', () => {
       expect(hasMatch).toBe(true);
       expect(container.textContent).toContain('2');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
+      expect(container.querySelectorAll('.keyword-icon--error').length).toBe(0);
       expect(view.currentKeywordItem).toBe(keywordItem);
     });
 
     it('should handle more renderings', () => {
       view.render(keywordItem);
-      const anotherkeywordItem = new Keyword('another test');
+      
+      const anotherkeywordItem = new Keyword('another test', {
+        frequency: 'invalid',
+        density: NaN,
+        keywordOccurrences: {
+          title: 0,
+          description: undefined,
+          h1: '9',
+          h2: '0',
+          p: null
+        }
+      });
       view.render(anotherkeywordItem);
+
       const container = view.body.querySelectorAll('.keywords__analysis-container');
       expect(container.length).toBe(1);
+      expect(container[0].textContent).toContain('9');
+      const match = container[0].textContent.match(/0/g) || [];
+      expect(match.length).toBe(6);
+      expect(container[0].querySelectorAll('.keyword-icon--error').length).toBe(2);
     });
 
     it('should make highlight button active', () => {

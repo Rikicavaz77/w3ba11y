@@ -221,7 +221,7 @@ class KeywordListView {
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
 
       const safeName = Utils.escapeHTML(keywordItem.name);
-      const safeFrequency = Number.isFinite(+keywordItem.frequency) ? keywordItem.frequency : 0;
+      const safeFrequency = keywordItem.frequency == null || isNaN(+keywordItem.frequency) ? 0 : +keywordItem.frequency;
       const highlightClass = this._getHighlightClass(keywordItem);
 
       item.innerHTML = `

@@ -31,6 +31,20 @@ describe('WordCounter', () => {
     wordCounter = new WordCounter(textProcessor, tagAccessor);
   });
 
+  describe('getBaseLang()', () => {
+    it('should return base lang correctly', () => {
+      let baseLang = wordCounter._getBaseLang('en');
+      expect(baseLang).toBe('en');
+
+      baseLang = wordCounter._getBaseLang('en-US');
+      expect(baseLang).toBe('en');
+    });
+
+    it('should return an empty string if no lang', () => {
+      expect(wordCounter._getBaseLang('')).toBe('');
+    });
+  });
+
   test('countWords() should count total and unique words', () => {
     const result = wordCounter.countWords();
     expect(result.totalWords).toBe(19);

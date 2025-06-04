@@ -90,6 +90,14 @@ describe('KeywordView', () => {
     expect(activeButton).toBe(button);
   });
 
+  test('getCustomKeywordValue() should return current custom keyword value', () => {    
+    view.renderKeywordInputBox();
+    expect(view.getCustomKeywordValue()).toBe('');
+
+    view.customKeywordInput.value = '   test   ';
+    expect(view.getCustomKeywordValue()).toBe('test');
+  });
+
   test('renderOverviewItem() should render an item with correct data', () => {
     const itemInfo = {
       title: 'Test item',
@@ -164,12 +172,8 @@ describe('KeywordView', () => {
     expect(settings.innerHTML).toContain('highlight-color-h1');
     expect(settings.innerHTML).toContain('highlight-border-h1');
     expect(view.colorInputs.length).toBe(6);
-    
-    const anotherColorMap = {
-      strong: { bg: '#e6320e', color: '#000000', border: '#000000' }
-    };
 
-    view.renderKeywordSettings(anotherColorMap);
+    view.renderKeywordSettings({});
     expect(view.body.querySelectorAll('.keywords__settings-container').length).toBe(1);
   });
 

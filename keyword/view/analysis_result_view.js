@@ -71,8 +71,8 @@ class AnalysisResultView {
     }
     this._currentKeywordItem = keywordItem;
     const highlightClass = this._getHighlightClass();
-    const safeFrequency = Number.isFinite(+keywordItem.frequency) ? keywordItem.frequency : 0;
-    const safeDensity = Number.isFinite(+keywordItem.density) ? keywordItem.density : 0;
+    const safeFrequency = keywordItem.frequency == null || isNaN(+keywordItem.frequency) ? 0 : +keywordItem.frequency;
+    const safeDensity = keywordItem.density == null || isNaN(+keywordItem.density) ? 0 : +keywordItem.density;
 
     analysisResultContainer.innerHTML = `
       <div class="keywords__analysis-item">
@@ -105,7 +105,8 @@ class AnalysisResultView {
         <ul class="keywords__tag-occurrences-list">
         ${Object.entries(keywordItem.keywordOccurrences)
           .map(([key, value]) => {
-            const safeValue = Number.isFinite(+value) ? value : 0;
+            const safeValue = value == null || isNaN(+value) ? 0 : +value;
+
             return `
               <li class="keywords__tag-occurrences-item">
                 <h4 class="keywords__tag-occurrences-item__title">${key}</h4>

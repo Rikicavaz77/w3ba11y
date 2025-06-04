@@ -54,7 +54,7 @@ describe('KeywordHighlighter', () => {
 
     it('should highlight compound keyword in different tags', () => {
       highlighter.highlightKeyword('compound keyword');
-      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      const highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
       expect(highlights.length).toBe(3);
       expect(highlights[0].textContent.toLowerCase()).toBe('compound keyword');
       expect(highlights[0].dataset.parent).toBe('p');
@@ -78,13 +78,13 @@ describe('KeywordHighlighter', () => {
 
     it('should avoid dom breaking', () => {
       let textNodes = highlighter._textProcessor.getTextNodes();
-      let initialLength = textNodes.length;
+      const initialLength = textNodes.length;
 
       highlighter.highlightKeyword('keyword');
       highlighter.removeHighlight();
 
       textNodes = highlighter._textProcessor.getTextNodes();
-      let currentLength = textNodes.length;
+      const currentLength = textNodes.length;
       expect(currentLength).toBe(initialLength);
     });
   });
