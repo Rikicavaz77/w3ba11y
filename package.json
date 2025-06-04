@@ -1,10 +1,13 @@
 {
   "name": "w3ba11y",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "Tool to analyze and improve the accessibility and SEO optimization of websites",
   "main": "main.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "bump:patch": "npm version patch --no-git-tag-version",
+    "bump:minor": "npm version minor --no-git-tag-version",
+    "bump:major": "npm version major --no-git-tag-version"
   },
   "repository": {
     "type": "git",

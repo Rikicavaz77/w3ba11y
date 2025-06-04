@@ -19,7 +19,10 @@ describe('KeywordListView', () => {
       listType: 'meta', 
       getActiveHighlightData: mockGetActiveHighlightData
     });
-    keywords = [new Keyword('test', { frequency: 26 }), new Keyword('another test', { frequency: 'invalid' })];
+    keywords = [
+      new Keyword('test', { frequency: 26 }), 
+      new Keyword('another test', { frequency: 'invalid' })
+    ];
   });
 
   test('should initialize container and fields correctly', () => {
@@ -67,6 +70,13 @@ describe('KeywordListView', () => {
     expect(view.isCurrentPage(2)).toBe(false);
   });
 
+  test('getSearchQuery() should return current search query', () => {    
+    expect(view.getSearchQuery()).toBe('');
+
+    view.searchKeywordField.value = '   test   ';
+    expect(view.getSearchQuery()).toBe('test');
+  });
+
   test('render() should handle keyword and pages visualization', () => {   
     view.renderKeywords = jest.fn();
     view.renderPages = jest.fn();
@@ -89,6 +99,18 @@ describe('KeywordListView', () => {
     expect(container.querySelector('.keywords__icon--delete')).toBeTruthy();
   });
 
+  test('renderWarningIconIfNeeded() should handle warning icon creation', () => {
+    let icon = view._renderWarningIconIfNeeded(0);
+    expect(icon).toContain('keyword-icon--error');
+
+    icon = view._renderWarningIconIfNeeded(10);
+    expect(icon).toBe('');
+
+    view.listType = 'userAdded';
+    icon = view._renderWarningIconIfNeeded(10);
+    expect(icon).toBe('');
+  });
+
   describe('renderKeywords()', () => {
     it('should populate keyword list correctly', () => {
       view.renderKeywords(keywords, 0);
@@ -99,8 +121,10 @@ describe('KeywordListView', () => {
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeNull();
       expect(items[0].querySelector('.keyword-button--view-details')).toBeTruthy();
       expect(items[0].textContent).toContain('test (26)');
+      expect(items[0].querySelector('.keyword-icon--error')).toBeNull();
       expect(items[0].dataset.keywordIndex).toBe('0');
       expect(items[1].textContent).toContain('another test (0)');
+      expect(items[1].querySelector('.keyword-icon--error')).toBeTruthy();
       expect(items[1].dataset.keywordIndex).toBe('1');
     });
 

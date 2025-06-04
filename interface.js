@@ -19,6 +19,10 @@ class Interface {
     return document.querySelector('aside');
   }
 
+  get header() {
+    return document.querySelector('.w3ba11y__header');
+  }
+
   get iframe() {
     return this._iframe;
   }
@@ -37,7 +41,7 @@ class Interface {
       <html lang="en">
         <head>
           <title>${document.title}</title>
-          <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+          <link rel="stylesheet" href="${chrome.runtime.getURL('static/fonts/remixicon.css')}">
         </head>
         <body>
           <aside>
@@ -56,8 +60,7 @@ class Interface {
             <div class="w3ba11y__body">
               <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
                 <h2 class="section__title">Analysis</h2>
-                <p class="warning-message"> **Warning: The extension might not correctly identify all the dynamic inserted images. </p>
-                <div>
+                <div class="w3ba11y__feature-access-container">
                   <button data-section="img" data-loading="true" class="section__button section__button--img">
                     <span class="button__title">Images</span>
                     <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
@@ -70,6 +73,23 @@ class Interface {
                     <span class="button__title">Keywords</span>
                     <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
                   </button>
+                </div>
+                <div class="warning-message-container">
+                  <strong>**Warning:</strong>
+                  <ul class="warning-message-list">
+                    <li class="warning-message-list__item">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="warning-message-icon" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                      </svg>
+                      The extension might not correctly identify all the dynamic inserted images.
+                    </li>
+                    <li class="warning-message-list__item">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="warning-message-icon" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                      </svg>
+                      Keyword frequency is calculated by analyzing the entire page, including hidden elements and non-visual content. As a result, some relevant keywords may not be immediately visible after using the highlighter.
+                    </li>
+                  </ul> 
                 </div>
               </section>
             </div>

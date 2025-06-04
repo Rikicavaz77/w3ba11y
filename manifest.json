@@ -22,6 +22,8 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "static/fonts/remixicon.css",
+        "static/fonts/remixicon.woff2",
         "css.css",
         "static/img/logo.png", 
         "static/img/loading.gif"

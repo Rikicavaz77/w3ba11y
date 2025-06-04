@@ -7,7 +7,7 @@ const TextProcessor = require('../../services/text_processor');
 const TagAccessor = require('../../services/tag_accessor');
 
 global.sw = {
-  eng: ['the', 'and', 'is'],
+  eng: ['the', 'and', 'is', 'a', 'of'],
   ita: ['il', 'la', 'e']
 };
 
@@ -22,7 +22,7 @@ describe('WordCounter', () => {
     document.body.innerHTML = `
       <h1>Test heading</h1>
       <h1>Another test heading</h1>
-      <p>This is a test ("il caffè")</p>
+      <p>This is a test of ("il caffè")</p>
       <img src="test.jpg" alt="Image alt text">
     `;
     const treeWalker = new TreeWalkerManager(document.body);
@@ -31,10 +31,24 @@ describe('WordCounter', () => {
     wordCounter = new WordCounter(textProcessor, tagAccessor);
   });
 
+  describe('getBaseLang()', () => {
+    it('should return base lang correctly', () => {
+      let baseLang = wordCounter._getBaseLang('en');
+      expect(baseLang).toBe('en');
+
+      baseLang = wordCounter._getBaseLang('en-US');
+      expect(baseLang).toBe('en');
+    });
+
+    it('should return an empty string if no lang', () => {
+      expect(wordCounter._getBaseLang('')).toBe('');
+    });
+  });
+
   test('countWords() should count total and unique words', () => {
     const result = wordCounter.countWords();
-    expect(result.totalWords).toBe(18);
-    expect(result.uniqueWords).toBe(13);
+    expect(result.totalWords).toBe(19);
+    expect(result.uniqueWords).toBe(14);
   });
 
   describe('findOneWordKeywords()', () => {
@@ -52,6 +66,43 @@ describe('WordCounter', () => {
       expect(result).toContain('test');
       expect(result).not.toContain('il');
       expect(result).not.toContain('is');
+    });
+  }); 
+
+  describe('findCompoundKeywords()', () => {
+    it('should reject double-word keywords containing any english stopwords', () => {
+      const result = wordCounter.findCompoundKeywords();
+      expect(result).toContain('test heading');
+      expect(result).toContain('il caffè');
+      expect(result).not.toContain('this is');
+      expect(result).not.toContain('is a');
+      expect(result).not.toContain('a test');
+      expect(result).not.toContain('test of');
+      expect(result[0]).toBe('test heading');
+      expect(result.length).toBeLessThanOrEqual(10);
+    });
+
+    it('should reject double-word keywords containing any italian stopwords and more than 50% english stopwords', () => {
+      const result = wordCounter.findCompoundKeywords('it');
+      expect(result).toContain('test heading');
+      expect(result).toContain('this is');
+      expect(result).toContain('a test');
+      expect(result).toContain('test of');
+      expect(result).not.toContain('is a');
+      expect(result).not.toContain('il caffè');
+      expect(result[0]).toBe('test heading');
+      expect(result.length).toBeLessThanOrEqual(10);
+    });
+
+    it('should reject triple-word keywords containing any italian stopwords and more than 50% english stopwords', () => {
+      const result = wordCounter.findCompoundKeywords('it', 3);
+      expect(result).toContain('another test heading');
+      expect(result).toContain('image alt text');
+      expect(result).not.toContain('this is a');
+      expect(result).not.toContain('is a test');
+      expect(result).not.toContain('a test of');
+      expect(result[0]).toBe('another test heading');
+      expect(result.length).toBeLessThanOrEqual(10);
     });
   }); 
 

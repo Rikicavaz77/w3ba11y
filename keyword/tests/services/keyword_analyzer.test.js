@@ -31,6 +31,8 @@ describe('KeywordAnalyzer', () => {
       <script>document.getElementById("keyword");</script>
       <p>Another keyword appears here.</p>
       <img src="test.jpg" alt="keyword in alt tag">
+      <p>Compound keyword appears in the same tag</p>
+      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
     const treeWalker = new TreeWalkerManager(document.body);
     const textProcessor = new TextProcessor(document, treeWalker);
@@ -39,33 +41,114 @@ describe('KeywordAnalyzer', () => {
     analyzer = new KeywordAnalyzer(textProcessor, tagAccessor, wordCounter, new AllInOneAnalysisStrategy());
   });
 
-  test('analyzeKeyword() should update keyword data correctly', () => {
-    const keyword = new Keyword('keyword');
-    analyzer.analyzeKeyword(keyword);
-    expect(keyword.frequency).toBe(5);
-    expect(keyword.keywordOccurrences.title).toBe(1);
-    expect(keyword.keywordOccurrences.description).toBe(1);
-    expect(keyword.keywordOccurrences.p).toBe(2);
-    expect(keyword.keywordOccurrences.alt).toBe(1);
-    expect(keyword.keywordOccurrences.h1).toBe(0);
-    expect(keyword.density).toBeCloseTo(23.81);
-    expect(keyword.status).toBe('done');
+  test('countOccurrencesInTag() should return keyword occurrences in a specified tag', () => {
+    const pattern = analyzer._textProcessor.getKeywordPattern('keyword');
+    let count = analyzer.countOccurrencesInTag('p', pattern);
+    expect(count).toBe(4);
+  });
+
+  describe('prepareAnalysisData()', () => {
+    it('should get only text nodes', () => {
+      const keywords = [new Keyword('keyword'), new Keyword('test')]
+      analyzer._prepareAnalysisData(keywords);
+      expect(analyzer._textNodes).toBeDefined();
+      expect(analyzer._nodeGroups).toBeUndefined();
+    });
+
+    it('should get only node groups', () => {
+      const keywords = [new Keyword('test keyword'), new Keyword('another test keyword')]
+      analyzer._prepareAnalysisData(keywords);
+      expect(analyzer._nodeGroups).toBeDefined();
+      expect(analyzer._textNodes).toBeUndefined();
+    });
+
+    it('should get text nodes and node groups', () => {
+      const keywords = [new Keyword('keyword'), new Keyword('test keyword')]
+      analyzer._prepareAnalysisData(keywords);
+      expect(analyzer._textNodes).toBeDefined();
+      expect(analyzer._nodeGroups).toBeDefined();
+    });
+  });
+
+  describe('analyzeKeyword()', () => {
+    let keywords;
+
+    beforeEach(() => {
+      keywords = [new Keyword('keyword'), new Keyword('compound keyword')];
+    });
+
+    it('should update keyword data correctly', () => {
+      const spy = jest.spyOn(analyzer._strategy, 'reset');
+  
+      analyzer.analyzeKeyword(keywords[0]);
+      expect(keywords[0].frequency).toBe(7);
+      expect(keywords[0].keywordOccurrences.title).toBe(1);
+      expect(keywords[0].keywordOccurrences.description).toBe(1);
+      expect(keywords[0].keywordOccurrences.h1).toBe(0);
+      expect(keywords[0].keywordOccurrences.p).toBe(4);
+      expect(keywords[0].keywordOccurrences.alt).toBe(1);
+      expect(keywords[0].density).toBeCloseTo(20);
+      expect(keywords[0].status).toBe('done');
+  
+      analyzer.analyzeKeyword(keywords[1]);
+      expect(keywords[1].frequency).toBe(2);
+      expect(keywords[1].keywordOccurrences.title).toBe(0);
+      expect(keywords[1].keywordOccurrences.description).toBe(0);
+      expect(keywords[1].keywordOccurrences.h1).toBe(0);
+      expect(keywords[1].keywordOccurrences.p).toBe(2);
+      expect(keywords[1].keywordOccurrences.strong).toBe(1);
+      expect(keywords[1].keywordOccurrences.em).toBe(0);
+      expect(keywords[1].keywordOccurrences.alt).toBe(0);
+      expect(keywords[1].density).toBeCloseTo(5.71);
+      expect(keywords[1].status).toBe('done');
+  
+      expect(analyzer._textNodes).toBeDefined();
+      expect(analyzer._nodeGroups).toBeDefined();
+      expect(spy).toHaveBeenCalledTimes(2);
+  
+      spy.mockRestore();
+    });
+
+    it('should reanalyze keyword correctly', () => {  
+      analyzer.analyzeKeyword(keywords[0]);
+      expect(keywords[0].frequency).toBe(7);
+
+      const span = document.createElement('span');
+      span.textContent = 'Keyword here';
+      document.body.appendChild(span);
+  
+      analyzer.analyzeKeyword(keywords[0]);
+      expect(keywords[0].frequency).toBe(8);
+    });
   });
 
   test('analyzeKeywords() should process multiple keywords', () => {
-    const keyword1 = new Keyword('keyword');
-    const keyword2 = new Keyword('here');
-    const keyword3 = new Keyword('appears');
-    analyzer.analyzeKeywords([keyword1, keyword2, keyword3]);
-    expect(keyword1.frequency).toBe(5);
-    expect(keyword2.frequency).toBe(2);
-    expect(keyword3.frequency).toBe(2);
-    expect(keyword1.keywordOccurrences.title).toBe(1);
-    expect(keyword2.keywordOccurrences.title).toBe(0);
-    expect(keyword3.keywordOccurrences.title).toBe(1);
-    expect(keyword1.keywordOccurrences.description).toBe(1);
-    expect(keyword2.keywordOccurrences.description).toBe(1);
-    expect(keyword3.keywordOccurrences.description).toBe(0);
+    const spy = jest.spyOn(analyzer._strategy, 'reset');
+
+    const keywords = [new Keyword('keyword'), new Keyword('appears'), new Keyword('keyword appears')];
+
+    analyzer.analyzeKeywords(keywords);
+    expect(keywords[0].frequency).toBe(7);
+    expect(keywords[1].frequency).toBe(4);
+    expect(keywords[2].frequency).toBe(4);
+    expect(keywords[0].keywordOccurrences.title).toBe(1);
+    expect(keywords[0].keywordOccurrences.description).toBe(1);
+    expect(keywords[0].keywordOccurrences.p).toBe(4);
+    expect(keywords[0].keywordOccurrences.em).toBe(1);
+    expect(keywords[1].keywordOccurrences.title).toBe(1);
+    expect(keywords[1].keywordOccurrences.description).toBe(0);
+    expect(keywords[1].keywordOccurrences.p).toBe(3);
+    expect(keywords[1].keywordOccurrences.em).toBe(0);
+    expect(keywords[2].keywordOccurrences.title).toBe(1);
+    expect(keywords[2].keywordOccurrences.description).toBe(0);
+    expect(keywords[2].keywordOccurrences.p).toBe(3);
+    expect(keywords[2].keywordOccurrences.em).toBe(0);
+
+    expect(analyzer._textNodes).toBeDefined();
+    expect(analyzer._nodeGroups).toBeDefined();
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    spy.mockRestore();
   });
 
   afterAll(() => {
