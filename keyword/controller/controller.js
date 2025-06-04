@@ -19,8 +19,8 @@ class KeywordController {
     this.keywordHighlighter = new KeywordHighlighter(this.liveTextProcessor);
 
     this.staticTreeWalker = new TreeWalkerManager(staticDoc.body);
-    this.staticTextProcessor = new TextProcessor(staticDoc, this.staticTreeWalker); 
-    this.tagAccessor = new TagAccessor(staticDoc);
+    this.staticTextProcessor = new TextProcessor(staticDoc, this.staticTreeWalker, true); 
+    this.tagAccessor = new TagAccessor(staticDoc, true);
     this.wordCounter = new WordCounter(this.staticTextProcessor, this.tagAccessor);
     this.keywordAnalyzer = new KeywordAnalyzer(
       this.staticTextProcessor, this.tagAccessor, this.wordCounter, new AllInOneAnalysisStrategy()
@@ -65,17 +65,32 @@ class KeywordController {
     return newDoc;
   }
 
+  updateRefs(iframe) {
+    const liveDoc = iframe;
+    const staticDoc = this.cloneDocument(iframe);
+
+    this.liveTreeWalker.root = liveDoc.body;
+    this.liveTextProcessor.doc = liveDoc;
+    this.liveTextProcessor.root = liveDoc.body;
+
+    this.staticTreeWalker.root = staticDoc.body;
+    this.staticTextProcessor.doc = staticDoc;
+    this.staticTextProcessor.root = staticDoc.body;
+    this.tagAccessor.doc = staticDoc;
+
+    this.liveTreeWalker.createTreeWalker();
+
+    this.staticTreeWalker.createTreeWalker();
+    this.staticTextProcessor.resetCache();
+    this.tagAccessor.resetCache();
+    this.wordCounter.resetCache();
+    this.keywordAnalyzer.resetCache();
+  }
+
   update(iframe, fullRefresh = false) {
     if (!iframe) return;
     this.view.iframe = iframe;
-    /* this.treeWalker.root = iframe.body;
-    this.treeWalker.createTreeWalker();
-    this.textProcessor.doc = iframe;
-    this.textProcessor.root = iframe.body;
-    this.tagAccessor.doc = iframe;
-    this.tagAccessor.resetCache();
-    this.wordCounter.resetCache(); */
-    this.wordCounter.resetCache();
+    this.updateRefs(iframe);
     this.wordCounter.countWords();
  
     if (fullRefresh) {

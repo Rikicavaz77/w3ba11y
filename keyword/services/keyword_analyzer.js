@@ -19,6 +19,10 @@ class KeywordAnalyzer {
     this._strategy.setContext(this);
   }
 
+  resetCache() {
+    this._strategy.reset();
+  }
+
   countOccurrencesInTag(tagName, pattern) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return 0;
@@ -72,7 +76,7 @@ class KeywordAnalyzer {
   analyzeKeyword(keyword) {
     this._prepareAnalysisData([keyword]);
     this._performAnalysis(keyword);
-    this._strategy.reset();
+    this.resetCache();
   }
 
   analyzeKeywords(keywords) {
@@ -86,7 +90,7 @@ class KeywordAnalyzer {
       });
     } finally {
       this._tagAccessor.useCache = false;
-      this._strategy.reset();
+      this.resetCache();
     }
   }
 }
