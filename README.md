@@ -6,7 +6,7 @@
 [![Language](https://img.shields.io/github/languages/top/Rikicavaz77/w3ba11y)](https://github.com/Rikicavaz77/w3ba11y)
 
 <div align="center">
-  <img src="static/img/icon.png" alt="Logo" width="120" height="120">
+  <img src="static/img/icon.png" alt="w3ba11y logo" width="120" height="120">
   <h3 align="center">📘w3ba11y - User Manual</h3>
   <p align="center">
     <em>"For better accessibility and seo optimization..."</em>
