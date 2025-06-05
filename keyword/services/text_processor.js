@@ -4,6 +4,7 @@ class TextProcessor {
     this._root = doc.body;
     this._treeWalker = treeWalker;
     this._cachedTextNodes = null;
+    this._cachedNodeGroups = null;
     this._useCache = useCache;
     this._allowedParentTags = [
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'li'
@@ -92,9 +93,12 @@ class TextProcessor {
 
   resetCache() {
     this._cachedTextNodes = null;
+    this._cachedNodeGroups = null;
   }
 
   getTextNodeGroups() {
+    if (this._useCache && this._cachedNodeGroups) return this._cachedNodeGroups;
+
     const nodeGroups = [];
     let currentGroup = [];
     let currentBlockParent = null;
@@ -128,6 +132,7 @@ class TextProcessor {
       nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
     }
 
+    if (this._useCache) this._cachedNodeGroups = nodeGroups;
     return nodeGroups;
   }
 

@@ -14,11 +14,11 @@ class KeywordController {
     const liveDoc = iframe;
     const staticDoc = this.cloneDocument(iframe);
 
-    this.liveTreeWalker = new TreeWalkerManager(liveDoc.body);
+    this.liveTreeWalker = new TreeWalkerManager(liveDoc);
     this.liveTextProcessor = new TextProcessor(liveDoc, this.liveTreeWalker);
     this.keywordHighlighter = new KeywordHighlighter(this.liveTextProcessor);
 
-    this.staticTreeWalker = new TreeWalkerManager(staticDoc.body);
+    this.staticTreeWalker = new TreeWalkerManager(staticDoc);
     this.staticTextProcessor = new TextProcessor(staticDoc, this.staticTreeWalker, true); 
     this.tagAccessor = new TagAccessor(staticDoc, true);
     this.wordCounter = new WordCounter(this.staticTextProcessor, this.tagAccessor);
@@ -58,39 +58,38 @@ class KeywordController {
     this.bindGlobalShortcuts();
   }
 
-  cloneDocument(iframe) {
+  cloneDocument(iframeDoc) {
     const newDoc = document.implementation.createHTMLDocument();
-    const htmlClone = iframe.documentElement.cloneNode(true);
+    const htmlClone = iframeDoc.documentElement.cloneNode(true);
     newDoc.replaceChild(htmlClone, newDoc.documentElement);
     return newDoc;
   }
 
-  updateRefs(iframe) {
+  updateProcessingTools(iframe) {
     const liveDoc = iframe;
     const staticDoc = this.cloneDocument(iframe);
 
+    this.liveTreeWalker.doc = liveDoc;
     this.liveTreeWalker.root = liveDoc.body;
     this.liveTextProcessor.doc = liveDoc;
     this.liveTextProcessor.root = liveDoc.body;
 
+    this.staticTreeWalker.doc = staticDoc;
     this.staticTreeWalker.root = staticDoc.body;
     this.staticTextProcessor.doc = staticDoc;
     this.staticTextProcessor.root = staticDoc.body;
     this.tagAccessor.doc = staticDoc;
 
     this.liveTreeWalker.createTreeWalker();
-
     this.staticTreeWalker.createTreeWalker();
-    this.staticTextProcessor.resetCache();
-    this.tagAccessor.resetCache();
-    this.wordCounter.resetCache();
-    this.keywordAnalyzer.resetCache();
+
+    this.keywordAnalyzer.fullRefresh();
   }
 
   update(iframe, fullRefresh = false) {
     if (!iframe) return;
     this.view.iframe = iframe;
-    this.updateRefs(iframe);
+    this.updateProcessingTools(iframe);
     this.wordCounter.countWords();
  
     if (fullRefresh) {

@@ -47,29 +47,6 @@ describe('KeywordAnalyzer', () => {
     expect(count).toBe(4);
   });
 
-  describe('prepareAnalysisData()', () => {
-    it('should get only text nodes', () => {
-      const keywords = [new Keyword('keyword'), new Keyword('test')]
-      analyzer._prepareAnalysisData(keywords);
-      expect(analyzer._textNodes).toBeDefined();
-      expect(analyzer._nodeGroups).toBeUndefined();
-    });
-
-    it('should get only node groups', () => {
-      const keywords = [new Keyword('test keyword'), new Keyword('another test keyword')]
-      analyzer._prepareAnalysisData(keywords);
-      expect(analyzer._nodeGroups).toBeDefined();
-      expect(analyzer._textNodes).toBeUndefined();
-    });
-
-    it('should get text nodes and node groups', () => {
-      const keywords = [new Keyword('keyword'), new Keyword('test keyword')]
-      analyzer._prepareAnalysisData(keywords);
-      expect(analyzer._textNodes).toBeDefined();
-      expect(analyzer._nodeGroups).toBeDefined();
-    });
-  });
-
   describe('analyzeKeyword()', () => {
     let keywords;
 
@@ -77,9 +54,7 @@ describe('KeywordAnalyzer', () => {
       keywords = [new Keyword('keyword'), new Keyword('compound keyword')];
     });
 
-    it('should update keyword data correctly', () => {
-      const spy = jest.spyOn(analyzer._strategy, 'reset');
-  
+    it('should update keyword data correctly', () => {  
       analyzer.analyzeKeyword(keywords[0]);
       expect(keywords[0].frequency).toBe(7);
       expect(keywords[0].keywordOccurrences.title).toBe(1);
@@ -101,12 +76,6 @@ describe('KeywordAnalyzer', () => {
       expect(keywords[1].keywordOccurrences.alt).toBe(0);
       expect(keywords[1].density).toBeCloseTo(5.71);
       expect(keywords[1].status).toBe('done');
-  
-      expect(analyzer._textNodes).toBeDefined();
-      expect(analyzer._nodeGroups).toBeDefined();
-      expect(spy).toHaveBeenCalledTimes(2);
-  
-      spy.mockRestore();
     });
 
     it('should reanalyze keyword correctly', () => {  
@@ -123,8 +92,6 @@ describe('KeywordAnalyzer', () => {
   });
 
   test('analyzeKeywords() should process multiple keywords', () => {
-    const spy = jest.spyOn(analyzer._strategy, 'reset');
-
     const keywords = [new Keyword('keyword'), new Keyword('appears'), new Keyword('keyword appears')];
 
     analyzer.analyzeKeywords(keywords);
@@ -143,12 +110,6 @@ describe('KeywordAnalyzer', () => {
     expect(keywords[2].keywordOccurrences.description).toBe(0);
     expect(keywords[2].keywordOccurrences.p).toBe(3);
     expect(keywords[2].keywordOccurrences.em).toBe(0);
-
-    expect(analyzer._textNodes).toBeDefined();
-    expect(analyzer._nodeGroups).toBeDefined();
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    spy.mockRestore();
   });
 
   afterAll(() => {
