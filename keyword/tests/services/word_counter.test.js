@@ -25,7 +25,7 @@ describe('WordCounter', () => {
       <p>This is a test of ("il caffè")</p>
       <img src="test.jpg" alt="Image alt text">
     `;
-    const treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document);
     const textProcessor = new TextProcessor(document, treeWalker);
     const tagAccessor = new TagAccessor(document);
     wordCounter = new WordCounter(textProcessor, tagAccessor);

@@ -20,7 +20,7 @@ describe('TextProcessor', () => {
         <p>Another<b style="display: inline;">test</b></p>
       </div> 
     `;
-    const treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document);
     processor = new TextProcessor(document, treeWalker);
   });
 
