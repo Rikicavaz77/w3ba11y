@@ -63,5 +63,11 @@
 <!-- CONTACTS -->
 ## Contacts
 
+For questions or support requests:
+
+📧 **Email:**
+1. [riccardo.cavalli@studenti.unipd.it](mailto:riccardo.cavalli@studenti.unipd.it)
+2. [rikicavalli2002@gmail.com](mailto:rikicavalli2002@gmail.com)
+
 <!-- CREDITS -->
 ## Credits
