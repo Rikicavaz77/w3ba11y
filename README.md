@@ -34,7 +34,7 @@
     <li>🚀<a href="#usage">Usage</a></li>
     <li>🐞<a href="#bug-report">Bug Report</a></li>
     <li>📄<a href="#license">License</a></li>
-    <li>📬<a href="#contact">Contacts</a></li>
+    <li>📬<a href="#contacts">Contacts</a></li>
     <li>📝<a href="#credits">Credits</a></li>
   </ol>
 </details>
@@ -61,7 +61,7 @@
 ## License
 
 <!-- CONTACTS -->
-## Contact
+## Contacts
 
 <!-- CREDITS -->
 ## Credits
