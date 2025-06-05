@@ -5,6 +5,63 @@
 [![License](https://img.shields.io/github/license/Rikicavaz77/w3ba11y?cacheSeconds=0)](https://github.com/Rikicavaz77/w3ba11y/blob/main/LICENSE)
 [![Language](https://img.shields.io/github/languages/top/Rikicavaz77/w3ba11y)](https://github.com/Rikicavaz77/w3ba11y)
 
-<h1 align="center">w3ba11y</h1>
-<h2 align="center">Documentazione</h2>
-<p align="center">La documentazione di progetto è visibile <a href="https://github.com/Rikicavaz77/Stage-Docs" target="_blank"><b>qui</b></a>.</p>
+<div align="center">
+  <img src="static/img/icon.png" alt="Logo" width="120" height="120">
+  <h3 style="font-size: 50px;" align="center">📘w3ba11y - User Manual</h3>
+  <p align="center">
+    <em>"For better accessibility and seo optimization..."</em>
+    <br />
+    <a href="https://github.com/Rikicavaz77/Stage-Docs"><strong>Explore the docs »</strong></a>
+  </p>
+</div>
+
+<details>
+  <summary><strong>Table of Contents</strong></summary>
+  <ol>
+    <li>
+      📦<a href="#about-the-project">About The Project</a>
+      <ul>
+        <li>🛠️<a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      🔧<a href="#getting-started">Getting Started</a>
+      <ul>
+        <li>⚙️<a href="#prerequisites">Prerequisites</a></li>
+        <li>💾<a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li>🚀<a href="#usage">Usage</a></li>
+    <li>🐞<a href="#bug-report">Bug Report</a></li>
+    <li>📄<a href="#license">License</a></li>
+    <li>📬<a href="#contact">Contacts</a></li>
+    <li>📝<a href="#credits">Credits</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+### Built With
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+### Prerequisites
+
+### Installation
+
+<!-- USAGE -->
+## Usage
+
+<!-- BUG REPORT -->
+## Bug report
+
+<!-- LICENSE -->
+## License
+
+<!-- CONTACTS -->
+## Contact
+
+<!-- CREDITS -->
+## Credits
