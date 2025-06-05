@@ -7,7 +7,7 @@
 
 <div align="center">
   <img src="static/img/icon.png" alt="Logo" width="120" height="120">
-  <h3 style="font-size: 50px;" align="center">📘w3ba11y - User Manual</h3>
+  <h3 align="center">📘w3ba11y - User Manual</h3>
   <p align="center">
     <em>"For better accessibility and seo optimization..."</em>
     <br />
