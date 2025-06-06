@@ -30,7 +30,7 @@ class AnalysisResultView {
       <header class="section__header">
         <h2 class="section__title">Keywords Analysis Result</h2>
         <div class="header__tabs">
-          <button data-section="dashboard" class="ri-arrow-go-back-line keywords__section__button keywords__section__button--back">
+          <button type="button" data-section="dashboard" class="ri-arrow-go-back-line keywords__section__button keywords__section__button--back">
             <span class="visually-hidden">Back to general</span>
           </button>
         </div>
@@ -79,7 +79,7 @@ class AnalysisResultView {
         <h3 class="keywords__analysis-item__title">Keyword:</h3>
         <div class="keywords__analysis-item__action-container">
           <span class="keyword-name">${Utils.escapeHTML(keywordItem.name)}</span>
-          <button class="keywords__analysis-item__button keyword-button--highlight ${highlightClass}" data-keyword-source="result">
+          <button type="button" class="keywords__analysis-item__button keyword-button--highlight ${highlightClass}" data-keyword-source="result">
             <span class="visually-hidden">Highlight keyword</span>
             <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="keywords__icon--medium keywords__icon--middle-align" aria-hidden="true">
               <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
