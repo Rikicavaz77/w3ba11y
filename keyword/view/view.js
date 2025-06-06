@@ -50,7 +50,7 @@ class KeywordView {
   }
 
   get activeTab() {
-    return this._activeTabButton;
+    return this._activeTab;
   }
 
   get dashboardSection() {
