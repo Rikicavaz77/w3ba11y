@@ -42,25 +42,27 @@ class KeywordHighlighter {
         --highlight-bg-color: #98746d;
         --highlight-color: #011502;
         --highlight-border-color: #ba9588;
-        background: linear-gradient(to right, var(--highlight-bg-color), rgba(255, 255, 255, 0.4));
-        color: var(--highlight-color);
+        background: linear-gradient(to right, var(--highlight-bg-color), rgba(255, 255, 255, 0.4)) !important;
+        color: var(--highlight-color) !important;
         position: relative;
         display: inline-block;
-        padding: 0.2em 1em;
+        padding: 0.2em 0.8em;
         border-radius: 6px;
-        border: 2px solid var(--highlight-border-color);
+        border: 2px solid var(--highlight-border-color) !important;
       }
       .w3ba11y__highlight-keyword::before {
         font-size: calc((0.6em + 0.6rem) / 2);
-        background-color: #000;
-        color: #fff;
+        background-color: #000 !important;
+        color: #fff !important;
         content: attr(data-parent);
         text-transform: capitalize;
+        line-height: 1;
         position: absolute;
         top: -4px;
         left: -2px;
-        padding: 0 0.2em;
+        padding: 0.4em;
         border-radius: 6px;
+        pointer-events: none;
       }
     `;
 
