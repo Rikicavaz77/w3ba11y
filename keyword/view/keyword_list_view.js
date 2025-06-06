@@ -161,14 +161,14 @@ class KeywordListView {
   }
 
   scrollToPagination() {
-    if (this._pagination) {
-      this._pagination.scrollIntoView({
-        block: 'nearest'
-      });
-    }
+    this._pagination?.scrollIntoView({
+      block: 'nearest'
+    });
   }
 
   updateSortButtons(clickedButton) {
+    if (!clickedButton) return;
+    
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = clickedButton;
     this._currentSortButton.classList.add('keywords__sort-button--active');

@@ -3,11 +3,11 @@ class KeywordView {
     this._iframe = iframe;
     this._header = null;
     this._body = null;
+    this._activeSection = null;
     this._refreshButton = null;
     this._tabButtons = null;
     this._activeTabButton = null;
-    this._overviewTab = null;
-    this._settingsTab = null;
+    this._activeTab = null;
     this._colorInputs = null;
     this._customKeywordInput = null;
     this._keywordHighlightCheckbox = null;
@@ -33,6 +33,10 @@ class KeywordView {
     return this._body;
   }
 
+  get activeSection() {
+    return this._activeSection;
+  }
+
   get refreshButton() {
     return this._refreshButton;
   }
@@ -45,12 +49,16 @@ class KeywordView {
     return this._activeTabButton;
   }
 
+  get activeTab() {
+    return this._activeTab;
+  }
+
   get dashboardSection() {
     return this._container.querySelector('.keywords__section--dashboard');
   }
 
   get overviewTab() {
-    return this._overviewTab;
+    return this._container.querySelector('.tab--overview');
   }
 
   get overviewTabButton() {
@@ -58,7 +66,7 @@ class KeywordView {
   }
 
   get settingsTab() {
-    return this._settingsTab;
+    return this._container.querySelector('.tab--settings');
   }
 
   get settingsTabButton() {
@@ -109,6 +117,10 @@ class KeywordView {
     this._body = body;
   }
 
+  set activeSection(section) {
+    this._activeSection = section;
+  }
+
   set refreshButton(button) {
     this._refreshButton = button;
   }
@@ -119,6 +131,10 @@ class KeywordView {
 
   set activeTabButton(button) {
     this._activeTabButton = button;
+  }
+
+  set activeTab(tab) {
+    this._activeTab = tab;
   }
 
   set colorInputs(colorInputs) {
@@ -219,6 +235,7 @@ class KeywordView {
 
     this._header = keywordViewSection.querySelector('.section__header');
     this._body = keywordViewSection.querySelector('.section__body');
+    this._activeSection = keywordViewSection.querySelector('.keywords__section--dashboard');
     this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
     this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
     this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
@@ -264,7 +281,7 @@ class KeywordView {
       overviewContainer = document.createElement('div');
       overviewContainer.classList.add('keywords__overview-container', 'tab', 'tab--active', 'tab--overview');
       overviewContainer.dataset.tab = 'overview';
-      this._overviewTab = overviewContainer;
+      this._activeTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
     const warningIconSvg = `
@@ -329,7 +346,6 @@ class KeywordView {
       settingsContainer = document.createElement('div');
       settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings');
       settingsContainer.dataset.tab = 'settings';
-      this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
     settingsContainer.innerHTML = `
@@ -445,12 +461,18 @@ class KeywordView {
   }
 
   toggleSection(section) {
-    this.getAllSection().forEach(section => section.classList.remove('keywords__section--active'));
-    this.getSection(section)?.classList.add('keywords__section--active');
+    const newSection = this.getSection(section);
+
+    if (!newSection || this._activeSection === newSection) 
+      return;
+
+    this._activeSection?.classList.remove('keywords__section--active');
+
+    newSection.classList.add('keywords__section--active');
+    this._activeSection = newSection;
+
     const anchor = document.querySelector('.w3ba11y__header');
-    if (anchor) {
-      anchor.scrollIntoView();
-    }
+    anchor?.scrollIntoView();
   }
 
   showTooltip(event) {
@@ -466,25 +488,29 @@ class KeywordView {
   }
 
   hideAllTooltips() {
-    this.tooltips.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
+    this.tooltips?.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
   }
 
   changeTab(clickedButton) {
-    if (this._activeTabButton === clickedButton)
+    if (!clickedButton || this._activeTabButton === clickedButton)
       return;
 
+    this._activeTabButton?.classList.remove('tab__button--active');
+    this._activeTab?.classList.remove('tab--active');
+
     this._activeTabButton = clickedButton;
-    this._container.querySelector('.tab__button--active').classList.remove('tab__button--active');
-    this._container.querySelector('.tab--active').classList.remove('tab--active');
+    this._activeTab = this._container.querySelector(`.tab--${clickedButton.dataset.tab}`);
     this._activeTabButton.classList.add('tab__button--active');
-    this._container.querySelector(`.tab--${clickedButton.dataset.tab}`).classList.add('tab--active');
+    this._activeTab?.classList.add('tab--active');
   }
 
   isButtonActive(clickedButton) {
+    if (!clickedButton) return false;
     return clickedButton.classList.contains('keyword-button--highlight--active');
   }
 
   setActiveButton(clickedButton) {
+    if (!clickedButton) return;
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
     clickedButton.classList.add('keyword-button--highlight--active');
   }
@@ -493,20 +519,18 @@ class KeywordView {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
   }
 
-  getAllSection() {
-    return this._container.querySelectorAll('.keywords__section');
-  }
-
   getSection(section) {
     return this._container.querySelector(`.keywords__section--${section}`);
   }
 
   clearHighlightCheckbox() {
-    this._keywordHighlightCheckbox.checked = false;
+    if (this._keywordHighlightCheckbox)
+      this._keywordHighlightCheckbox.checked = false;
   }
 
   clearCustomKeywordInput() {
-    this._customKeywordInput.value = '';
+    if (this._customKeywordInput)
+      this._customKeywordInput.value = '';
   }
 }
 
