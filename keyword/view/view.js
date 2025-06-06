@@ -117,8 +117,8 @@ class KeywordView {
     this._body = body;
   }
 
-  set activeSection(activeSection) {
-    this._activeSection = activeSection;
+  set activeSection(section) {
+    this._activeSection = section;
   }
 
   set refreshButton(button) {
@@ -131,6 +131,10 @@ class KeywordView {
 
   set activeTabButton(button) {
     this._activeTabButton = button;
+  }
+
+  set activeTab(tab) {
+    this._activeTab = tab;
   }
 
   set colorInputs(colorInputs) {
