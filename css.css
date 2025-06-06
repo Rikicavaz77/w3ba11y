@@ -734,6 +734,11 @@ pre {
   border-radius: 6px;
   border: 1px solid #9f9f9f;
   box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+  transition: box-shadow 0.2s ease;
+}
+
+.keywords__input-wrapper:focus-within {
+  box-shadow: 0 0 0 2px #af0bcc;
 }
 
 .keywords__input-wrapper__prefix {
