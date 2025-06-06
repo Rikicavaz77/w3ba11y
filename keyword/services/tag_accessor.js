@@ -4,19 +4,19 @@ class TagAccessor {
     this._cache = {};
     this._useCache = useCache;
     this._tagAccess = {
-      title:       { selector: 'title', type: 'single', textSource: 'innerText' },
+      title:       { selector: 'title', type: 'single', textSource: 'textContent' },
       description: { selector: 'meta[name="description" i]', type: 'single', textSource: 'content' },
-      h1:          { selector: 'h1', type: 'multi', textSource: 'innerText' },
-      h2:          { selector: 'h2', type: 'multi', textSource: 'innerText' },
-      h3:          { selector: 'h3', type: 'multi', textSource: 'innerText' },
-      h4:          { selector: 'h4', type: 'multi', textSource: 'innerText' },
-      h5:          { selector: 'h5', type: 'multi', textSource: 'innerText' },
-      h6:          { selector: 'h6', type: 'multi', textSource: 'innerText' },
-      p:           { selector: 'p', type: 'multi', textSource: 'innerText' },
-      strong:      { selector: 'strong', type: 'multi', textSource: 'innerText' },
-      em:          { selector: 'em', type: 'multi', textSource: 'innerText' },
-      a:           { selector: 'a', type: 'multi', textSource: 'innerText' },
-      li:          { selector: 'li', type: 'multi', textSource: 'innerText' },
+      h1:          { selector: 'h1', type: 'multi', textSource: 'textContent' },
+      h2:          { selector: 'h2', type: 'multi', textSource: 'textContent' },
+      h3:          { selector: 'h3', type: 'multi', textSource: 'textContent' },
+      h4:          { selector: 'h4', type: 'multi', textSource: 'textContent' },
+      h5:          { selector: 'h5', type: 'multi', textSource: 'textContent' },
+      h6:          { selector: 'h6', type: 'multi', textSource: 'textContent' },
+      p:           { selector: 'p', type: 'multi', textSource: 'textContent' },
+      strong:      { selector: 'strong', type: 'multi', textSource: 'textContent' },
+      em:          { selector: 'em', type: 'multi', textSource: 'textContent' },
+      a:           { selector: 'a', type: 'multi', textSource: 'textContent' },
+      li:          { selector: 'li', type: 'multi', textSource: 'textContent' },
       alt:         { selector: 'img[alt]', type: 'multi', textSource: 'alt' }
     };
   }
@@ -61,9 +61,7 @@ class TagAccessor {
 
   extractText(tagName, element) {
     const { textSource } = this._tagAccess[tagName];
-    const value = 
-      element?.[textSource] ??
-      (textSource === 'innerText' ? element?.textContent : undefined);
+    const value = element?.[textSource];
     return value?.toLowerCase() ?? '';
   }
 }
