@@ -461,6 +461,10 @@ pre {
   flex-shrink: 0;
 }
 
+.keywords__icon--settings {
+  color: #565252;
+}
+
 .keywords__icon--delete {
   color: #c40a0a;
 }
@@ -539,10 +543,6 @@ pre {
   justify-content: center;
   column-gap: 0.3rem;
 } 
-
-.keywords__settings-icon {
-  color: #565252;
-}
 
 .w3ba11y__section--keyword .tab__button--active {
   background-color: #fff;
@@ -697,6 +697,7 @@ pre {
   text-align: center;
   padding: 0.4rem;
   border-radius: 6px;
+  z-index: 1000;
 }
 
 .keywords__tooltip-text::before {
