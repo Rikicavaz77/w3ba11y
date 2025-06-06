@@ -23,9 +23,9 @@
     {
       "resources": [
         "static/fonts/remixicon.css",
-        "static/fonts/remixicon.woff2",
-        "static/fonts/remixicon.woff",
         "static/fonts/remixicon.ttf",
+        "static/fonts/remixicon.woff",
+        "static/fonts/remixicon.woff2",
         "css.css",
         "static/img/logo.png", 
         "static/img/loading.gif"
