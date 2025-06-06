@@ -502,6 +502,12 @@ pre {
   border: 2px solid rgb(175, 11, 204);
 }
 
+.keywords__refresh-description {
+  font-size: 0.8rem;
+  text-align: justify;
+  margin: 0.3rem 0;
+}
+
 .w3ba11y__section--keyword .header__tabs {
   margin-top: 0.5rem;
 }

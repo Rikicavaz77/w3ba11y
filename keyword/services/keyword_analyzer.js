@@ -83,15 +83,15 @@ class KeywordAnalyzer {
     const prevTagCache = this._tagAccessor.useCache;
 
     try {
-      if (!prevTextCache) this._tagAccessor.useCache = true;
-      if (!prevTagCache) this._textProcessor.useCache = true;
+      if (!prevTextCache) this._textProcessor.useCache = true;
+      if (!prevTagCache) this._tagAccessor.useCache = true;
 
       keywords.forEach(keyword => {
         this._performAnalysis(keyword);
       });
     } finally {
-      if (!prevTextCache) this._tagAccessor.useCache = false;
-      if (!prevTagCache) this._textProcessor.useCache = false;
+      if (!prevTextCache) this._textProcessor.useCache = false;
+      if (!prevTagCache) this._tagAccessor.useCache = false;
 
       this._resetCache({
         text: !prevTextCache,

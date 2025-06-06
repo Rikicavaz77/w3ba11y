@@ -46,11 +46,11 @@ class TextProcessor {
     if (node.nodeType !== Node.ELEMENT_NODE) return false;
 
     const tag = node.nodeName.toLowerCase();
-    const display = window.getComputedStyle(node).display;
+    const display = this._doc.defaultView?.getComputedStyle(node)?.display;
 
-    if (!display.startsWith('inline')) return false;
+    if (display && !display.startsWith('inline')) return false;
 
-   return this.allowedInlineTags.includes(tag);
+    return this.allowedInlineTags.includes(tag);
   }
 
   getBlockParent(node) {
