@@ -76,11 +76,11 @@ class TextProcessor {
   }
 
   getWordsPattern() {
-    return /[\p{L}\p{N}]+(?:[’'_.-][\p{L}\p{N}]+)*/gu;
+    return /[\p{L}\p{N}]+(?:[’'_.–—-][\p{L}\p{N}]+)*/gu;
   }
 
   getCompoundSplitPattern() {
-    return /[^\p{L}\p{N} ’'_.-]+|(?<![\p{L}\p{N}])[’'_.-]|[’'_.-](?![\p{L}\p{N}])/u;
+    return /[^\p{L}\p{N}\s’'_.–—-]+|(?<![\p{L}\p{N}])[’'_.–—-]|[’'_.–—-](?![\p{L}\p{N}])/u;
   }
 
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
@@ -92,7 +92,7 @@ class TextProcessor {
       ? `(${flexKeyword})`
       : flexKeyword;
 
-    const pattern = `(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${basePattern}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`;
+    const pattern = `(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.–—-])${basePattern}(?![\\p{L}\\p{N}]|[’'_.–—-][\\p{L}\\p{N}])`;
 
     return new RegExp(pattern, flags);
   }

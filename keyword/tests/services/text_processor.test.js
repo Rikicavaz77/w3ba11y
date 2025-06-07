@@ -24,31 +24,53 @@ describe('TextProcessor', () => {
     processor = new TextProcessor(document, treeWalker);
   });
 
-  test('getTextNodes() should return valid text nodes', () => {
-    const textNodes = processor.getTextNodes();
-    const values = textNodes.map(n => n.nodeValue.trim());
-    expect(values).toEqual([
-      'Main heading', 'This is a test.', 'Another', 'test', 'Another', 'test'
-    ]);
+  describe('getTextNodes()', () => {
+    it('should return valid text nodes', () => {
+      const textNodes = processor.getTextNodes();
+      const values = textNodes.map(n => n.nodeValue.trim());
+      expect(values).toEqual([
+        'Main heading', 'This is a test.', 'Another', 'test', 'Another', 'test'
+      ]);
+    });
+
+    it('should cache result when useCache is true', () => {
+      processor.useCache = true;
+
+      const firstCall = processor.getTextNodes();
+      const secondCall = processor.getTextNodes();
+  
+      expect(secondCall).toBe(firstCall);
+    });
   });
 
-  test('getTextNodeGroups() should group text nodes by block parent', () => {
-    const nodeGroups = processor.getTextNodeGroups();
-    expect(nodeGroups.length).toBe(4);
-    expect(nodeGroups[0].virtualText).toBe('Main heading');
-    expect(nodeGroups[0].parent.nodeName.toLowerCase()).toBe('h1');
-    expect(nodeGroups[0].nodes[0].start).toBe(0);
-    expect(nodeGroups[0].nodes[0].end).toBe(12);
-    expect(nodeGroups[1].virtualText).toBe('This is a test.');
-    expect(nodeGroups[1].parent.nodeName.toLowerCase()).toBe('p');
-    expect(nodeGroups[2].virtualText).toBe('Another test');
-    expect(nodeGroups[2].parent.nodeName.toLowerCase()).toBe('p');
-    expect(nodeGroups[2].nodes[0].start).toBe(0);
-    expect(nodeGroups[2].nodes[0].end).toBe(8);
-    expect(nodeGroups[2].nodes[1].start).toBe(8);
-    expect(nodeGroups[2].nodes[1].end).toBe(12);
-    expect(nodeGroups[3].virtualText).toBe('Another test');
-    expect(nodeGroups[3].parent.nodeName.toLowerCase()).toBe('p');
+  describe('getTextNodeGroups()', () => {
+    it('should group text nodes by block parent', () => {
+      const nodeGroups = processor.getTextNodeGroups();
+      expect(nodeGroups.length).toBe(4);
+      expect(nodeGroups[0].virtualText).toBe('Main heading');
+      expect(nodeGroups[0].parent.nodeName.toLowerCase()).toBe('h1');
+      expect(nodeGroups[0].nodes[0].start).toBe(0);
+      expect(nodeGroups[0].nodes[0].end).toBe(12);
+      expect(nodeGroups[1].virtualText).toBe('This is a test.');
+      expect(nodeGroups[1].parent.nodeName.toLowerCase()).toBe('p');
+      expect(nodeGroups[2].virtualText).toBe('Another test');
+      expect(nodeGroups[2].parent.nodeName.toLowerCase()).toBe('p');
+      expect(nodeGroups[2].nodes[0].start).toBe(0);
+      expect(nodeGroups[2].nodes[0].end).toBe(8);
+      expect(nodeGroups[2].nodes[1].start).toBe(8);
+      expect(nodeGroups[2].nodes[1].end).toBe(12);
+      expect(nodeGroups[3].virtualText).toBe('Another test');
+      expect(nodeGroups[3].parent.nodeName.toLowerCase()).toBe('p');
+    });
+
+    it('should cache result when useCache is true', () => {
+      processor.useCache = true;
+
+      const firstCall = processor.getTextNodeGroups();
+      const secondCall = processor.getTextNodeGroups();
+  
+      expect(secondCall).toBe(firstCall);
+    });
   });
 
   describe('getParentName()', () => {
@@ -144,14 +166,62 @@ describe('TextProcessor', () => {
     ]);
   });
 
-  test('getCompoundSplitPattern() should split correctly around invalid characters in context', () => {
-    const pattern = processor.getCompoundSplitPattern();
-    const text = `word1-test.word2'word3...another`;
-    const split = text.split(pattern).filter(Boolean);
-    expect(split).toEqual([
-      `word1-test.word2'word3`, 
-      'another'
-    ]);
+  describe('getCompoundSplitPattern()', () => {
+    it('should split correctly around invalid characters in context', () => {
+      const pattern = processor.getCompoundSplitPattern();
+      const text = `word1-test.word2'word3...another`;
+      const split = text.split(pattern).filter(Boolean);
+      expect(split).toEqual([
+        `word1-test.word2'word3`, 
+        'another'
+      ]);
+    });
+
+    it('should split complex text correctly', () => {
+      const pattern = processor.getCompoundSplitPattern();
+      const text = `Despite the project's delay—which, to be fair, was partly expected—we proceeded. 
+        However, questions remain: Why now? Who approved it? And more importantly, what are the long-term 
+        implications? That said, the team—divided, exhausted, yet oddly optimistic—pressed on, adjusting
+        timelines, redefining priorities, and documenting every step. In retrospect, perhaps we should’ve 
+        paused; re-evaluated. But momentum (as flawed as it was) carried us forward—blindly, even stubbornly.
+        Still, lessons were learned: not just procedural or    technical, but human—messy, nuanced, essential.
+      `;
+      const split = text
+        .split(pattern)
+        .map(part => part.replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+      expect(split).toEqual([
+        `Despite the project's delay—which`, 
+        'to be fair',
+        'was partly expected—we proceeded',
+        'However',
+        'questions remain',
+        'Why now',
+        'Who approved it',
+        'And more importantly',
+        'what are the long-term implications',
+        'That said',
+        'the team—divided',
+        'exhausted',
+        'yet oddly optimistic—pressed on',
+        'adjusting timelines',
+        'redefining priorities',
+        'and documenting every step',
+        'In retrospect',
+        `perhaps we should’ve paused`,
+        're-evaluated',
+        'But momentum',
+        'as flawed as it was',
+        'carried us forward—blindly',
+        'even stubbornly',
+        'Still',
+        'lessons were learned',
+        'not just procedural or technical',
+        'but human—messy',
+        'nuanced',
+        'essential'
+      ]);
+    });
   });
 
   describe('getKeywordPattern()', () => {
@@ -172,6 +242,17 @@ describe('TextProcessor', () => {
         '.'
       ]);
     });
+  });
+
+  test('resetCache() should clear internal cache', () => {
+    processor.useCache = true;
+
+    const firstCall = processor.getTextNodes();
+    processor.resetCache();
+    const secondCall = processor.getTextNodes();
+
+    expect(processor.useCache).toBe(true);
+    expect(secondCall).not.toBe(firstCall);
   });
 
   afterAll(() => {

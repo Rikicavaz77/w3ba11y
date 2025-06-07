@@ -462,16 +462,16 @@ class KeywordView {
     this.renderKeywordInputBox();
   }
 
-  toggleSection(section) {
-    const newSection = this.getSection(section);
+  toggleSection(sectionName) {
+    const section = this.getSection(sectionName);
 
-    if (!newSection || this._activeSection === newSection) 
+    if (!section || this._activeSection === section) 
       return;
 
     this._activeSection?.classList.remove('keywords__section--active');
 
-    newSection.classList.add('keywords__section--active');
-    this._activeSection = newSection;
+    section.classList.add('keywords__section--active');
+    this._activeSection = section;
 
     const anchor = document.querySelector('.w3ba11y__header');
     anchor?.scrollIntoView();
@@ -521,8 +521,8 @@ class KeywordView {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
   }
 
-  getSection(section) {
-    return this._container.querySelector(`.keywords__section--${section}`);
+  getSection(sectionName) {
+    return this._container.querySelector(`.keywords__section--${sectionName}`);
   }
 
   clearHighlightCheckbox() {
