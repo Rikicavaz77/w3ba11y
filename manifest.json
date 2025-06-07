@@ -2,6 +2,8 @@
   "name": "w3b1y",
   "version": "1.0",
   "manifest_version": 3,
+  "description": "Tool to analyze and improve the accessibility and SEO optimization of websites",
+  "author": "Original author(s): Riccardo Fabbian - see fabbricca/w3ba11y. Maintained and extended by Riccardo Cavalli for academic purposes",
   "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
