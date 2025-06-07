@@ -144,6 +144,43 @@ The extension will now be loaded and available in your browser.
 <!-- USAGE -->
 ## 🚀 Usage
 
+Once the extension is installed and loaded in your browser:
+
+1. Navigate to any webpage you want to analyze;
+2. Click on the extension icon in the browser toolbar;
+3. A left sidebar will appear, allowing you to:
+    - 📚 Inspect heading structure (H1–H6);
+    - 🖼️ Inspect images and check for missing alt attributes;
+    - 🔑 Analyze and visually highlight keyword distribution;
+    - ℹ️ Get general information about other accessibility and SEO metrics.
+
+#### Headings
+
+This feature analyzes the **heading hierarchy**. Any headings that do not follow a consistent structure will be flagged as incorrect.
+
+#### Images
+
+This feature collects images on the page, including purely decorative ones inserted via CSS. In addition to checking for the presence of **alternative text** (alt attributes), the extension also analyzes image **sizes**. A general summary is provided, highlighting any errors or warnings, along with filtering options for easier navigation. A detailed list of detected images is also generated, each accompanied by specific information (such as alt text, size, etc.) and related status messages. It is also possible to **visually highlight** an image directly on the page.
+
+#### Keywords
+
+This feature provides a general overview of the **on-page SEO analysis**:
+- Meta keywords tag content;
+- Page language;
+- Total word count;
+- Unique word count.
+
+These values serve as a base for keyword analysis. The interface is divided into four lists: meta keywords, user-defined keywords, most frequent single-word and two-word keywords. Each list can be sorted and filtered.
+
+The keyword analysis results include:
+- **Frequency** (warning if 0);
+- **Density** (warning if 0%);
+- Number of occurrences within a predefined set of **semantic tags**.
+
+Each keyword can be **visually highlighted** within the page. User-defined keywords can be highlighted even if they are not included in any list. Each occurrence is styled with different background, text, and border colors based on the semantic tag that contains it (colors are customizable via settings).
+
+The analysis is performed on a static copy of the DOM to ensure consistency across all keywords. A dedicated button allows for global reanalysis at any time.
+
 <!-- BUG REPORT -->
 ## 🐞 Bug Report
 
