@@ -111,8 +111,8 @@ pre {
 .warning-message-icon {
   color: rgb(218, 145, 19);
   flex: none;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.3rem;
+  height: 1.3rem;
 }
 
 .w3ba11y__logo {
@@ -129,18 +129,16 @@ pre {
   display: flex;
   margin-left: auto;
 }
-.w3ba11y__settings-button,
 .w3ba11y__close-button {
   position: relative;
-  display: flex;
   margin: 0 0.3rem;
   padding: 0.3rem;
 }
-.w3ba11y__settings-icon,
 .w3ba11y__close-icon {
   color: #565252;
   width: 2rem;
   height: 2rem;
+  vertical-align: middle;
 }
 
 .w3ba11y__body {
@@ -433,8 +431,8 @@ pre {
 }
 
 .keywords__icon--medium {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .keywords__icon--small {
@@ -461,6 +459,10 @@ pre {
 
 .keywords__icon--no-shrink {
   flex-shrink: 0;
+}
+
+.keywords__icon--settings {
+  color: #565252;
 }
 
 .keywords__icon--delete {
@@ -695,6 +697,7 @@ pre {
   text-align: center;
   padding: 0.4rem;
   border-radius: 6px;
+  z-index: 1000;
 }
 
 .keywords__tooltip-text::before {
@@ -731,6 +734,11 @@ pre {
   border-radius: 6px;
   border: 1px solid #9f9f9f;
   box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+  transition: box-shadow 0.2s ease;
+}
+
+.keywords__input-wrapper:focus-within {
+  box-shadow: 0 0 0 2px #af0bcc;
 }
 
 .keywords__input-wrapper__prefix {

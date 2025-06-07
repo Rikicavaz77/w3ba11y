@@ -61,7 +61,7 @@
 ## License
 
 <!-- CONTACTS -->
-## Contacts
+## 📬 Contacts
 
 For questions or support requests:
 

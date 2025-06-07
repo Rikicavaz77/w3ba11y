@@ -68,9 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       interfaceInstance.getAllSection().forEach(section => section.classList.remove('w3ba11y__section--active'));
       interfaceInstance.getSection(target.dataset.section)?.classList.add('w3ba11y__section--active');
       const anchor = interfaceInstance.header;
-      if (anchor) {
-        anchor.scrollIntoView();
-      }
+      anchor?.scrollIntoView();
     }
   };
 
