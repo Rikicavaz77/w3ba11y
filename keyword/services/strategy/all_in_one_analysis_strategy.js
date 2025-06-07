@@ -8,7 +8,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
-  reset() {
+  resetCache() {
     this._ancestorCache = new WeakMap(); 
   }
 

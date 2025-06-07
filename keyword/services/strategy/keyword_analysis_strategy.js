@@ -5,8 +5,8 @@ class KeywordAnalysisStrategy {
     }
   }
 
-  reset() {
-    throw new Error("reset() must be implemented");
+  resetCache() {
+    throw new Error("resetCache() must be implemented");
   }
 
   setContext(context) {

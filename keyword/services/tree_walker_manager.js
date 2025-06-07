@@ -1,20 +1,29 @@
 class TreeWalkerManager {
-  constructor(root) {
-    this._root = root;
+  constructor(doc) {
+    this._doc = doc;
+    this._root = doc.body;
     this._invalidTags = ['script', 'style', 'noscript', 'iframe', 'object', 'textarea', 'button', 'svg'];
     this.createTreeWalker();
+  }
+
+  set doc(doc) {
+    this._doc = doc;
   }
 
   set root(root) {
     this._root = root;
   }
 
+  get doc() {
+    return this._doc;
+   }
+
   get root() {
-   return  this._root;
+   return this._root;
   }
 
   createTreeWalker() {
-    this._walker = document.createTreeWalker(
+    this._walker = this._doc.createTreeWalker(
       this._root,
       NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
       {

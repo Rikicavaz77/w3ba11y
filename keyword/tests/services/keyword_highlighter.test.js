@@ -18,7 +18,7 @@ describe('KeywordHighlighter', () => {
       <p>Compound keyword appears in the same tag</p>
       <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
-    const treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document);
     const textProcessor = new TextProcessor(document, treeWalker);
     highlighter = new KeywordHighlighter(textProcessor);
   });

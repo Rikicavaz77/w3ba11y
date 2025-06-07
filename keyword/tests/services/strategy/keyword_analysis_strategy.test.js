@@ -10,11 +10,11 @@ describe('KeywordAnalysisStrategy', () => {
     );
   });
 
-  test('should throw error if reset is not implemented', () => {
+  test('should throw error if resetCache is not implemented', () => {
     class DummyStrategy extends KeywordAnalysisStrategy {}
     const strategy = Object.create(DummyStrategy.prototype);
-    expect(() => strategy.reset()).toThrow(
-      'reset() must be implemented'
+    expect(() => strategy.resetCache()).toThrow(
+      'resetCache() must be implemented'
     );
   });
 

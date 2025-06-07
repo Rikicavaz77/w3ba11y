@@ -201,13 +201,15 @@ class KeywordView {
         <header class="section__header">
           <div class="keywords__main-title-container section__title">
             <h2>Keywords Analysis</h2>
-            <button type="button" class="keywords__button--refresh">
-              <span class="visually-hidden">Refresh analysis</span>
+            <button type="button" class="keywords__button--refresh" aria-describedby="refresh-keywords-analysis-description">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__icon--medium keywords__icon--middle-align">
                 <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z" clip-rule="evenodd" />
               </svg>
             </button>
           </div>
+          <p id="refresh-keywords-analysis-description" class="keywords__refresh-description">
+            The analysis is performed on a static copy of the DOM to ensure consistency across all keywords. If you've made dynamic changes to the page, click the refresh button to update the analysis.
+          </p>
           <div class="header__tabs">
             <button type="button" data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
               <span class="visually-hidden">Back to general</span>
@@ -460,16 +462,16 @@ class KeywordView {
     this.renderKeywordInputBox();
   }
 
-  toggleSection(section) {
-    const newSection = this.getSection(section);
+  toggleSection(sectionName) {
+    const section = this.getSection(sectionName);
 
-    if (!newSection || this._activeSection === newSection) 
+    if (!section || this._activeSection === section) 
       return;
 
     this._activeSection?.classList.remove('keywords__section--active');
 
-    newSection.classList.add('keywords__section--active');
-    this._activeSection = newSection;
+    section.classList.add('keywords__section--active');
+    this._activeSection = section;
 
     const anchor = document.querySelector('.w3ba11y__header');
     anchor?.scrollIntoView();
@@ -519,8 +521,8 @@ class KeywordView {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
   }
 
-  getSection(section) {
-    return this._container.querySelector(`.keywords__section--${section}`);
+  getSection(sectionName) {
+    return this._container.querySelector(`.keywords__section--${sectionName}`);
   }
 
   clearHighlightCheckbox() {

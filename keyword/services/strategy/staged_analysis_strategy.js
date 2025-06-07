@@ -3,7 +3,7 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
-  reset() {}
+  resetCache() {}
 
   analyzeSimpleKeyword(textNodes, pattern, keyword) {
     textNodes.forEach(node => {
