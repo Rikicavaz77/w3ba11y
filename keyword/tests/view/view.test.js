@@ -61,9 +61,11 @@ describe('KeywordView', () => {
     view.iframe = dummy;
     view.header = dummy;
     view.body = dummy;
+    view.activeSection = dummy;
     view.refreshButton = dummy;
     view.tabButtons = dummy;
     view.activeTabButton = dummy;
+    view.activeTab = dummy;
     view.colorInputs = dummy;
     view.customKeywordInput = dummy;
     view.keywordHighlightCheckbox = dummy;
@@ -72,9 +74,11 @@ describe('KeywordView', () => {
     expect(view.iframe).toBe(dummy);
     expect(view.header).toBe(dummy);
     expect(view.body).toBe(dummy);
+    expect(view.activeSection).toBe(dummy);
     expect(view.refreshButton).toBe(dummy);
     expect(view.tabButtons).toBe(dummy);
     expect(view.activeTabButton).toBe(dummy);
+    expect(view.activeTab).toBe(dummy);
     expect(view.colorInputs).toBe(dummy);
     expect(view.customKeywordInput).toBe(dummy);
     expect(view.keywordHighlightCheckbox).toBe(dummy);
@@ -397,20 +401,33 @@ describe('KeywordView', () => {
     expect(view.renderKeywordInputBox).toHaveBeenCalled();
   });
 
-  test('toggleSection() should activate correct section and scroll', () => {
-    const mockSection = document.createElement('div');
-    mockSection.classList.add('keywords__section', 'keywords__section--test');
-    view.container.appendChild(mockSection);
-    
-    const header = document.createElement('div');
-    header.classList.add('w3ba11y__header');
-    header.scrollIntoView = jest.fn();
-    document.body.querySelector('aside').prepend(header);
+  describe('toggleSection()', () => {
+    let header;
 
-    view.toggleSection('test');
-    expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(false);
-    expect(mockSection.classList.contains('keywords__section--active')).toBe(true);
-    expect(header.scrollIntoView).toHaveBeenCalled();
+    beforeEach(() => {
+      header = document.createElement('div');
+      header.classList.add('w3ba11y__header');
+      header.scrollIntoView = jest.fn();
+      document.body.querySelector('aside').prepend(header);
+    });
+    
+    it('should activate correct section and scroll', () => {    
+      const mockSection = document.createElement('div');
+      mockSection.classList.add('keywords__section', 'keywords__section--test');
+      view.container.appendChild(mockSection);
+
+      view.toggleSection('test');
+      expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(false);
+      expect(mockSection.classList.contains('keywords__section--active')).toBe(true);
+      expect(header.scrollIntoView).toHaveBeenCalled();
+    });
+
+    it('should not switch if section already active', () => {
+      view.toggleSection('dashboard');
+      expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(true);
+      expect(view.activeSection).toBe(view.dashboardSection);
+      expect(header.scrollIntoView).not.toHaveBeenCalled();
+    });
   });
 
   test('showTooltip() should make tooltip visible', () => {
@@ -478,12 +495,6 @@ describe('KeywordView', () => {
     view.container.appendChild(button);
     view.clearActiveButton(button);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
-  });
-
-  test('getAllSection() should return all sections', () => { 
-    const sections = view.getAllSection();
-    expect(sections.length).toBe(1);
-    expect(sections[0]).toBe(view.dashboardSection);
   });
 
   test('getSection() should return the section by class', () => { 

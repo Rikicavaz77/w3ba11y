@@ -3,11 +3,11 @@ class KeywordView {
     this._iframe = iframe;
     this._header = null;
     this._body = null;
+    this._activeSection = null;
     this._refreshButton = null;
     this._tabButtons = null;
     this._activeTabButton = null;
-    this._overviewTab = null;
-    this._settingsTab = null;
+    this._activeTab = null;
     this._colorInputs = null;
     this._customKeywordInput = null;
     this._keywordHighlightCheckbox = null;
@@ -33,6 +33,10 @@ class KeywordView {
     return this._body;
   }
 
+  get activeSection() {
+    return this._activeSection;
+  }
+
   get refreshButton() {
     return this._refreshButton;
   }
@@ -45,12 +49,16 @@ class KeywordView {
     return this._activeTabButton;
   }
 
+  get activeTab() {
+    return this._activeTab;
+  }
+
   get dashboardSection() {
     return this._container.querySelector('.keywords__section--dashboard');
   }
 
   get overviewTab() {
-    return this._overviewTab;
+    return this._container.querySelector('.tab--overview');
   }
 
   get overviewTabButton() {
@@ -58,7 +66,7 @@ class KeywordView {
   }
 
   get settingsTab() {
-    return this._settingsTab;
+    return this._container.querySelector('.tab--settings');
   }
 
   get settingsTabButton() {
@@ -109,6 +117,10 @@ class KeywordView {
     this._body = body;
   }
 
+  set activeSection(section) {
+    this._activeSection = section;
+  }
+
   set refreshButton(button) {
     this._refreshButton = button;
   }
@@ -119,6 +131,10 @@ class KeywordView {
 
   set activeTabButton(button) {
     this._activeTabButton = button;
+  }
+
+  set activeTab(tab) {
+    this._activeTab = tab;
   }
 
   set colorInputs(colorInputs) {
@@ -185,7 +201,7 @@ class KeywordView {
         <header class="section__header">
           <div class="keywords__main-title-container section__title">
             <h2>Keywords Analysis</h2>
-            <button class="keywords__button--refresh" type="button" aria-describedby="refresh-keywords-analysis-description">
+            <button type="button" class="keywords__button--refresh" aria-describedby="refresh-keywords-analysis-description">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__icon--medium keywords__icon--middle-align">
                 <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z" clip-rule="evenodd" />
               </svg>
@@ -195,14 +211,14 @@ class KeywordView {
             The analysis is performed on a static copy of the DOM to ensure consistency across all keywords. If you've made dynamic changes to the page, click the refresh button to update the analysis.
           </p>
           <div class="header__tabs">
-            <button data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
+            <button type="button" data-section="general" class="ri-arrow-go-back-line section__button section__button--back">
               <span class="visually-hidden">Back to general</span>
             </button>
-            <button data-tab="overview" class="tab__button tab__button--active tab__button--overview">
+            <button type="button" data-tab="overview" class="tab__button tab__button--active tab__button--overview">
               <span class="button__title">Overview</span>
             </button>
-            <button data-tab="settings" class="tab__button tab__button--settings">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w3ba11y__settings-icon" aria-hidden="true">
+            <button type="button" data-tab="settings" class="tab__button tab__button--settings">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__icon--settings keywords__icon--large" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
               </svg>
@@ -221,6 +237,7 @@ class KeywordView {
 
     this._header = keywordViewSection.querySelector('.section__header');
     this._body = keywordViewSection.querySelector('.section__body');
+    this._activeSection = keywordViewSection.querySelector('.keywords__section--dashboard');
     this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
     this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
     this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
@@ -266,7 +283,7 @@ class KeywordView {
       overviewContainer = document.createElement('div');
       overviewContainer.classList.add('keywords__overview-container', 'tab', 'tab--active', 'tab--overview');
       overviewContainer.dataset.tab = 'overview';
-      this._overviewTab = overviewContainer;
+      this._activeTab = overviewContainer;
       this._body.appendChild(overviewContainer);
     }
     const warningIconSvg = `
@@ -331,7 +348,6 @@ class KeywordView {
       settingsContainer = document.createElement('div');
       settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings');
       settingsContainer.dataset.tab = 'settings';
-      this._settingsTab = settingsContainer;
       this._body.appendChild(settingsContainer);
     }
     settingsContainer.innerHTML = `
@@ -387,7 +403,7 @@ class KeywordView {
       <div class="keywords__analyze-box">
         <div class="keywords__input-wrapper">
           <span class="keywords__input-wrapper__prefix">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__icon--block keywords__icon--small" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__icon--small keywords__icon--block" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
             </svg>                
           </span>
@@ -447,12 +463,18 @@ class KeywordView {
   }
 
   toggleSection(section) {
-    this.getAllSection().forEach(section => section.classList.remove('keywords__section--active'));
-    this.getSection(section)?.classList.add('keywords__section--active');
+    const newSection = this.getSection(section);
+
+    if (!newSection || this._activeSection === newSection) 
+      return;
+
+    this._activeSection?.classList.remove('keywords__section--active');
+
+    newSection.classList.add('keywords__section--active');
+    this._activeSection = newSection;
+
     const anchor = document.querySelector('.w3ba11y__header');
-    if (anchor) {
-      anchor.scrollIntoView();
-    }
+    anchor?.scrollIntoView();
   }
 
   showTooltip(event) {
@@ -468,25 +490,29 @@ class KeywordView {
   }
 
   hideAllTooltips() {
-    this.tooltips.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
+    this.tooltips?.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
   }
 
   changeTab(clickedButton) {
-    if (this._activeTabButton === clickedButton)
+    if (!clickedButton || this._activeTabButton === clickedButton)
       return;
 
+    this._activeTabButton?.classList.remove('tab__button--active');
+    this._activeTab?.classList.remove('tab--active');
+
     this._activeTabButton = clickedButton;
-    this._container.querySelector('.tab__button--active').classList.remove('tab__button--active');
-    this._container.querySelector('.tab--active').classList.remove('tab--active');
+    this._activeTab = this._container.querySelector(`.tab--${clickedButton.dataset.tab}`);
     this._activeTabButton.classList.add('tab__button--active');
-    this._container.querySelector(`.tab--${clickedButton.dataset.tab}`).classList.add('tab--active');
+    this._activeTab?.classList.add('tab--active');
   }
 
   isButtonActive(clickedButton) {
+    if (!clickedButton) return false;
     return clickedButton.classList.contains('keyword-button--highlight--active');
   }
 
   setActiveButton(clickedButton) {
+    if (!clickedButton) return;
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
     clickedButton.classList.add('keyword-button--highlight--active');
   }
@@ -495,20 +521,18 @@ class KeywordView {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
   }
 
-  getAllSection() {
-    return this._container.querySelectorAll('.keywords__section');
-  }
-
   getSection(section) {
     return this._container.querySelector(`.keywords__section--${section}`);
   }
 
   clearHighlightCheckbox() {
-    this._keywordHighlightCheckbox.checked = false;
+    if (this._keywordHighlightCheckbox)
+      this._keywordHighlightCheckbox.checked = false;
   }
 
   clearCustomKeywordInput() {
-    this._customKeywordInput.value = '';
+    if (this._customKeywordInput)
+      this._customKeywordInput.value = '';
   }
 }
 
