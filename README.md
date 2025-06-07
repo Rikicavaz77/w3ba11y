@@ -21,6 +21,7 @@
       <a href="#about-the-project">📦About The Project</a>
       <ul>
         <li><a href="#built-with">🛠️Built With</a></li>
+        <li><a href="#structure">📁Structure</a></li>
       </ul>
     </li>
     <li>
@@ -39,22 +40,79 @@
 </details>
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## 📦 About The Project
 
-### Built With
+**w3ba11y** is a browser extension designed to analyze and improve the accessibility and SEO optimization of websites.  
+
+It is being developed as part of a university project shared among multiple interns.
+
+The extension allows users to inspect headings, keywords, images, and other on-page content relevant to accessibility or SEO.
+
+### 🛠️ Built With
+
+- [**JavaScript**](https://developer.mozilla.org/en-US/docs/Web/JavaScript): core logic and browser scripting;
+- [**HTML5**](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5): markup and structure;
+- [**CSS3**](https://developer.mozilla.org/en-US/docs/Web/CSS): custom styles and layout;
+- [**Chrome Extensions API**](https://developer.chrome.com/docs/extensions?hl=en): extension architecture (Manifest V3);
+- [**Jest**](https://jestjs.io): testing framework; 
+- **Icons**:
+  - [**Remix Icon**](https://remixicon.com);
+  - [**Font Awesome**](https://fontawesome.com);
+  - [**Heroicons**](https://heroicons.com).
+- [**Stopword**](https://github.com/fergiemcdowall/stopword) - JavaScript third-party module by Fergus McDowall *(MIT Licensed)*. 
+
+### 📁 Structure
+
+The project follows the **MVC** (Model-View-Controller) architectural pattern to ensure a clear separation of concerns.
+
+<details>
+  <summary><strong>Show Structure</strong></summary>
+  <pre>
+  .
+  ├── main.js    
+  ├── background.js      
+  ├── interface.js       
+  ├── manifest.json         
+  ├── .github/
+  │   └── workflows/                
+  ├── heading/
+  │   ├── main.js                   
+  │   ├── controller/               
+  │   ├── model/                    
+  │   └── view/                     
+  ├── img/
+  │   ├── main.js                   
+  │   ├── controller/               
+  │   ├── model/                   
+  │   └── view/                     
+  ├── keyword/
+  │   ├── main.js                   
+  │   ├── controller/               
+  │   ├── model/                    
+  │   ├── services/
+  │   │   └── strategy/             
+  │   ├── utils/                    
+  │   ├── view/                     
+  │   └── tests/                    
+  └── static/                      
+      ├── fonts/                   
+      ├── img/                     
+      └── libs/    
+  </pre>          
+</details>   
 
 <!-- GETTING STARTED -->
-## Getting Started
+## 🔧 Getting Started
 
-### Prerequisites
+### ⚙️ Prerequisites
 
-### Installation
+### 💾 Installation
 
 <!-- USAGE -->
-## Usage
+## 🚀 Usage
 
 <!-- BUG REPORT -->
-## Bug Report
+## 🐞 Bug Report
 
 If you encounter any bugs or unexpected behavior while using the extension, feel free to open an issue in this repository:
 
