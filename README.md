@@ -154,6 +154,10 @@ Once the extension is installed and loaded in your browser:
     - 🔑 Analyze and visually highlight keyword distribution
     - ℹ️ Get general information about other accessibility and SEO metrics
 
+The extension supports keyboard navigation, following a logical tab order and clearly indicating which element is currently focused.
+
+To close the extension, you can either click the browser toolbar icon again or use the dedicated button in the header.
+
 ### 📚Headings
 
 This feature analyzes the **heading hierarchy**. Any headings that do not follow a consistent structure will be flagged as incorrect.
