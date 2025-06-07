@@ -56,9 +56,9 @@ The extension allows users to inspect headings, keywords, images, and other on-p
 - [**Chrome Extensions API**](https://developer.chrome.com/docs/extensions?hl=en): extension architecture (Manifest V3);
 - [**Jest**](https://jestjs.io): testing framework; 
 - **Icons**:
-  - [**Remix Icon**](https://remixicon.com);
-  - [**Font Awesome**](https://fontawesome.com);
-  - [**Heroicons**](https://heroicons.com).
+    - [**Remix Icon**](https://remixicon.com);
+    - [**Font Awesome**](https://fontawesome.com);
+    - [**Heroicons**](https://heroicons.com).
 - [**Stopword**](https://github.com/fergiemcdowall/stopword) - JavaScript third-party module by Fergus McDowall *(MIT Licensed)*. 
 
 ### 📁 Structure
@@ -104,6 +104,8 @@ The project follows the **MVC** (Model-View-Controller) architectural pattern to
 <!-- GETTING STARTED -->
 ## 🔧 Getting Started
 
+This section provides instructions to run the extension locally.
+
 ### ⚙️ Prerequisites
 
 To run the extension, you need:
@@ -121,7 +123,23 @@ To run the extension, you need:
       ```
 
     - Or downloading it as a ZIP archive from [GitHub](https://github.com/Rikicavaz77/w3ba11y/archive/refs/heads/main.zip) and extracting it.
-2. Open 
+2. Open the extensions page in your browser:  
+    - For **Chrome**:
+
+      ```text
+      chrome://extensions/
+      ```
+
+    - For **Microsoft Edge**:
+
+      ```text
+      edge://extensions/
+      ```
+3. Enable **Developer mode** (top right toggle);
+4. Click **Load unpacked**;
+5. Select the root folder of the project (the one containing `manifest.json`).
+
+The extension will now be loaded and available in your browser.
 
 <!-- USAGE -->
 ## 🚀 Usage
