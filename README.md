@@ -20,22 +20,22 @@
     <li>
       📦<a href="#about-the-project">About The Project</a>
       <ul>
-        <li><a href="#built-with">🛠️Built With</a></li>
-        <li><a href="#structure">📁Structure</a></li>
+        🛠️<li><a href="#built-with">Built With</a></li>
+        📁<li><a href="#structure">Structure</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">🔧Getting Started</a>
+      🔧<a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">⚙️Prerequisites</a></li>
-        <li><a href="#installation">💾Installation</a></li>
+        ⚙️<li><a href="#prerequisites">Prerequisites</a></li>
+        💾<li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">🚀Usage</a></li>
-    <li><a href="#bug-report">🐞Bug Report</a></li>
-    <li><a href="#usage-terms">🔒Usage Terms</a></li>
-    <li><a href="#contacts">📬Contacts</a></li>
-    <li><a href="#credits">📝Credits</a></li>
+    🚀<li><a href="#usage">Usage</a></li>
+    🐞<li><a href="#bug-report">Bug Report</a></li>
+    🔒<li><a href="#usage-terms">Usage Terms</a></li>
+    📬<li><a href="#contacts">Contacts</a></li>
+    📝<li><a href="#credits">Credits</a></li>
   </ol>
 </details>
 
