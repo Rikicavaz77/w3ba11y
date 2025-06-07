@@ -18,8 +18,14 @@
     "accessibility",
     "seo"
   ],
-  "author": "Riccardo Fabbian, Riccardo Cavalli",
-  "license": "ISC",
+  "author": "Riccardo Cavalli",
+  "contributors": [
+    {
+      "name": "Riccardo Fabbian",
+      "url": "https://github.com/fabbricca"
+    }
+  ],
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/Rikicavaz77/w3ba11y/issues"
   },
