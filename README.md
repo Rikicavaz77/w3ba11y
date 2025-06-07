@@ -18,29 +18,29 @@
   <summary><strong>Table of Contents</strong></summary>
   <ol>
     <li>
-      <a href="#about-the-project">📦 About The Project</a>
+      <a href="#about-the-project">📦About The Project</a>
       <ul>
-        <li><a href="#built-with">🛠️ Built With</a></li>
-        <li><a href="#structure">📁 Structure</a></li>
+        <li><a href="#built-with">🛠️Built With</a></li>
+        <li><a href="#structure">📁Structure</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">🔧 Getting Started</a>
+      <a href="#getting-started">🔧Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">⚙️ Prerequisites</a></li>
-        <li><a href="#installation">💾 Installation</a></li>
+        <li><a href="#prerequisites">⚙️Prerequisites</a></li>
+        <li><a href="#installation">💾Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">🚀 Usage</a></li>
-    <li><a href="#bug-report">🐞 Bug Report</a></li>
-    <li><a href="#usage-terms">🔒 Usage Terms</a></li>
-    <li><a href="#contacts">📬 Contacts</a></li>
-    <li><a href="#credits">📝 Credits</a></li>
+    <li><a href="#usage">🚀Usage</a></li>
+    <li><a href="#bug-report">🐞Bug Report</a></li>
+    <li><a href="#usage-terms">🔒Usage Terms</a></li>
+    <li><a href="#contacts">📬Contacts</a></li>
+    <li><a href="#credits">📝Credits</a></li>
   </ol>
 </details>
 
 <!-- ABOUT THE PROJECT -->
-## 📦 About The Project
+## 📦About The Project
 
 **w3ba11y** is a browser extension designed to analyze and improve the accessibility and SEO optimization of websites.  
 
@@ -48,7 +48,7 @@ It is being developed as part of a university project shared among multiple inte
 
 The extension allows users to inspect headings, keywords, images, and other on-page content relevant to accessibility or SEO.
 
-### 🛠️ Built With
+### 🛠️Built With
 
 - [**JavaScript**](https://developer.mozilla.org/en-US/docs/Web/JavaScript): core logic and browser scripting;
 - [**HTML5**](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5): markup and structure;
@@ -61,7 +61,7 @@ The extension allows users to inspect headings, keywords, images, and other on-p
     - [**Heroicons**](https://heroicons.com).
 - [**Stopword**](https://github.com/fergiemcdowall/stopword) - JavaScript third-party module by Fergus McDowall *(MIT Licensed)*. 
 
-### 📁 Structure
+### 📁Structure
 
 The project follows the **MVC** (Model-View-Controller) architectural pattern to ensure a clear separation of concerns.
 
@@ -106,14 +106,14 @@ The project follows the **MVC** (Model-View-Controller) architectural pattern to
 
 This section provides instructions to run the extension locally.
 
-### ⚙️ Prerequisites
+### ⚙️Prerequisites
 
 To run the extension, you need:
 
 - A modern Chromium-based browser (e.g., Google Chrome, Microsoft Edge);
 - An active Internet connection.
 
-### 💾 Installation
+### 💾Installation
 
 1. Download the extension code by either:
     - Cloning this repository:
@@ -142,7 +142,7 @@ To run the extension, you need:
 The extension will now be loaded and available in your browser.
 
 <!-- USAGE -->
-## 🚀 Usage
+## 🚀Usage
 
 Once the extension is installed and loaded in your browser:
 
@@ -154,15 +154,15 @@ Once the extension is installed and loaded in your browser:
     - 🔑 Analyze and visually highlight keyword distribution;
     - ℹ️ Get general information about other accessibility and SEO metrics.
 
-#### Headings
+#### 📚Headings
 
 This feature analyzes the **heading hierarchy**. Any headings that do not follow a consistent structure will be flagged as incorrect.
 
-#### Images
+#### 🖼️Images
 
 This feature collects images on the page, including purely decorative ones inserted via CSS. In addition to checking for the presence of **alternative text** (alt attributes), the extension also analyzes image **sizes**. A general summary is provided, highlighting any errors or warnings, along with filtering options for easier navigation. A detailed list of detected images is also generated, each accompanied by specific information (such as alt text, size, etc.) and related status messages. It is also possible to **visually highlight** an image directly on the page.
 
-#### Keywords
+#### 🔑Keywords
 
 This feature provides a general overview of the **on-page SEO analysis**:
 - Meta keywords tag content;
@@ -182,7 +182,7 @@ Each keyword can be **visually highlighted** within the page. User-defined keywo
 The analysis is performed on a static copy of the DOM to ensure consistency across all keywords. A dedicated button allows for global reanalysis at any time.
 
 <!-- BUG REPORT -->
-## 🐞 Bug Report
+## 🐞Bug Report
 
 If you encounter any bugs or unexpected behavior while using the extension, feel free to open an issue in this repository:
 
@@ -195,7 +195,7 @@ When reporting a bug, please include:
 - (Optional) Screenshots or console logs.
 
 <!-- LICENSE -->
-## 🔒 Usage Terms
+## 🔒Usage Terms
 
 This repository is a fork of [fabbricca/w3ba11y](https://github.com/fabbricca/w3ba11y), which was developed as part of a **university project** and does not include an open-source license.  
 
@@ -212,7 +212,7 @@ This fork was created with the permission of the original project's commissioner
 **All rights reserved**.
 
 <!-- CONTACTS -->
-## 📬 Contacts
+## 📬Contacts
 
 For questions or support requests:
 
@@ -221,7 +221,7 @@ For questions or support requests:
 2. [rikicavalli2002@gmail.com](mailto:rikicavalli2002@gmail.com)
 
 <!-- CREDITS -->
-## 📝 Credits
+## 📝Credits
 
 The icons used in this project are provided by:
 
