@@ -102,7 +102,7 @@ The project follows the **MVC** (Model-View-Controller) architectural pattern to
 </details>   
 
 <!-- GETTING STARTED -->
-## Getting Started
+## 🔧 Getting Started
 
 This section provides instructions to run the extension locally.
 
