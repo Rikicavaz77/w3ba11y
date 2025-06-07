@@ -2,7 +2,6 @@
 [![Workflow status badge](https://github.com/Rikicavaz77/w3ba11y/actions/workflows/test.yml/badge.svg)](https://github.com/Rikicavaz77/w3ba11y/actions/workflows/test.yml)
 [![GitHub release (latest by tag)](https://img.shields.io/github/v/release/Rikicavaz77/w3ba11y)](https://github.com/Rikicavaz77/w3ba11y/releases)
 [![GitHub release date](https://img.shields.io/github/release-date/Rikicavaz77/w3ba11y)](https://github.com/Rikicavaz77/w3ba11y/releases)
-[![License](https://img.shields.io/github/license/Rikicavaz77/w3ba11y?cacheSeconds=0)](https://github.com/Rikicavaz77/w3ba11y/blob/main/LICENSE)
 [![Language](https://img.shields.io/github/languages/top/Rikicavaz77/w3ba11y)](https://github.com/Rikicavaz77/w3ba11y)
 
 <div align="center">
@@ -33,7 +32,7 @@
     </li>
     <li>🚀<a href="#usage">Usage</a></li>
     <li>🐞<a href="#bug-report">Bug Report</a></li>
-    <li>⚠️<a href="#usage-terms">Usage Terms</a></li>
+    <li>🔒<a href="#usage-terms">Usage Terms</a></li>
     <li>📬<a href="#contacts">Contacts</a></li>
     <li>📝<a href="#credits">Credits</a></li>
   </ol>
@@ -58,7 +57,7 @@
 ## Bug report
 
 <!-- LICENSE -->
-## ⚠️ Usage Terms
+## 🔒 Usage Terms
 
 This repository is a fork of [fabbricca/w3ba11y](https://github.com/fabbricca/w3ba11y), which was developed as part of a **university project** and does not include an open-source license.  
 
