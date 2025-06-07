@@ -48,7 +48,7 @@ It is being developed as part of a university project shared among multiple inte
 
 The extension allows users to inspect headings, keywords, images, and other on-page content relevant to accessibility or SEO.
 
-### 🛠️Built With
+### 🛠Built With
 
 - [**JavaScript**](https://developer.mozilla.org/en-US/docs/Web/JavaScript): core logic and browser scripting;
 - [**HTML5**](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5): markup and structure;
@@ -106,7 +106,7 @@ The project follows the **MVC** (Model-View-Controller) architectural pattern to
 
 This section provides instructions to run the extension locally.
 
-### ⚙️Prerequisites
+### ⛓Prerequisites
 
 To run the extension, you need:
 
