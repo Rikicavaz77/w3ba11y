@@ -32,7 +32,7 @@
     </li>
     <li>🚀<a href="#usage">Usage</a></li>
     <li>🐞<a href="#bug-report">Bug Report</a></li>
-    <li>⚠️<a href="#usage-terms">Usage Terms</a></li>
+    <li>🔒<a href="#usage-terms">Usage Terms</a></li>
     <li>📬<a href="#contacts">Contacts</a></li>
     <li>📝<a href="#credits">Credits</a></li>
   </ol>
@@ -57,7 +57,7 @@
 ## Bug report
 
 <!-- LICENSE -->
-## ⚠️ Usage Terms
+## 🔒 Usage Terms
 
 This repository is a fork of [fabbricca/w3ba11y](https://github.com/fabbricca/w3ba11y), which was developed as part of a **university project** and does not include an open-source license.  
 
