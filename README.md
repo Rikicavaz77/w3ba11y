@@ -106,7 +106,18 @@ The project follows the **MVC** (Model-View-Controller) architectural pattern to
 
 ### ⚙️ Prerequisites
 
+To run the extension, you need:
+
+- A modern Chromium-based browser (e.g., Google Chrome, Microsoft Edge);
+- An active Internet connection.
+
 ### 💾 Installation
+
+1. Download the extension code by either:
+  - Cloning this repository:
+    `git clone https://github.com/Rikicavaz77/w3ba11y.git`
+  - Or downloading it as a ZIP archive from [GitHub](https://github.com/Rikicavaz77/w3ba11y/archive/refs/heads/main.zip) and extracting it.
+2. Open 
 
 <!-- USAGE -->
 ## 🚀 Usage
