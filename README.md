@@ -114,9 +114,13 @@ To run the extension, you need:
 ### 💾 Installation
 
 1. Download the extension code by either:
-  - Cloning this repository:
-    `git clone https://github.com/Rikicavaz77/w3ba11y.git`
-  - Or downloading it as a ZIP archive from [GitHub](https://github.com/Rikicavaz77/w3ba11y/archive/refs/heads/main.zip) and extracting it.
+    - Cloning this repository:
+
+      ```bash
+      git clone https://github.com/Rikicavaz77/w3ba11y.git
+      ```
+
+    - Or downloading it as a ZIP archive from [GitHub](https://github.com/Rikicavaz77/w3ba11y/archive/refs/heads/main.zip) and extracting it.
 2. Open 
 
 <!-- USAGE -->
