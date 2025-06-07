@@ -110,8 +110,8 @@ This section provides instructions to run the extension locally.
 
 To run the extension, you need:
 
-- A modern Chromium-based browser (e.g., Google Chrome, Microsoft Edge);
-- An active Internet connection.
+- A modern Chromium-based browser (e.g., Google Chrome, Microsoft Edge)
+- An active Internet connection
 
 ### 💾Installation
 
