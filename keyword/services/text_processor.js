@@ -42,7 +42,7 @@ class TextProcessor {
     return this._allowedParentTags;
   }
 
-  isValidInlineElement(node) {
+  _isValidInlineElement(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return false;
 
     const tag = node.nodeName.toLowerCase();
@@ -53,10 +53,10 @@ class TextProcessor {
     return this.allowedInlineTags.includes(tag);
   }
 
-  getBlockParent(node) {
+  _getBlockParent(node) {
     let current = node.parentNode;
-    while(current && current !== this.root) {
-      if (!this.isValidInlineElement(current)) {
+    while(current && current !== this._root) {
+      if (!this._isValidInlineElement(current)) {
         return current;
       }
       current = current.parentNode;
@@ -84,11 +84,17 @@ class TextProcessor {
   }
 
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
-    const escapedKeyword = Utils.escapeRegExp(keyword);
-    if (capture) {
-      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${escapedKeyword})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
-    }
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${escapedKeyword}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+    const parts = keyword.trim().split(/\s+/);
+    const escaped = parts.map(Utils.escapeRegExp);
+    const flexKeyword = escaped.join('\\s+');
+
+    const basePattern = capture 
+      ? `(${flexKeyword})`
+      : flexKeyword;
+
+    const pattern = `(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${basePattern}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`;
+
+    return new RegExp(pattern, flags);
   }
 
   resetCache() {
@@ -107,7 +113,7 @@ class TextProcessor {
     let node;
     while ((node = this._treeWalker.nextNode())) {
       const text = node.nodeValue;
-      const parent = this.getBlockParent(node);
+      const parent = this._getBlockParent(node);
 
       if (currentBlockParent === parent) {
         if (virtualText.length > 0 && !virtualText.endsWith(' ') && !text.startsWith(' ')) {

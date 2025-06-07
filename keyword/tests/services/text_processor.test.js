@@ -74,33 +74,33 @@ describe('TextProcessor', () => {
       const node = document.createElement('strong');
       node.style.display = 'inline';
       document.body.appendChild(node);
-      expect(processor.isValidInlineElement(node)).toBe(true);
+      expect(processor._isValidInlineElement(node)).toBe(true);
     });
 
     it('should return false if node is valid but not inline', () => {
       const node = document.createElement('strong');
       node.style.display = 'block';
       document.body.appendChild(node);
-      expect(processor.isValidInlineElement(node)).toBe(false);
+      expect(processor._isValidInlineElement(node)).toBe(false);
     });
 
     it('should return false if node is not inline', () => {
       const node = document.createElement('div');
       document.body.appendChild(node);
-      expect(processor.isValidInlineElement(node)).toBe(false);
+      expect(processor._isValidInlineElement(node)).toBe(false);
     });
 
     it('should return false if node is inline but not valid', () => {
       const node = document.createElement('div');
       node.style.display = 'inline';
       document.body.appendChild(node);
-      expect(processor.isValidInlineElement(node)).toBe(false);
+      expect(processor._isValidInlineElement(node)).toBe(false);
     });
 
     it('should return false if node is not an element', () => {
       const node = document.createTextNode('test');
       document.body.appendChild(node);
-      expect(processor.isValidInlineElement(node)).toBe(false);
+      expect(processor._isValidInlineElement(node)).toBe(false);
     });
   });
 
@@ -117,7 +117,7 @@ describe('TextProcessor', () => {
       p.appendChild(span);
       document.body.appendChild(p);
 
-      expect(processor.getBlockParent(textNode)).toBe(p);
+      expect(processor._getBlockParent(textNode)).toBe(p);
     });
 
     it('should return root node when no out-of-context ancestor found', () => {
@@ -130,7 +130,7 @@ describe('TextProcessor', () => {
       span.appendChild(em);
       document.body.appendChild(span);
 
-      expect(processor.getBlockParent(textNode)).toBe(document.body);
+      expect(processor._getBlockParent(textNode)).toBe(document.body);
     });
   });
 
