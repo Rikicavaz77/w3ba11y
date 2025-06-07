@@ -61,7 +61,7 @@
 ## License
 
 <!-- CONTACTS -->
-## Contacts
+## 📬 Contacts
 
 For questions or support requests:
 
@@ -70,4 +70,10 @@ For questions or support requests:
 2. [rikicavalli2002@gmail.com](mailto:rikicavalli2002@gmail.com)
 
 <!-- CREDITS -->
-## Credits
+## 📝 Credits
+
+The icons used in this project are provided by:
+
+- [**Font Awesome**](https://fontawesome.com): a vast library of free and premium vector icons;
+- [**Heroicons**](https://heroicons.com): a collection of hand-crafted SVG icons, by the makers of Tailwind CSS;
+- [**Remix Icon**](https://remixicon.com): an open-source library of carefully crafted icons.
