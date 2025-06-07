@@ -25,7 +25,6 @@
       </ul>
     </li>
     <li>
-      Jump to [🔧 Getting Started](#getting-started)
       <a href="#getting-started">🔧 Getting Started</a>
       <ul>
         <li><a href="#prerequisites">⚙️ Prerequisites</a></li>
@@ -103,7 +102,7 @@ The project follows the **MVC** (Model-View-Controller) architectural pattern to
 </details>   
 
 <!-- GETTING STARTED -->
-## 🔧 Getting Started
+## 🔧Getting Started
 
 This section provides instructions to run the extension locally.
 
