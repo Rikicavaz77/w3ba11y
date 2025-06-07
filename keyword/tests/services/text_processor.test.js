@@ -225,7 +225,7 @@ describe('TextProcessor', () => {
   });
 
   describe('getKeywordPattern()', () => {
-    it('should match expected keywords', () => {
+    it('should match expected single-word keyword', () => {
       const pattern = processor.getKeywordPattern('test');
       const text = `Let's test this pattern: run a test-case with tester.js, then take an italian "caffè".`;
       const matches = [...text.matchAll(pattern)].map(m => m[0]);
@@ -234,10 +234,16 @@ describe('TextProcessor', () => {
 
     it('should return keyword in group with capture flag', () => {
       const pattern = processor.getKeywordPattern('italian "caffè"', { capture: true, flags: 'iu' });
-      const text = `Let's test this pattern: run a test-case with tester.js, then take an italian "caffè".`;
-      const splittedText = text.split(pattern);
+      const text = `
+        Let's test this pattern: run a test-case with tester.js, then take an italian  
+        "caffè".
+      `;
+      const splittedText = text
+        .split(pattern)
+        .map(part => part.replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
       expect(splittedText).toEqual([
-        'Let\'s test this pattern: run a test-case with tester.js, then take an ',
+        'Let\'s test this pattern: run a test-case with tester.js, then take an',
         'italian "caffè"',
         '.'
       ]);

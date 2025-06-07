@@ -12,6 +12,19 @@ describe('KeywordController', () => {
     controller = Object.create(KeywordController.prototype);
   });
 
+  test('cloneDocument() should deep clone the HTML structure', () => {
+    const sourceDoc = document.implementation.createHTMLDocument();
+    sourceDoc.body.innerHTML = `
+      <div id="test">Hello</div>
+    `;
+
+    const result = controller.cloneDocument(sourceDoc);
+
+    expect(result.body.innerHTML).toContain('<div id="test">Hello</div>');
+    expect(result.getElementById('test')).toBeTruthy();
+    expect(result.getElementById('test')).not.toBe(sourceDoc.getElementById('test'));
+  });
+
   describe('getLang()', () => {
     it('should return lang from document', () => {
       document.documentElement.lang = 'en-US';

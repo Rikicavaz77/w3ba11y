@@ -47,7 +47,11 @@ describe('KeywordController - init', () => {
         <div class="w3ba11y__body"></div>
       </aside>
     `;
-    iframeDoc = document.implementation.createHTMLDocument('iframe');
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
     iframeDoc.head.innerHTML = `
       <title>This is a test</title>
       <meta name="keywords" content="seo, accessibility, keyword">
@@ -59,7 +63,7 @@ describe('KeywordController - init', () => {
       <h1>Another test heading</h1>
       <p>Keyword here too</p>
       <img src="test.jpg" alt="Image alt text">
-      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong></p>
+      <p><strong style="display: inline;">Compound <em id="test" style="display: inline;">keyword</em></strong></p>
     `;
     controller = new KeywordController(iframeDoc);
   });
@@ -184,6 +188,23 @@ describe('KeywordController - init', () => {
     expect(highlights.length).toBe(2);
 
     checkbox.checked = false;
+    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    expect(highlights.length).toBe(0);
+  });
+
+  test('should highlight compount keyword based on display property', () => {
+    const keywordInput = controller.view.customKeywordInput;
+    const checkbox = controller.view.keywordHighlightCheckbox;
+
+    keywordInput.value = '  compound keyword  ';
+    checkbox.checked = true;
+
+    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    expect(highlights.length).toBe(2);
+
+    iframeDoc.getElementById('test').style.display = 'block';
     checkbox.dispatchEvent(new Event('change', { bubbles: true }));
     highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
     expect(highlights.length).toBe(0);

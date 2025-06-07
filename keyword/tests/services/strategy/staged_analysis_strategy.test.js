@@ -39,8 +39,8 @@ describe('StagedAnalysisStrategy', () => {
     compoundKeyword = new Keyword('compound keyword');
   });
 
-  test('reset() should do nothing', () => {
-    const result = strategy.reset();
+  test('resetCache() should do nothing', () => {
+    const result = strategy.resetCache();
     expect(result).toBeUndefined();
   });
 

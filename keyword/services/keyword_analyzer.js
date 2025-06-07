@@ -23,7 +23,7 @@ class KeywordAnalyzer {
     if (text) this._textProcessor.resetCache();
     if (tags) this._tagAccessor.resetCache();
     if (words) this._wordCounter.resetCache();
-    if (strategy) this._strategy.reset();
+    if (strategy) this._strategy.resetCache();
   }
 
   fullRefresh() {
