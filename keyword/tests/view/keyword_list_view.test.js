@@ -107,7 +107,7 @@ describe('KeywordListView', () => {
     expect(icon).toBe('');
 
     view.listType = 'userAdded';
-    icon = view._renderWarningIconIfNeeded(10);
+    icon = view._renderWarningIconIfNeeded(0);
     expect(icon).toBe('');
   });
 

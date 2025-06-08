@@ -29,7 +29,9 @@ describe('KeywordView', () => {
     expect(view.container).toBeInstanceOf(HTMLElement);
     expect(view.header).toBeInstanceOf(HTMLElement);
     expect(view.body).toBeInstanceOf(HTMLElement);
+    expect(view.activeSection.classList.contains('keywords__section--dashboard')).toBe(true);
     expect(view.tabButtons.length).toBeGreaterThan(0);
+    expect(view.refreshButton).toBeInstanceOf(HTMLElement);
     expect(view.activeTabButton.classList.contains('tab__button--overview')).toBe(true);
     expect(view.iframe).toBe(document);
   });
@@ -140,6 +142,7 @@ describe('KeywordView', () => {
     view.renderKeywordAnalysisOverview(overviewInfo);
     let overview = view.body.querySelector('.keywords__overview-container');
     expect(overview).toBeTruthy();
+    expect(view.activeTab).toBe(overview);
     expect(overview.textContent).toContain('test, another test');
     expect(overview.textContent).toContain('en-US');
     expect(overview.textContent).toContain('2000');
@@ -357,7 +360,11 @@ describe('KeywordView', () => {
   describe('createListView()', () => {
     it('should create list view correctly', () => {
       ['meta', 'userAdded'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type, sortDirection: null }, () => {});
+        const result = view.createListView({ 
+          title: 'Test', 
+          type: type, 
+          sortDirection: null 
+        }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBeNull();
@@ -366,7 +373,11 @@ describe('KeywordView', () => {
       });
 
       ['oneWord', 'twoWords'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type, sortDirection: 'desc' }, () => {});
+        const result = view.createListView({ 
+          title: 'Test', 
+          type: type, 
+          sortDirection: 'desc' 
+        }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBe('desc');
