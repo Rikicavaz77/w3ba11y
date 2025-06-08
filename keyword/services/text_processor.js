@@ -9,7 +9,7 @@ class TextProcessor {
     this._allowedParentTags = [
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'li'
     ];
-    this.allowedInlineTags = [
+    this._allowedInlineTags = [
       'strong', 'em', 'b', 'i', 'u', 'span', 'mark', 'small', 'sup', 'sub', 'abbr'
     ];
   }
@@ -50,7 +50,7 @@ class TextProcessor {
 
     if (display && !display.startsWith('inline')) return false;
 
-    return this.allowedInlineTags.includes(tag);
+    return this._allowedInlineTags.includes(tag);
   }
 
   _getBlockParent(node) {
