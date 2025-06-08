@@ -38,7 +38,12 @@ describe('KeywordAnalyzer', () => {
     const textProcessor = new TextProcessor(document, treeWalker);
     const tagAccessor = new TagAccessor(document);
     const wordCounter = new WordCounter(textProcessor, tagAccessor);
-    analyzer = new KeywordAnalyzer(textProcessor, tagAccessor, wordCounter, new AllInOneAnalysisStrategy());
+    analyzer = new KeywordAnalyzer(
+      textProcessor, 
+      tagAccessor, 
+      wordCounter, 
+      new AllInOneAnalysisStrategy()
+    );
   });
 
   test('countOccurrencesInTag() should return keyword occurrences in a specified tag', () => {
@@ -183,7 +188,7 @@ describe('KeywordAnalyzer', () => {
       expect(analyzer._strategy.resetCache).not.toHaveBeenCalled();
     });
 
-    it('should not reset any caches', () => {
+    it('should not reset any cache', () => {
       analyzer._resetCache();
 
       expect(analyzer._textProcessor.resetCache).not.toHaveBeenCalled();

@@ -179,7 +179,8 @@ describe('TextProcessor', () => {
 
     it('should split complex text correctly', () => {
       const pattern = processor.getCompoundSplitPattern();
-      const text = `Despite the project's delay—which, to be fair, was partly expected—we proceeded. 
+      const text = `
+        Despite the project's delay—which, to be fair, was partly expected—we proceeded. 
         However, questions remain: Why now? Who approved it? And more importantly, what are the long-term 
         implications? That said, the team—divided, exhausted, yet oddly optimistic—pressed on, adjusting
         timelines, redefining priorities, and documenting every step. In retrospect, perhaps we should’ve 

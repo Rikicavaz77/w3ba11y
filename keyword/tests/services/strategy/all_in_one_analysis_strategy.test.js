@@ -55,7 +55,6 @@ describe('AllInOneAnalysisStrategy', () => {
       const textNode = document.createTextNode('Javascript');
       em.appendChild(textNode);
 
-      strategy.resetCache();
       const ancestors = strategy._findAncestors(textNode);
       expect(ancestors).toContain(p, strong, em);
     });
@@ -67,7 +66,6 @@ describe('AllInOneAnalysisStrategy', () => {
       const textNode = document.createTextNode('Javascript');
       span.appendChild(textNode);
 
-      strategy.resetCache();
       const ancestors = strategy._findAncestors(textNode);
       expect(ancestors).toEqual([]);
     });
@@ -86,7 +84,6 @@ describe('AllInOneAnalysisStrategy', () => {
       strong.appendChild(secondTextNode);
       const textNodes = [firstTextNode, secondTextNode];
   
-      strategy.resetCache();
       const commonAncestors = strategy._getCommonAncestors(textNodes);
       expect(commonAncestors).toContain(p, strong);
       expect(commonAncestors).not.toContain(em);
@@ -102,7 +99,6 @@ describe('AllInOneAnalysisStrategy', () => {
       div.appendChild(secondTextNode);
       const textNodes = [firstTextNode, secondTextNode];
   
-      strategy.resetCache();
       const commonAncestors = strategy._getCommonAncestors(textNodes);
       expect(commonAncestors).toEqual([]);
     });
