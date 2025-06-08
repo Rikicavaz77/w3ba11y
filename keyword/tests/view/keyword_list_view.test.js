@@ -114,7 +114,7 @@ describe('KeywordListView', () => {
   describe('renderKeywords()', () => {
     it('should populate keyword list correctly', () => {
       view.renderKeywords(keywords, 0);
-      const items = view.container.querySelectorAll('.keyword-list-item');
+      const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items.length).toBe(2);
       expect(items[0].querySelector('.keyword-button--delete')).toBeNull();
       expect(items[0].querySelector('.keyword-button--highlight')).toBeTruthy();
@@ -137,7 +137,7 @@ describe('KeywordListView', () => {
       view.listType = 'userAdded';
       view._getActiveHighlightData = mockGetActiveHighlightData;
       view.renderKeywords(keywords, 0);
-      const items = view.container.querySelectorAll('.keyword-list-item');
+      const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--delete')).toBeTruthy();
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeNull();
     });
@@ -149,7 +149,7 @@ describe('KeywordListView', () => {
       });
       view._getActiveHighlightData = mockGetActiveHighlightData;
       view.renderKeywords(keywords, 0);
-      const items = view.container.querySelectorAll('.keyword-list-item');
+      const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeTruthy();
     });
   });

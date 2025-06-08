@@ -217,7 +217,7 @@ class KeywordListView {
     keywordList.innerHTML = '';
     keywords.forEach(keywordItem => {
       const item = document.createElement('li');
-      item.classList.add('keyword-list-item');
+      item.classList.add('keyword-list__item');
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
 
       const safeName = Utils.escapeHTML(keywordItem.name);

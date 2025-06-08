@@ -149,7 +149,7 @@ describe('KeywordController', () => {
   describe('getKeywordIndex()', () => {
     it('should return keywordIndex from dataset', () => {
       const container = document.createElement('div');
-      container.classList.add('keyword-list-item');
+      container.classList.add('keyword-list__item');
       container.dataset.keywordIndex = '0';
 
       const target = document.createElement('button');
@@ -174,7 +174,7 @@ describe('KeywordController', () => {
       container.dataset.listType = 'meta';
 
       listItem = document.createElement('div');
-      listItem.classList.add('keyword-list-item');
+      listItem.classList.add('keyword-list__item');
       listItem.dataset.keywordIndex = '1';
       container.appendChild(listItem);
 

@@ -59,7 +59,7 @@ The extension allows users to inspect headings, keywords, images, and other on-p
     - [**Remix Icon**](https://remixicon.com)
     - [**Font Awesome**](https://fontawesome.com)
     - [**Heroicons**](https://heroicons.com)
-- [**Stopword**](https://github.com/fergiemcdowall/stopword) - JavaScript third-party module by Fergus McDowall *(MIT Licensed)*
+- [**Stopword**](https://github.com/fergiemcdowall/stopword): JavaScript third-party module by Fergus McDowall *(MIT Licensed)*
 
 ### 📁Structure
 
@@ -164,7 +164,7 @@ This feature analyzes the **heading hierarchy**. Any headings that do not follow
 
 ### 🖼️Images
 
-This feature collects images on the page, including purely decorative ones inserted via CSS. In addition to checking for the presence of **alternative text** (alt attributes), the extension also analyzes image **sizes**. A general summary is provided, highlighting any errors or warnings, along with filtering options for easier navigation. A detailed list of detected images is also generated, each accompanied by specific information (such as alt text, size, etc.) and related status messages. It is also possible to **visually highlight** an image directly on the page.
+This feature collects images on the page, including purely decorative ones inserted via CSS. In addition to checking for the presence of **alternative text**, the extension also analyzes image **sizes**. A general summary is provided, highlighting any errors or warnings, along with filtering options for easier navigation. A detailed list of detected images is also generated, each accompanied by specific information (such as alt text, size, etc.) and related status messages. It is also possible to **visually highlight** an image directly on the page.
 
 ### 🔑Keywords
 
@@ -198,7 +198,7 @@ When reporting a bug, please include:
 - The browser version and operating system
 - (Optional) Screenshots or console logs
 
-<!-- LICENSE -->
+<!-- USAGE TERMS -->
 ## 🔒Usage Terms
 
 This repository is a fork of [fabbricca/w3ba11y](https://github.com/fabbricca/w3ba11y), which was developed as part of a **university project** and does not include an open-source license.  

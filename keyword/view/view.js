@@ -251,8 +251,8 @@ class KeywordView {
       <li class="keywords__overview-item">
         ${value ? iconSvg : warningIconSvg}
         <div class="keywords__overview-item__info-container">
-          <div class="keywords__overview-item-header">
-            <h3 class="keywords__overview-item-title">${title}</h3>
+          <div class="keywords__overview-item__header">
+            <h3 class="keywords__overview-item__title">${title}</h3>
             <div class="keywords__tooltip-container">
               <div class="keywords__tooltip-trigger" tabindex="0" aria-describedby="${id}-tooltip">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__tooltip-icon" aria-hidden="true">
@@ -264,8 +264,8 @@ class KeywordView {
               </span>              
             </div>
           </div>
-          <div class="keywords__overview-item-body">
-            <p class="keywords__overview-item-body__text">
+          <div class="keywords__overview-item__body">
+            <p class="keywords__overview-item__body__content">
               ${typeof value === 'string'
                 ? (value ? Utils.escapeHTML(value) : 'Missing')
                 : (value || value === 0 ? value : 'Missing')
