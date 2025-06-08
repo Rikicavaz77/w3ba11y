@@ -103,7 +103,7 @@ class TextProcessor {
   }
 
   getTextNodeGroups() {
-    if (this._useCache && this._cachedNodeGroups) return this._cachedNodeGroups;
+    if (this._useCache && Array.isArray(this._cachedNodeGroups)) return this._cachedNodeGroups;
 
     const nodeGroups = [];
     let currentGroup = [];
@@ -143,7 +143,7 @@ class TextProcessor {
   }
 
   getTextNodes() {
-    if (this._useCache && this._cachedTextNodes) return this._cachedTextNodes;
+    if (this._useCache && Array.isArray(this._cachedTextNodes)) return this._cachedTextNodes;
 
     const textNodes = [];
     this._treeWalker.resetWalker();
