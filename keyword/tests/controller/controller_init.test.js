@@ -126,7 +126,7 @@ describe('KeywordController - init', () => {
       `;
     });
 
-    it('should update controller correctly with full refresh', () => {
+    it('should update controller correctly with full refresh', () => {      
       controller.update(iframeDoc, true);
 
       const info = controller.overviewInfo;
@@ -176,38 +176,41 @@ describe('KeywordController - init', () => {
     });
   });
 
-  test('should highlight keyword on input and checkbox', () => {
-    const keywordInput = controller.view.customKeywordInput;
-    const checkbox = controller.view.keywordHighlightCheckbox;
+  describe('toggle highlight from checkbox', () => {
+    let keywordInput, checkbox;
 
-    keywordInput.value = '  test  ';
-    checkbox.checked = true;
+    beforeEach(() => {
+      keywordInput = controller.view.customKeywordInput;
+      checkbox = controller.view.keywordHighlightCheckbox;
+    });
 
-    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-    let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(2);
-
-    checkbox.checked = false;
-    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-    highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(0);
-  });
-
-  test('should highlight compount keyword based on display property', () => {
-    const keywordInput = controller.view.customKeywordInput;
-    const checkbox = controller.view.keywordHighlightCheckbox;
-
-    keywordInput.value = '  compound keyword  ';
-    checkbox.checked = true;
-
-    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-    let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(2);
-
-    iframeDoc.getElementById('test').style.display = 'block';
-    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-    highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(0);
+    it('should highlight simple keyword', () => {
+      keywordInput.value = '  test  ';
+      checkbox.checked = true;
+  
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(2);
+  
+      checkbox.checked = false;
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(0);
+    });
+  
+    it('should highlight compound keyword based on display property', () => {
+      keywordInput.value = '  compound keyword  ';
+      checkbox.checked = true;
+  
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(2);
+  
+      iframeDoc.getElementById('test').style.display = 'block';
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      expect(highlights.length).toBe(0);
+    });
   });
 
   test('should highlight keyword from list', () => {
