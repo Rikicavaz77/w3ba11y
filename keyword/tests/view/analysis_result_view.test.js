@@ -34,9 +34,24 @@ describe('AnalysisResultView', () => {
     expect(view.body).toBeInstanceOf(HTMLElement);
   });
 
+  test('setters should assign values correctly', () => {
+    const dummy = {};
+
+    view.container = dummy;
+    view.header = dummy;
+    view.body = dummy;
+    view.currentKeywordItem = dummy;
+
+    expect(view.container).toBe(dummy);
+    expect(view.header).toBe(dummy);
+    expect(view.body).toBe(dummy);
+    expect(view.currentKeywordItem).toBe(dummy);
+  });
+
+
   test('renderWarningIconIfNeeded() should handle warning icon creation', () => {
     let icon = view._renderWarningIconIfNeeded(0);
-    expect(icon).toContain('keyword-icon--error');
+    expect(icon).toContain('keywords__icon--error');
 
     icon = view._renderWarningIconIfNeeded(10);
     expect(icon).toBe('');
@@ -59,7 +74,7 @@ describe('AnalysisResultView', () => {
       expect(hasMatch).toBe(true);
       expect(container.textContent).toContain('2');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
-      expect(container.querySelectorAll('.keyword-icon--error').length).toBe(0);
+      expect(container.querySelectorAll('.keywords__icon--error').length).toBe(0);
       expect(view.currentKeywordItem).toBe(keywordItem);
     });
 
@@ -84,7 +99,7 @@ describe('AnalysisResultView', () => {
       expect(container[0].textContent).toContain('9');
       const match = container[0].textContent.match(/0/g) || [];
       expect(match.length).toBe(6);
-      expect(container[0].querySelectorAll('.keyword-icon--error').length).toBe(2);
+      expect(container[0].querySelectorAll('.keywords__icon--error').length).toBe(2);
     });
 
     it('should make highlight button active', () => {

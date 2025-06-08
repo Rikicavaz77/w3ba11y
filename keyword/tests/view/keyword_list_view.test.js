@@ -31,6 +31,7 @@ describe('KeywordListView', () => {
     expect(view.listType).toBe('meta');
     expect(view.container.dataset.listType).toBe('meta');
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
+    expect(view.keywordList).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
     expect(view.sortDirection).toBeNull();
@@ -53,12 +54,14 @@ describe('KeywordListView', () => {
 
     view.container = dummy;
     view.searchKeywordField = dummy;
+    view.keywordList = dummy;
     view.pagination = dummy;
     view.paginationButtons = dummy;
     view.currentPageButton = dummy;
 
     expect(view.container).toBe(dummy);
     expect(view.searchKeywordField).toBe(dummy);
+    expect(view.keywordList).toBe(dummy);
     expect(view.pagination).toBe(dummy);
     expect(view.paginationButtons).toBe(dummy);
     expect(view.currentPageButton).toBe(dummy);
@@ -101,7 +104,7 @@ describe('KeywordListView', () => {
 
   test('renderWarningIconIfNeeded() should handle warning icon creation', () => {
     let icon = view._renderWarningIconIfNeeded(0);
-    expect(icon).toContain('keyword-icon--error');
+    expect(icon).toContain('keywords__icon--error');
 
     icon = view._renderWarningIconIfNeeded(10);
     expect(icon).toBe('');
@@ -121,10 +124,10 @@ describe('KeywordListView', () => {
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeNull();
       expect(items[0].querySelector('.keyword-button--view-details')).toBeTruthy();
       expect(items[0].textContent).toContain('test (26)');
-      expect(items[0].querySelector('.keyword-icon--error')).toBeNull();
+      expect(items[0].querySelector('.keywords__icon--error')).toBeNull();
       expect(items[0].dataset.keywordIndex).toBe('0');
       expect(items[1].textContent).toContain('another test (0)');
-      expect(items[1].querySelector('.keyword-icon--error')).toBeTruthy();
+      expect(items[1].querySelector('.keywords__icon--error')).toBeTruthy();
       expect(items[1].dataset.keywordIndex).toBe('1');
     });
 

@@ -103,13 +103,13 @@ describe('KeywordController - init', () => {
     expect(listContainer).toBeTruthy();
     let button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
     expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
-    expect(listContainer.querySelectorAll('.keyword-icon--error').length).toBe(2);
+    expect(listContainer.querySelectorAll('.keywords__icon--error').length).toBe(2);
 
     listContainer = document.querySelector('[data-list-type="oneWord"]');
     expect(listContainer).toBeTruthy();
     button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
     expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
-    expect(listContainer.querySelectorAll('.keyword-icon--error').length).toBe(0);
+    expect(listContainer.querySelectorAll('.keywords__icon--error').length).toBe(0);
   });
 
   describe('update', () => {

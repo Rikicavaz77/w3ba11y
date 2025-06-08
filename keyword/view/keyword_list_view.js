@@ -6,6 +6,7 @@ class KeywordListView {
     this._getActiveHighlightData = getActiveHighlightData;
     this._searchKeywordField = null;
     this._currentSortButton = null;
+    this._keywordList = null;
     this._pagination = null;
     this._paginationButtons = null;
     this._currentPageButton = null;
@@ -35,6 +36,10 @@ class KeywordListView {
 
   get sortDirection() {
     return this._sortDirection;
+  }
+
+  get keywordList() {
+    return this._keywordList;
   }
 
   get pagination() {
@@ -69,8 +74,8 @@ class KeywordListView {
     this._searchKeywordField = searchKeywordField;
   }
 
-  set currentSortButton(newButton) {
-    this._currentSortButton = newButton;
+  set currentSortButton(button) {
+    this._currentSortButton = button;
   }
 
   set sortDirection(sortDirection) {
@@ -81,12 +86,16 @@ class KeywordListView {
     this._pagination = pagination;
   }
 
+  set keywordList(keywordList) {
+    this._keywordList = keywordList;
+  }
+
   set paginationButtons(buttons) {
     this._paginationButtons = buttons;
   }
 
-  set currentPageButton(newButton) {
-    this._currentPageButton = newButton;
+  set currentPageButton(button) {
+    this._currentPageButton = button;
   }
 
   set currentPage(currentPage) {
@@ -144,6 +153,7 @@ class KeywordListView {
     `;
 
     this._searchKeywordField = keywordListContainer.querySelector('.keywords__input-wrapper__field');
+    this._keywordList = keywordListContainer.querySelector('.keyword-list');
     this._pagination = keywordListContainer.querySelector('.keywords__pagination');
     if (this._sortDirection) {
       const button = keywordListContainer.querySelector(`.keywords__sort-button[data-sort="${this._sortDirection}"]`);
@@ -197,7 +207,7 @@ class KeywordListView {
   _renderWarningIconIfNeeded(frequency) {
     if (this._listType !== 'meta' || frequency !== 0) return '';
     return `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keyword-icon--error keywords__icon--medium keywords__icon--inline-block keywords__icon--no-shrink" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__icon--error keywords__icon--medium keywords__icon--inline-block keywords__icon--no-shrink" aria-hidden="true">
         <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
       </svg>
     `;
@@ -213,8 +223,9 @@ class KeywordListView {
   }
 
   renderKeywords(keywords, startIndex) {
-    const keywordList = this._container.querySelector('.keyword-list');
-    keywordList.innerHTML = '';
+    if (!this._keywordList) return;
+
+    this._keywordList.innerHTML = '';
     keywords.forEach(keywordItem => {
       const item = document.createElement('li');
       item.classList.add('keyword-list__item');
@@ -246,18 +257,22 @@ class KeywordListView {
           </button>
         </div>
       `;
-      keywordList.appendChild(item);
+      this._keywordList.appendChild(item);
     });
   }
 
   renderPages(totalPages, currentPage = 1) {
+    if (!this._pagination) return;
+    
     const range = Array.from({ length: 5 }, (_, i) => currentPage - 2 + i);
     const pages = [...new Set([1, ...range, totalPages].filter(p => p >= 1 && p <= totalPages))];
+
     this._pagination.innerHTML = '';
     pages.forEach((page, index) => {
       const item = document.createElement('li');
+      const isActive = page === currentPage ? 'keywords__pagination__button--active' : '';
       item.innerHTML = `
-        <button type="button" class="keywords__pagination__button ${page === currentPage ? 'keywords__pagination__button--active' : ''}" data-page="${page}" aria-label="Go to page ${page}">${page}</button>
+        <button type="button" class="keywords__pagination__button ${isActive}" data-page="${page}" aria-label="Go to page ${page}">${page}</button>
       `;
       this._pagination.appendChild(item);
 

@@ -17,12 +17,12 @@ class KeywordView {
     this._container = this.generateKeywordViewSection();
   }
 
-  get container() {
-    return this._container;
-  }
-
   get iframe() {
     return this._iframe;
+  }
+
+  get container() {
+    return this._container;
   }
 
   get header() {
@@ -109,6 +109,10 @@ class KeywordView {
     this._iframe = iframe;
   }
 
+  set container(container) {
+    this._container = container;
+  }
+
   set header(header) {
     this._header = header;
   }
@@ -137,20 +141,20 @@ class KeywordView {
     this._activeTab = tab;
   }
 
-  set colorInputs(colorInputs) {
-    this._colorInputs = colorInputs;
+  set colorInputs(inputs) {
+    this._colorInputs = inputs;
   }
 
-  set customKeywordInput(customKeywordInput) {
-    this._customKeywordInput = customKeywordInput;
+  set customKeywordInput(input) {
+    this._customKeywordInput = input;
   }
 
-  set keywordHighlightCheckbox(keywordHighlightCheckbox) {
-    this._keywordHighlightCheckbox = keywordHighlightCheckbox;
+  set keywordHighlightCheckbox(checkbox) {
+    this._keywordHighlightCheckbox = checkbox;
   }
 
-  set analyzeButton(analyzeButton) {
-    this._analyzeButton = analyzeButton;
+  set analyzeButton(button) {
+    this._analyzeButton = button;
   }
 
   getCustomKeywordValue() {
@@ -238,8 +242,8 @@ class KeywordView {
     this._header = keywordViewSection.querySelector('.section__header');
     this._body = keywordViewSection.querySelector('.section__body');
     this._activeSection = keywordViewSection.querySelector('.keywords__section--dashboard');
-    this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
     this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
+    this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
     this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
 
     return keywordViewSection;
@@ -478,13 +482,15 @@ class KeywordView {
   }
 
   showTooltip(event) {
-    const tooltipText = event.target.closest('.keywords__tooltip-container')?.querySelector('.keywords__tooltip-text');
+    const tooltipContainer = event.target.closest('.keywords__tooltip-container');
+    const tooltipText = tooltipContainer?.querySelector('.keywords__tooltip-text');
     if (!tooltipText) return;
     tooltipText.classList.remove('keywords--not-visible');
   }
 
   hideTooltip(event) {
-    const tooltipText = event.target.closest('.keywords__tooltip-container')?.querySelector('.keywords__tooltip-text');
+    const tooltipContainer = event.target.closest('.keywords__tooltip-container');
+    const tooltipText = tooltipContainer?.querySelector('.keywords__tooltip-text');
     if (!tooltipText) return;
     tooltipText.classList.add('keywords--not-visible');
   }

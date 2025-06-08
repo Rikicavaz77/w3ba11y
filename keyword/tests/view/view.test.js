@@ -61,6 +61,7 @@ describe('KeywordView', () => {
     const dummy = {};
 
     view.iframe = dummy;
+    view.container = dummy;
     view.header = dummy;
     view.body = dummy;
     view.activeSection = dummy;
@@ -74,6 +75,7 @@ describe('KeywordView', () => {
     view.analyzeButton = dummy;
 
     expect(view.iframe).toBe(dummy);
+    expect(view.container).toBe(dummy);
     expect(view.header).toBe(dummy);
     expect(view.body).toBe(dummy);
     expect(view.activeSection).toBe(dummy);
