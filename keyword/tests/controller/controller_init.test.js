@@ -189,12 +189,12 @@ describe('KeywordController - init', () => {
       checkbox.checked = true;
   
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      let highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(2);
   
       checkbox.checked = false;
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(0);
     });
   
@@ -203,12 +203,12 @@ describe('KeywordController - init', () => {
       checkbox.checked = true;
   
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      let highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(2);
   
       iframeDoc.getElementById('test').style.display = 'block';
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+      highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(0);
     });
   });
@@ -218,7 +218,7 @@ describe('KeywordController - init', () => {
     const button = [...listContainer.querySelectorAll('.keyword-button--highlight')].at(-1);
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-    const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    const highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
     expect(highlights.length).toBe(2);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(true);
     expect(controller.view.activeHighlightButton).toBe(button);
@@ -266,7 +266,7 @@ describe('KeywordController - init', () => {
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
 
     highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    const highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
     expect(highlights.length).toBe(2);
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(true);
     expect(controller.view.activeHighlightButton).toBe(highlightButton);

@@ -64,8 +64,8 @@ class KeywordAnalyzer {
 
     ['title', 'description', 'alt'].forEach(tagName => {
       const count = this.countOccurrencesInTag(tagName, pattern);
-      keyword.frequency += count;
-      keyword.keywordOccurrences[tagName] += count;
+      keyword.frequency = (keyword.frequency || 0) + count;
+      keyword.keywordOccurrences[tagName] = (keyword.keywordOccurrences[tagName] || 0) + count;
     });
 
     keyword.calculateDensity(this._wordCounter.totalWords);

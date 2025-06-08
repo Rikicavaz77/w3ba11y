@@ -5,28 +5,29 @@ class StagedAnalysisStrategy extends KeywordAnalysisStrategy {
 
   resetCache() {}
 
+  _updateOccurrencesByTags(pattern, keywordOccurrences) {
+    this._context.allowedParentTags.forEach(tagName => {
+      const count = this._context.countOccurrencesInTag(tagName, pattern);
+      keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + count;
+    });
+  }
+
   analyzeSimpleKeyword(textNodes, pattern, keyword) {
     textNodes.forEach(node => {
       const matches = node.nodeValue.match(pattern) || [];
-      keyword.frequency += matches.length;
+      keyword.frequency = (keyword.frequency || 0) + matches.length;
     });
 
-    this._context.allowedParentTags.forEach(tagName => {
-      let count = this._context.countOccurrencesInTag(tagName, pattern);
-      keyword.keywordOccurrences[tagName] += count;
-    });
+    this._updateOccurrencesByTags(pattern, keyword.keywordOccurrences);
   } 
 
   analyzeCompoundKeyword(nodeGroups, pattern, keyword) {
     nodeGroups.forEach(({ virtualText }) => {
       const matches = virtualText.match(pattern) || [];
-      keyword.frequency += matches.length;
+      keyword.frequency = (keyword.frequency || 0) + matches.length;
     });
 
-    this._context.allowedParentTags.forEach(tagName => {
-      let count = this._context.countOccurrencesInTag(tagName, pattern);
-      keyword.keywordOccurrences[tagName] += count;
-    });
+    this._updateOccurrencesByTags(pattern, keyword.keywordOccurrences);
   } 
 }
 

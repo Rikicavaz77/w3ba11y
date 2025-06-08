@@ -38,7 +38,7 @@ class KeywordHighlighter {
 
   _injectHighlightBlock() {
     const staticCSS = `
-      .w3ba11y__highlight-keyword {
+      .w3ba11y__keyword-highlight {
         --highlight-bg-color: #98746d;
         --highlight-color: #011502;
         --highlight-border-color: #ba9588;
@@ -50,7 +50,7 @@ class KeywordHighlighter {
         border-radius: 6px;
         border: 2px solid var(--highlight-border-color) !important;
       }
-      .w3ba11y__highlight-keyword::before {
+      .w3ba11y__keyword-highlight::before {
         font-size: calc((0.6em + 0.6rem) / 2);
         background-color: #000 !important;
         color: #fff !important;
@@ -68,24 +68,24 @@ class KeywordHighlighter {
 
     const dynamicCSS = Object.entries(this._colorMap)
       .map(([key, value]) => `
-        .w3ba11y__highlight-keyword[data-parent="${key}"] {
+        .w3ba11y__keyword-highlight[data-parent="${key}"] {
           --highlight-bg-color: ${value.bg};
           --highlight-color: ${value.color};
           --highlight-border-color: ${value.border};
         }
       `).join('\n');
 
-    let styleEl = this.doc.getElementById('w3ba11y-highlight-keyword-style-override');
+    let styleEl = this.doc.getElementById('w3ba11y-keyword-highlight-style-override');
     if (!styleEl) {
       styleEl = this.doc.createElement('style');
-      styleEl.id = 'w3ba11y-highlight-keyword-style-override';
+      styleEl.id = 'w3ba11y-keyword-highlight-style-override';
       this.doc.head.appendChild(styleEl);
     }
     styleEl.textContent = staticCSS + dynamicCSS;
   }
 
   removeHighlight() {
-    const highlightedKeywords = this.root.querySelectorAll('.w3ba11y__highlight-keyword');
+    const highlightedKeywords = this.root.querySelectorAll('.w3ba11y__keyword-highlight');
     const parents = new Set();
 
     highlightedKeywords.forEach(element => {
@@ -157,7 +157,7 @@ class KeywordHighlighter {
       }
 
       const span = this.doc.createElement('span');
-      span.classList.add('w3ba11y__highlight-keyword');
+      span.classList.add('w3ba11y__keyword-highlight');
       span.dataset.parent = parent.toLowerCase();
       span.textContent = text.slice(matchStart, matchEnd);
       fragment.appendChild(span);
