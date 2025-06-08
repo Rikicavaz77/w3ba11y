@@ -42,25 +42,35 @@ class TagAccessor {
   }
 
   getTag(tagName) {
-    if (this._useCache && this._cache?.[tagName]) return this._cache[tagName];
+    if (this._useCache && tagName in this._cache) return this._cache[tagName];
 
-    const { selector, type } = this._tagAccess[tagName];
-    const result = (type === 'multi') ? Array.from(this._doc.querySelectorAll(selector)) : this._doc.querySelector(selector);
+    const tagConfig = this._tagAccess[tagName];
+    if (!tagConfig) return;
+
+    const { selector, type } = tagConfig;
+    const result = (type === 'multi') 
+      ? Array.from(this._doc.querySelectorAll(selector)) 
+      : this._doc.querySelector(selector);
 
     if (this._useCache) this._cache[tagName] = result;
     return result;
   }
 
   getTagOccurrences(tagName) {
-    const { selector, type } = this._tagAccess[tagName];
-    if (type === 'multi') {
-      return this._doc.querySelectorAll(selector).length;
-    } 
-    return this._doc.querySelector(selector) ? 1 : 0;
+    const tagConfig = this._tagAccess[tagName];
+    if (!tagConfig) return 0;
+
+    const { selector, type } = tagConfig;
+    return (type === 'multi') 
+      ? this._doc.querySelectorAll(selector).length
+      : this._doc.querySelector(selector) ? 1 : 0;
   }
 
   extractText(tagName, element) {
-    const { textSource } = this._tagAccess[tagName];
+    const tagConfig = this._tagAccess[tagName];
+    if (!tagConfig) return '';
+
+    const { textSource } = tagConfig;
     const value = element?.[textSource];
     return value?.toLowerCase() ?? '';
   }

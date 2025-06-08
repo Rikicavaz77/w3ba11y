@@ -67,7 +67,7 @@ class WordCounter {
   }
 
   _collectWords(forceRefresh = false) {
-    if (!forceRefresh && this._cachedWords) return this._cachedWords;
+    if (!forceRefresh && Array.isArray(this._cachedWords)) return this._cachedWords;
 
     const pattern = this._textProcessor.getWordsPattern();
     const textNodes = this._textProcessor.getTextNodes();

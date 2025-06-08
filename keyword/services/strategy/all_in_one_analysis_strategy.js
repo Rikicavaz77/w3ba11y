@@ -8,7 +8,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
-  reset() {
+  resetCache() {
     this._ancestorCache = new WeakMap(); 
   }
 
@@ -18,7 +18,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     let current = node.parentNode;
     const ancestors = [];
     while (current && current !== this._context.root) {
-      let tagName = current.nodeName.toLowerCase();
+      const tagName = current.nodeName.toLowerCase();
       if (this._context.allowedParentTags.includes(tagName)) {
         ancestors.push(current);
       }
@@ -50,7 +50,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
 
   _updateOccurrencesByAncestors(ancestors, keywordOccurrences, occurrences = 1) {
     ancestors.forEach(ancestor => {
-      let tagName = ancestor.nodeName.toLowerCase();
+      const tagName = ancestor.nodeName.toLowerCase();
       keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + occurrences;
     });
   }
@@ -60,7 +60,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
       const matches = node.nodeValue.match(pattern) || [];
       if (matches.length === 0) return;
 
-      keyword.frequency += matches.length;
+      keyword.frequency = (keyword.frequency || 0) + matches.length;
 
       const ancestors = this._findAncestors(node);
       this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, matches.length);
@@ -72,7 +72,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
       const matches = [...virtualText.matchAll(pattern)];
       if (matches.length === 0) return;
 
-      keyword.frequency += matches.length;
+      keyword.frequency = (keyword.frequency || 0) + matches.length;
 
       matches.forEach(match => {
         const matchStart = match.index;

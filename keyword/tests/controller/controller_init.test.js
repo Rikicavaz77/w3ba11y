@@ -47,7 +47,11 @@ describe('KeywordController - init', () => {
         <div class="w3ba11y__body"></div>
       </aside>
     `;
-    iframeDoc = document.implementation.createHTMLDocument('iframe');
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
     iframeDoc.head.innerHTML = `
       <title>This is a test</title>
       <meta name="keywords" content="seo, accessibility, keyword">
@@ -59,7 +63,7 @@ describe('KeywordController - init', () => {
       <h1>Another test heading</h1>
       <p>Keyword here too</p>
       <img src="test.jpg" alt="Image alt text">
-      <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong></p>
+      <p><strong style="display: inline;">Compound <em id="test" style="display: inline;">keyword</em></strong></p>
     `;
     controller = new KeywordController(iframeDoc);
   });
@@ -99,13 +103,13 @@ describe('KeywordController - init', () => {
     expect(listContainer).toBeTruthy();
     let button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
     expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
-    expect(listContainer.querySelectorAll('.keyword-icon--error').length).toBe(2);
+    expect(listContainer.querySelectorAll('.keywords__icon--error').length).toBe(2);
 
     listContainer = document.querySelector('[data-list-type="oneWord"]');
     expect(listContainer).toBeTruthy();
     button = listContainer.querySelector(`.keywords__sort-button[data-sort="desc"]`);
     expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
-    expect(listContainer.querySelectorAll('.keyword-icon--error').length).toBe(0);
+    expect(listContainer.querySelectorAll('.keywords__icon--error').length).toBe(0);
   });
 
   describe('update', () => {
@@ -122,7 +126,7 @@ describe('KeywordController - init', () => {
       `;
     });
 
-    it('should update controller correctly with full refresh', () => {
+    it('should update controller correctly with full refresh', () => {      
       controller.update(iframeDoc, true);
 
       const info = controller.overviewInfo;
@@ -172,21 +176,41 @@ describe('KeywordController - init', () => {
     });
   });
 
-  test('should highlight keyword on input and checkbox', () => {
-    const keywordInput = controller.view.customKeywordInput;
-    const checkbox = controller.view.keywordHighlightCheckbox;
+  describe('toggle highlight from checkbox', () => {
+    let keywordInput, checkbox;
 
-    keywordInput.value = '  test  ';
-    checkbox.checked = true;
+    beforeEach(() => {
+      keywordInput = controller.view.customKeywordInput;
+      checkbox = controller.view.keywordHighlightCheckbox;
+    });
 
-    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-    let highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(2);
-
-    checkbox.checked = false;
-    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-    highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
-    expect(highlights.length).toBe(0);
+    it('should highlight simple keyword', () => {
+      keywordInput.value = '  test  ';
+      checkbox.checked = true;
+  
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      let highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
+      expect(highlights.length).toBe(2);
+  
+      checkbox.checked = false;
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
+      expect(highlights.length).toBe(0);
+    });
+  
+    it('should highlight compound keyword based on display property', () => {
+      keywordInput.value = '  compound keyword  ';
+      checkbox.checked = true;
+  
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      let highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
+      expect(highlights.length).toBe(2);
+  
+      iframeDoc.getElementById('test').style.display = 'block';
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
+      expect(highlights.length).toBe(0);
+    });
   });
 
   test('should highlight keyword from list', () => {
@@ -194,7 +218,7 @@ describe('KeywordController - init', () => {
     const button = [...listContainer.querySelectorAll('.keyword-button--highlight')].at(-1);
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-    const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    const highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
     expect(highlights.length).toBe(2);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(true);
     expect(controller.view.activeHighlightButton).toBe(button);
@@ -242,7 +266,7 @@ describe('KeywordController - init', () => {
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
 
     highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    const highlights = iframeDoc.querySelectorAll('.w3ba11y__highlight-keyword');
+    const highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
     expect(highlights.length).toBe(2);
     expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(true);
     expect(controller.view.activeHighlightButton).toBe(highlightButton);

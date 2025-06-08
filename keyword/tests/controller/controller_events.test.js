@@ -70,8 +70,9 @@ describe('KeywordController - events', () => {
     controller.bindRefreshAnalysisButton();
     controller.view.refreshButton.dispatchEvent(new MouseEvent('click'));
     expect(controller.update).toHaveBeenCalledTimes(1);
-    const arg = controller.update.mock.calls[0][0];
-    expect(arg).toBe(iframe);
+    const arg = controller.update.mock.calls[0];
+    expect(arg[0]).toBe(iframe);
+    expect(arg[1]).toBe(false);
   });
 
   test('bindColorPicker() should attach color input handler', () => {

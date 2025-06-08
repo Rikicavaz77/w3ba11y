@@ -31,6 +31,7 @@ describe('KeywordListView', () => {
     expect(view.listType).toBe('meta');
     expect(view.container.dataset.listType).toBe('meta');
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
+    expect(view.keywordList).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
     expect(view.sortDirection).toBeNull();
@@ -53,12 +54,14 @@ describe('KeywordListView', () => {
 
     view.container = dummy;
     view.searchKeywordField = dummy;
+    view.keywordList = dummy;
     view.pagination = dummy;
     view.paginationButtons = dummy;
     view.currentPageButton = dummy;
 
     expect(view.container).toBe(dummy);
     expect(view.searchKeywordField).toBe(dummy);
+    expect(view.keywordList).toBe(dummy);
     expect(view.pagination).toBe(dummy);
     expect(view.paginationButtons).toBe(dummy);
     expect(view.currentPageButton).toBe(dummy);
@@ -101,30 +104,30 @@ describe('KeywordListView', () => {
 
   test('renderWarningIconIfNeeded() should handle warning icon creation', () => {
     let icon = view._renderWarningIconIfNeeded(0);
-    expect(icon).toContain('keyword-icon--error');
+    expect(icon).toContain('keywords__icon--error');
 
     icon = view._renderWarningIconIfNeeded(10);
     expect(icon).toBe('');
 
     view.listType = 'userAdded';
-    icon = view._renderWarningIconIfNeeded(10);
+    icon = view._renderWarningIconIfNeeded(0);
     expect(icon).toBe('');
   });
 
   describe('renderKeywords()', () => {
     it('should populate keyword list correctly', () => {
       view.renderKeywords(keywords, 0);
-      const items = view.container.querySelectorAll('.keyword-list-item');
+      const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items.length).toBe(2);
       expect(items[0].querySelector('.keyword-button--delete')).toBeNull();
       expect(items[0].querySelector('.keyword-button--highlight')).toBeTruthy();
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeNull();
       expect(items[0].querySelector('.keyword-button--view-details')).toBeTruthy();
       expect(items[0].textContent).toContain('test (26)');
-      expect(items[0].querySelector('.keyword-icon--error')).toBeNull();
+      expect(items[0].querySelector('.keywords__icon--error')).toBeNull();
       expect(items[0].dataset.keywordIndex).toBe('0');
       expect(items[1].textContent).toContain('another test (0)');
-      expect(items[1].querySelector('.keyword-icon--error')).toBeTruthy();
+      expect(items[1].querySelector('.keywords__icon--error')).toBeTruthy();
       expect(items[1].dataset.keywordIndex).toBe('1');
     });
 
@@ -137,7 +140,7 @@ describe('KeywordListView', () => {
       view.listType = 'userAdded';
       view._getActiveHighlightData = mockGetActiveHighlightData;
       view.renderKeywords(keywords, 0);
-      const items = view.container.querySelectorAll('.keyword-list-item');
+      const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--delete')).toBeTruthy();
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeNull();
     });
@@ -149,7 +152,7 @@ describe('KeywordListView', () => {
       });
       view._getActiveHighlightData = mockGetActiveHighlightData;
       view.renderKeywords(keywords, 0);
-      const items = view.container.querySelectorAll('.keyword-list-item');
+      const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeTruthy();
     });
   });

@@ -1,22 +1,17 @@
 class TextProcessor {
-  constructor(doc, treeWalker) {
+  constructor(doc, treeWalker, useCache = false) {
     this._doc = doc;
     this._root = doc.body;
     this._treeWalker = treeWalker;
+    this._cachedTextNodes = null;
+    this._cachedNodeGroups = null;
+    this._useCache = useCache;
     this._allowedParentTags = [
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'strong', 'em', 'a', 'li'
     ];
-    this.allowedInlineTags = [
+    this._allowedInlineTags = [
       'strong', 'em', 'b', 'i', 'u', 'span', 'mark', 'small', 'sup', 'sub', 'abbr'
     ];
-  }
-
-  set doc(doc) {
-    this._doc = doc;
-  }
-
-  set root(root) {
-    this._root = root;
   }
 
   get doc() {
@@ -27,25 +22,41 @@ class TextProcessor {
     return this._root;
   }
 
+  get useCache() {
+    return this._useCache;
+  }
+
+  set doc(doc) {
+    this._doc = doc;
+  }
+
+  set root(root) {
+    this._root = root;
+  }
+
+  set useCache(useCache) {
+    this._useCache = useCache;
+  }
+
   get allowedParentTags() {
     return this._allowedParentTags;
   }
 
-  isValidInlineElement(node) {
+  _isValidInlineElement(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return false;
 
     const tag = node.nodeName.toLowerCase();
-    const display = window.getComputedStyle(node).display;
+    const display = this._doc.defaultView?.getComputedStyle(node)?.display;
 
-    if (!display.startsWith('inline')) return false;
+    if (display && !display.startsWith('inline')) return false;
 
-   return this.allowedInlineTags.includes(tag);
+    return this._allowedInlineTags.includes(tag);
   }
 
-  getBlockParent(node) {
+  _getBlockParent(node) {
     let current = node.parentNode;
-    while(current && current !== this.root) {
-      if (!this.isValidInlineElement(current)) {
+    while(current && current !== this._root) {
+      if (!this._isValidInlineElement(current)) {
         return current;
       }
       current = current.parentNode;
@@ -65,22 +76,35 @@ class TextProcessor {
   }
 
   getWordsPattern() {
-    return /[\p{L}\p{N}]+(?:[’'_.-][\p{L}\p{N}]+)*/gu;
+    return /[\p{L}\p{N}]+(?:[’'_.–—-][\p{L}\p{N}]+)*/gu;
   }
 
   getCompoundSplitPattern() {
-    return /[^\p{L}\p{N} ’'_.-]+|(?<![\p{L}\p{N}])[’'_.-]|[’'_.-](?![\p{L}\p{N}])/u;
+    return /[^\p{L}\p{N}\s’'_.–—-]+|(?<![\p{L}\p{N}])[’'_.–—-]|[’'_.–—-](?![\p{L}\p{N}])/u;
   }
 
   getKeywordPattern(keyword, { capture = false, flags = 'giu' } = {}) {
-    const escapedKeyword = Utils.escapeRegExp(keyword);
-    if (capture) {
-      return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])(${escapedKeyword})(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
-    }
-    return new RegExp(`(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.-])${escapedKeyword}(?![\\p{L}\\p{N}]|[’'_.-][\\p{L}\\p{N}])`, flags);
+    const parts = keyword.trim().split(/\s+/);
+    const escaped = parts.map(Utils.escapeRegExp);
+    const flexKeyword = escaped.join('\\s+');
+
+    const basePattern = capture 
+      ? `(${flexKeyword})`
+      : flexKeyword;
+
+    const pattern = `(?<![\\p{L}\\p{N}]|[\\p{L}\\p{N}][’'_.–—-])${basePattern}(?![\\p{L}\\p{N}]|[’'_.–—-][\\p{L}\\p{N}])`;
+
+    return new RegExp(pattern, flags);
+  }
+
+  resetCache() {
+    this._cachedTextNodes = null;
+    this._cachedNodeGroups = null;
   }
 
   getTextNodeGroups() {
+    if (this._useCache && Array.isArray(this._cachedNodeGroups)) return this._cachedNodeGroups;
+
     const nodeGroups = [];
     let currentGroup = [];
     let currentBlockParent = null;
@@ -89,7 +113,7 @@ class TextProcessor {
     let node;
     while ((node = this._treeWalker.nextNode())) {
       const text = node.nodeValue;
-      const parent = this.getBlockParent(node);
+      const parent = this._getBlockParent(node);
 
       if (currentBlockParent === parent) {
         if (virtualText.length > 0 && !virtualText.endsWith(' ') && !text.startsWith(' ')) {
@@ -114,16 +138,21 @@ class TextProcessor {
       nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
     }
 
+    if (this._useCache) this._cachedNodeGroups = nodeGroups;
     return nodeGroups;
   }
 
   getTextNodes() {
+    if (this._useCache && Array.isArray(this._cachedTextNodes)) return this._cachedTextNodes;
+
     const textNodes = [];
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
       textNodes.push(node);
     }
+
+    if (this._useCache) this._cachedTextNodes = textNodes;
     return textNodes;
   }
 }
