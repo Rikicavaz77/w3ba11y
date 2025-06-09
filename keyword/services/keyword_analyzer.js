@@ -38,6 +38,7 @@ class KeywordAnalyzer {
   countOccurrencesInTag(tagName, pattern) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return 0;
+    
     tags = Array.isArray(tags) ? tags : [tags];
     let count = 0;
     tags.forEach(tag => {

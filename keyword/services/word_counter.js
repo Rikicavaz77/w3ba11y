@@ -36,6 +36,7 @@ class WordCounter {
   _collectWordsInTag(tagName, pattern, words) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return;
+
     tags = Array.isArray(tags) ? tags : [tags];
     tags.forEach(tag => {
       const text = this._tagAccessor.extractText(tagName, tag);
@@ -59,6 +60,7 @@ class WordCounter {
   _collectCompoundsInTag(tagName, pattern, compounds, gramSize) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return;
+
     tags = Array.isArray(tags) ? tags : [tags];
     tags.forEach(tag => {
       const text = this._tagAccessor.extractText(tagName, tag);
@@ -67,7 +69,7 @@ class WordCounter {
   }
 
   _collectWords(forceRefresh = false) {
-    if (!forceRefresh && Array.isArray(this._cachedWords)) return this._cachedWords;
+    if (!forceRefresh && this._cachedWords) return this._cachedWords;
 
     const pattern = this._textProcessor.getWordsPattern();
     const textNodes = this._textProcessor.getTextNodes();
@@ -129,6 +131,7 @@ class WordCounter {
     const words = this._collectWords();
     const filteredWords = words.filter(word => !stopwords.has(word));
     const wordsMap = this._countOccurrences(filteredWords);
+    
     const relevantWords = [...wordsMap.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
@@ -142,12 +145,14 @@ class WordCounter {
     if (this._getBaseLang(lang) !== 'en') {
       secondaryStopwords = this._getStopwords('en', false);
     }
+
     const compounds = this._collectCompounds(gramSize);
     const filteredWords = compounds.filter(compound => {
       const words = compound.split(' ');
       return words.every(word => !mainStopwords.has(word)) &&
       (!secondaryStopwords || words.filter(word => secondaryStopwords.has(word)).length <= gramSize / 2);
     });
+
     const wordsMap = this._countOccurrences(filteredWords);
     const relevantWords = [...wordsMap.entries()]
       .sort((a, b) => b[1] - a[1])
