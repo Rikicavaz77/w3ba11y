@@ -2,7 +2,11 @@ class TreeWalkerManager {
   constructor(doc) {
     this._doc = doc;
     this._root = doc.body;
-    this._invalidTags = ['script', 'style', 'noscript', 'iframe', 'object', 'textarea', 'button', 'svg'];
+    this._invalidTags = [
+      'script', 'style', 'noscript', 'iframe', 'object', 'textarea', 
+      'button', 'svg', 'canvas', 'select', 'option', 'input',
+      'track', 'source', 'audio', 'video'
+    ];
     this.createTreeWalker();
   }
 
