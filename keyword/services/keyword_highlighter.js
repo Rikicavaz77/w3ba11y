@@ -108,8 +108,10 @@ class KeywordHighlighter {
           matchStart: match.index,
           matchEnd: match.index + match[0].length
         }));
-      if (matches.length === 0) return;
-      this._highlightMatches(node, matches);
+
+      if (matches.length > 0) {
+        this._highlightMatches(node, matches);
+      }
     });
   }
 

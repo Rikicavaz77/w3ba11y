@@ -57,7 +57,7 @@ describe('KeywordController', () => {
       clearActiveButton: jest.fn(),
       getListViewByType: jest.fn().mockReturnValue(mockListView),
       getCustomKeywordValue: jest.fn().mockReturnValue('seo'),
-      keywordHighlightCheckbox: { checked: false },
+      isHighlightCheckboxEnabled: jest.fn().mockReturnValue(false),
       clearHighlightCheckbox: jest.fn(),
       clearCustomKeywordInput: jest.fn(),
       removeKeywordList: jest.fn()
@@ -263,7 +263,7 @@ describe('KeywordController', () => {
     });
 
     it('should analyze and render keyword with highlight button active', () => {
-      controller.view.keywordHighlightCheckbox = { checked: true };
+      controller.view.isHighlightCheckboxEnabled.mockReturnValue(true);
       controller.analyzeKeyword();
       expect(controller.keywordAnalyzer.analyzeKeyword).toHaveBeenCalledWith(expect.any(Keyword));
       expect(controller.view.clearCustomKeywordInput).toHaveBeenCalled();

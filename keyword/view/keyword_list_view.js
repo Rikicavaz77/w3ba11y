@@ -70,8 +70,8 @@ class KeywordListView {
     this._container = container;
   }
 
-  set searchKeywordField(searchKeywordField) {
-    this._searchKeywordField = searchKeywordField;
+  set searchKeywordField(input) {
+    this._searchKeywordField = input;
   }
 
   set currentSortButton(button) {
@@ -124,7 +124,7 @@ class KeywordListView {
                 <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
               </svg>
             </span>
-            <input type="text" name="search-keyword" class="keywords__input-wrapper__field" data-search placeholder="Search keyword..." aria-label="Search keyword">
+            <input type="text" name="keyword-search" class="keywords__input-wrapper__field" data-search placeholder="Search keyword..." aria-label="Search keyword">
           </div>
         </div>
         <div class="keywords__sort-container">
@@ -232,7 +232,8 @@ class KeywordListView {
       item.dataset.keywordIndex = startIndex + keywords.indexOf(keywordItem);
 
       const safeName = Utils.escapeHTML(keywordItem.name);
-      const safeFrequency = keywordItem.frequency == null || isNaN(+keywordItem.frequency) ? 0 : +keywordItem.frequency;
+      const safeFrequency = keywordItem.frequency == null || isNaN(+keywordItem.frequency) 
+        ? 0 : +keywordItem.frequency;
       const highlightClass = this._getHighlightClass(keywordItem);
 
       item.innerHTML = `

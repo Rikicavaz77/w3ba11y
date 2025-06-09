@@ -477,6 +477,30 @@ describe('KeywordView', () => {
     expect(tooltip2.classList.contains('keywords--not-visible')).toBe(true);
   });
 
+  describe('isHighlightCheckboxEnabled()', () => {
+    beforeEach(() => {
+      view.renderKeywordInputBox();
+    });
+
+    it('should return true if checkbox is enabled', () => {
+      view.keywordHighlightCheckbox.checked = true;
+      
+      expect(view.isHighlightCheckboxEnabled()).toBe(true);
+    });
+
+    it('should return false if checkbox is not enabled', () => {
+      view.keywordHighlightCheckbox.checked = false;
+      
+      expect(view.isHighlightCheckboxEnabled()).toBe(false);
+    });
+
+    it('should return false if checkbox is undefined', () => {
+      view.keywordHighlightCheckbox = null;
+      
+      expect(view.isHighlightCheckboxEnabled()).toBe(false);
+    });
+  });
+
   describe('isButtonActive()', () => {
     it('should return true if button is active', () => {
       const button = document.createElement('button');

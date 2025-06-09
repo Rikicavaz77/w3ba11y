@@ -233,6 +233,7 @@ class KeywordController {
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
+
     const start = (currentPage - 1) * batchSize;
     const end = start + batchSize;
     const keywordsData = keywordList.slice(start, end);
@@ -378,7 +379,7 @@ class KeywordController {
     this.keywordAnalyzer.analyzeKeyword(keywordItem);
 
     this.view.clearCustomKeywordInput();
-    if (this.view.keywordHighlightCheckbox.checked) {
+    if (this.view.isHighlightCheckboxEnabled()) {
       this.activeHighlightedKeyword = keywordItem;
       this.activeHighlightSource = 'list';
       this.view.clearHighlightCheckbox();
@@ -478,7 +479,7 @@ class KeywordController {
 
   bindRefreshAnalysisButton() {
     this.view.refreshButton.addEventListener('click', () => {
-      this.update(this.view.iframe, false);
+      this.update(this.view.iframe);
     });
   }
 

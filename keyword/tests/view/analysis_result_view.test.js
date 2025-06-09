@@ -66,6 +66,7 @@ describe('AnalysisResultView', () => {
       expect(container).not.toBeNull();
       expect(container.innerHTML).not.toContain('<script>alert(1)</script>');
       expect(container.innerHTML).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
+      expect(container.textContent).toContain('<script>alert(1)</script>');
       expect(container.textContent).toContain('24');
       expect(container.textContent).toContain('0.84');
       const hasMatch = /\bp\b/.test(
