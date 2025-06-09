@@ -111,7 +111,7 @@ class KeywordHighlighter {
 
       if (matches.length > 0) {
         this._highlightMatches(node, matches);
-      };
+      }
     });
   }
 
