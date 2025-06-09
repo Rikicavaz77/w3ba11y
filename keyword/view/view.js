@@ -416,13 +416,13 @@ class KeywordView {
         <button type="button" class="keywords__analyze-button">Analyze</button>
       </div>
       <div class="keywords__highlight-box">
-        <input type="checkbox" id="highlight-input-keyword" class="keywords__highlight-input" name="keyword-highlight">
-        <label for="highlight-input-keyword">Highlight keyword</label>
+        <input type="checkbox" id="input-keyword-highlight" class="keywords__highlight-input" name="keyword-highlight">
+        <label for="input-keyword-highlight">Highlight keyword</label>
       </div>
     `;
 
     this._customKeywordInput = keywordInputContainer.querySelector('#custom-keyword-input');
-    this._keywordHighlightCheckbox = keywordInputContainer.querySelector("#highlight-input-keyword");
+    this._keywordHighlightCheckbox = keywordInputContainer.querySelector("#input-keyword-highlight");
     this._analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
   }
 
@@ -510,6 +510,10 @@ class KeywordView {
     this._activeTab = this._container.querySelector(`.tab--${clickedButton.dataset.tab}`);
     this._activeTabButton.classList.add('tab__button--active');
     this._activeTab?.classList.add('tab--active');
+  }
+
+  isHighlightCheckboxEnabled() {
+    return !!this._keywordHighlightCheckbox?.checked;
   }
 
   isButtonActive(clickedButton) {

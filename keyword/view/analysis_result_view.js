@@ -87,8 +87,10 @@ class AnalysisResultView {
     }
     this._currentKeywordItem = keywordItem;
     const highlightClass = this._getHighlightClass();
-    const safeFrequency = keywordItem.frequency == null || isNaN(+keywordItem.frequency) ? 0 : +keywordItem.frequency;
-    const safeDensity = keywordItem.density == null || isNaN(+keywordItem.density) ? 0 : +keywordItem.density;
+    const safeFrequency = keywordItem.frequency == null || isNaN(+keywordItem.frequency) 
+      ? 0 : +keywordItem.frequency;
+    const safeDensity = keywordItem.density == null || isNaN(+keywordItem.density) 
+      ? 0 : +keywordItem.density;
 
     analysisResultContainer.innerHTML = `
       <div class="keywords__analysis-item">
