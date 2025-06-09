@@ -46,7 +46,7 @@ class KeywordHighlighter {
         color: var(--highlight-color) !important;
         position: relative;
         display: inline-block;
-        padding: 0.2em 0.8em;
+        padding: 0.2em 1em;
         border-radius: 6px;
         border: 2px solid var(--highlight-border-color) !important;
       }

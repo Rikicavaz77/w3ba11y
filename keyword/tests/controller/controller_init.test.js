@@ -150,7 +150,7 @@ describe('KeywordController - init', () => {
       expect(controller.view.activeHighlightButton).toBeNull();
       expect(controller.view.keywordHighlightCheckbox.checked).toBe(false);
 
-      const overviewContainer = controller.view.body.querySelector('.keywords__overview-container');
+      const overviewContainer = controller.view.dashboardBody.querySelector('.keywords__overview-container');
       expect(overviewContainer.querySelectorAll('.keywords__overview-icon--warning').length).toBe(1);
 
       const listContainer = document.querySelector('[data-list-type="meta"]');
@@ -165,7 +165,7 @@ describe('KeywordController - init', () => {
       expect(info.wordCount).toBe(16);
       expect(info.uniqueWordCount).toBe(10);
 
-      const overviewContainer = controller.view.body.querySelector('.keywords__overview-container');
+      const overviewContainer = controller.view.dashboardBody.querySelector('.keywords__overview-container');
       expect(overviewContainer.textContent).toContain('seo, accessibility, keyword');
       expect(overviewContainer.textContent).toContain('16');
       expect(overviewContainer.textContent).toContain('10');
