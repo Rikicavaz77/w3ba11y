@@ -490,7 +490,7 @@ pre {
 }
 
 .w3ba11y__section--keyword .section__title {
-  margin-top: 0.83rem;
+  margin-top: 0.83em;
 }
 
 .keywords__button--refresh {
@@ -582,7 +582,7 @@ pre {
   margin: 0.5rem 0;
 }
 
-.keywords__overview-item-icon {
+.keywords__overview-icon {
   background-color: rgba(235, 159, 197, 0.4);
   color: #af0bcc;
   padding: 0.3rem;

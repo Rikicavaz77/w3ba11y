@@ -27,8 +27,9 @@ describe('KeywordView', () => {
 
   test('should initialize container and internal refs', () => {
     expect(view.container).toBeInstanceOf(HTMLElement);
-    expect(view.header).toBeInstanceOf(HTMLElement);
-    expect(view.body).toBeInstanceOf(HTMLElement);
+    expect(view.dashboardSection).toBeInstanceOf(HTMLElement);
+    expect(view.dashboardHeader).toBeInstanceOf(HTMLElement);
+    expect(view.dashboardBody).toBeInstanceOf(HTMLElement);
     expect(view.activeSection.classList.contains('keywords__section--dashboard')).toBe(true);
     expect(view.tabButtons.length).toBeGreaterThan(0);
     expect(view.refreshButton).toBeInstanceOf(HTMLElement);
@@ -62,9 +63,10 @@ describe('KeywordView', () => {
 
     view.iframe = dummy;
     view.container = dummy;
-    view.header = dummy;
-    view.body = dummy;
+    view.dashboardSection = dummy;
     view.activeSection = dummy;
+    view.dashboardHeader = dummy;
+    view.dashboardBody = dummy;
     view.refreshButton = dummy;
     view.tabButtons = dummy;
     view.activeTabButton = dummy;
@@ -76,9 +78,10 @@ describe('KeywordView', () => {
 
     expect(view.iframe).toBe(dummy);
     expect(view.container).toBe(dummy);
-    expect(view.header).toBe(dummy);
-    expect(view.body).toBe(dummy);
+    expect(view.dashboardSection).toBe(dummy);
     expect(view.activeSection).toBe(dummy);
+    expect(view.dashboardHeader).toBe(dummy);
+    expect(view.dashboardBody).toBe(dummy);
     expect(view.refreshButton).toBe(dummy);
     expect(view.tabButtons).toBe(dummy);
     expect(view.activeTabButton).toBe(dummy);
@@ -142,7 +145,7 @@ describe('KeywordView', () => {
     };
 
     view.renderKeywordAnalysisOverview(overviewInfo);
-    let overview = view.body.querySelector('.keywords__overview-container');
+    let overview = view.dashboardBody.querySelector('.keywords__overview-container');
     expect(overview).toBeTruthy();
     expect(view.activeTab).toBe(overview);
     expect(overview.textContent).toContain('test, another test');
@@ -159,8 +162,8 @@ describe('KeywordView', () => {
     };
 
     view.renderKeywordAnalysisOverview(anotherOverviewInfo);
-    expect(view.body.querySelectorAll('.keywords__overview-container').length).toBe(1);
-    overview = view.body.querySelector('.keywords__overview-container');
+    expect(view.dashboardBody.querySelectorAll('.keywords__overview-container').length).toBe(1);
+    overview = view.dashboardBody.querySelector('.keywords__overview-container');
     const matches = overview.textContent.match(/Missing/gi);
     expect(matches.length).toBe(2);
     expect(overview.textContent).toContain('0');
@@ -175,7 +178,7 @@ describe('KeywordView', () => {
 
     view.renderKeywordSettings(colorMap);
 
-    const settings = view.body.querySelector('.keywords__settings-container');
+    const settings = view.dashboardBody.querySelector('.keywords__settings-container');
     expect(settings).toBeTruthy();
     expect(settings.innerHTML).toContain('highlight-bg-p');
     expect(settings.innerHTML).toContain('highlight-color-h1');
@@ -183,13 +186,13 @@ describe('KeywordView', () => {
     expect(view.colorInputs.length).toBe(6);
 
     view.renderKeywordSettings({});
-    expect(view.body.querySelectorAll('.keywords__settings-container').length).toBe(1);
+    expect(view.dashboardBody.querySelectorAll('.keywords__settings-container').length).toBe(1);
   });
 
   test('renderKeywordInputBox() should create input container', () => {
     view.renderKeywordInputBox();
 
-    const box = view.body.querySelector('.keywords__input-container');
+    const box = view.dashboardBody.querySelector('.keywords__input-container');
     expect(box).toBeTruthy();
     expect(view.customKeywordInput).toBeDefined();
     expect(view.customKeywordInput.classList.contains('keywords__input-wrapper__field')).toBe(true);
@@ -199,7 +202,7 @@ describe('KeywordView', () => {
     expect(view.analyzeButton.classList.contains('keywords__analyze-button')).toBe(true);
 
     view.renderKeywordInputBox();
-    expect(view.body.querySelectorAll('.keywords__input-container').length).toBe(1);
+    expect(view.dashboardBody.querySelectorAll('.keywords__input-container').length).toBe(1);
   });
 
   describe('renderKeywordListContainer()', () => {
@@ -224,7 +227,7 @@ describe('KeywordView', () => {
       const appendSpy = jest.spyOn(Element.prototype, 'appendChild');
   
       view.renderKeywordListContainer(keywordListInfo, () => {});
-      const all = view.body.querySelector('.keyword-all-lists__container');
+      const all = view.dashboardBody.querySelector('.keyword-all-lists__container');
       expect(all).toBeTruthy();
       expect(all.contains(mockListView.container)).toBe(true);
       expect(mockListView.render).toHaveBeenCalledWith(keywords, 1);
@@ -251,11 +254,11 @@ describe('KeywordView', () => {
       const existing = document.createElement('div');
       existing.dataset.listType = 'meta';
       all.appendChild(existing);
-      view.body.appendChild(all);
+      view.dashboardBody.appendChild(all);
 
       view.renderKeywordListContainer(keywordListInfo);
       expect(mockListView.render).toHaveBeenCalled();
-      expect(view.body.querySelectorAll('.keyword-all-lists__container').length).toBe(1);
+      expect(view.dashboardBody.querySelectorAll('.keyword-all-lists__container').length).toBe(1);
       expect(all.querySelectorAll('[data-list-type="meta"]').length).toBe(1);
     });
   });
