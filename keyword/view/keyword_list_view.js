@@ -82,12 +82,12 @@ class KeywordListView {
     this._sortDirection = sortDirection;
   }
 
-  set pagination(pagination) {
-    this._pagination = pagination;
-  }
-
   set keywordList(keywordList) {
     this._keywordList = keywordList;
+  }
+
+  set pagination(pagination) {
+    this._pagination = pagination;
   }
 
   set paginationButtons(buttons) {

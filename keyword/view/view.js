@@ -1,9 +1,10 @@
 class KeywordView {
   constructor(iframe) {
     this._iframe = iframe;
-    this._header = null;
-    this._body = null;
+    this._dashboardSection = null;
     this._activeSection = null;
+    this._dashboardHeader = null;
+    this._dashboardBody = null;
     this._refreshButton = null;
     this._tabButtons = null;
     this._activeTabButton = null;
@@ -25,16 +26,20 @@ class KeywordView {
     return this._container;
   }
 
-  get header() {
-    return this._header;
-  }
-
-  get body() {
-    return this._body;
+  get dashboardSection() {
+    return this._dashboardSection;
   }
 
   get activeSection() {
     return this._activeSection;
+  }
+
+  get dashboardHeader() {
+    return this._dashboardHeader;
+  }
+
+  get dashboardBody() {
+    return this._dashboardBody;
   }
 
   get refreshButton() {
@@ -53,32 +58,28 @@ class KeywordView {
     return this._activeTab;
   }
 
-  get dashboardSection() {
-    return this._container.querySelector('.keywords__section--dashboard');
-  }
-
   get overviewTab() {
-    return this._container.querySelector('.tab--overview');
+    return this._dashboardSection?.querySelector('.tab--overview');
   }
 
   get overviewTabButton() {
-    return this._container.querySelector('.tab__button--overview');
+    return this._dashboardSection?.querySelector('.tab__button--overview');
   }
 
   get settingsTab() {
-    return this._container.querySelector('.tab--settings');
+    return this._dashboardSection?.querySelector('.tab--settings');
   }
 
   get settingsTabButton() {
-    return this._container.querySelector('.tab__button--settings');
+    return this._dashboardSection?.querySelector('.tab__button--settings');
   }
 
   get tooltipTriggers() {
-    return this._container.querySelectorAll('.keywords__tooltip-trigger');
+    return this._container?.querySelectorAll('.keywords__tooltip-trigger');
   }
 
   get tooltips() {
-    return this._container.querySelectorAll('.keywords__tooltip-text');
+    return this._container?.querySelectorAll('.keywords__tooltip-text');
   }
 
   get colorInputs() {
@@ -98,7 +99,7 @@ class KeywordView {
   }
 
   get activeHighlightButton() {
-    return this._container.querySelector('.keyword-button--highlight--active');
+    return this._container?.querySelector('.keyword-button--highlight--active');
   }
 
   get analysis() {
@@ -113,16 +114,20 @@ class KeywordView {
     this._container = container;
   }
 
-  set header(header) {
-    this._header = header;
-  }
-
-  set body(body) {
-    this._body = body;
+  set dashboardSection(section) {
+    this._dashboardSection = section;
   }
 
   set activeSection(section) {
     this._activeSection = section;
+  }
+
+  set dashboardHeader(header) {
+    this._dashboardHeader = header;
+  }
+
+  set dashboardBody(body) {
+    this._dashboardBody = body;
   }
 
   set refreshButton(button) {
@@ -239,12 +244,14 @@ class KeywordView {
       asideBody.removeChild(existingKeywordSection);
     asideBody.appendChild(keywordViewSection);
 
-    this._header = keywordViewSection.querySelector('.section__header');
-    this._body = keywordViewSection.querySelector('.section__body');
-    this._activeSection = keywordViewSection.querySelector('.keywords__section--dashboard');
-    this._refreshButton = keywordViewSection.querySelector('.keywords__button--refresh');
-    this._tabButtons = keywordViewSection.querySelectorAll('.tab__button');
-    this._activeTabButton = keywordViewSection.querySelector('.tab__button--overview');
+    const dashboardSection = keywordViewSection.querySelector('.keywords__section--dashboard');
+    this._dashboardSection = dashboardSection;
+    this._activeSection = dashboardSection;
+    this._dashboardHeader = dashboardSection.querySelector('.section__header');
+    this._dashboardBody = dashboardSection.querySelector('.section__body');
+    this._refreshButton = dashboardSection.querySelector('.keywords__button--refresh');
+    this._tabButtons = dashboardSection.querySelectorAll('.tab__button');
+    this._activeTabButton = dashboardSection.querySelector('.tab__button--overview');
 
     return keywordViewSection;
   }
@@ -282,13 +289,13 @@ class KeywordView {
   }
 
   renderKeywordAnalysisOverview(overviewInfo) {
-    let overviewContainer = this._body.querySelector('.keywords__overview-container');
+    let overviewContainer = this._dashboardBody.querySelector('.keywords__overview-container');
     if (!overviewContainer) {
       overviewContainer = document.createElement('div');
       overviewContainer.classList.add('keywords__overview-container', 'tab', 'tab--active', 'tab--overview');
       overviewContainer.dataset.tab = 'overview';
       this._activeTab = overviewContainer;
-      this._body.appendChild(overviewContainer);
+      this._dashboardBody.appendChild(overviewContainer);
     }
     const warningIconSvg = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__overview-icon--warning keywords__icon--large" aria-hidden="true">
@@ -347,12 +354,12 @@ class KeywordView {
   }
 
   renderKeywordSettings(colorMap) {
-    let settingsContainer = this._body.querySelector('.keywords__settings-container');
+    let settingsContainer = this._dashboardBody.querySelector('.keywords__settings-container');
     if (!settingsContainer) {
       settingsContainer = document.createElement('div');
       settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings');
       settingsContainer.dataset.tab = 'settings';
-      this._body.appendChild(settingsContainer);
+      this._dashboardBody.appendChild(settingsContainer);
     }
     settingsContainer.innerHTML = `
       <h3 class="keywords__settings-title">Highlight keywords</h3>
@@ -396,11 +403,11 @@ class KeywordView {
   }
 
   renderKeywordInputBox() { 
-    let keywordInputContainer = this._body.querySelector('.keywords__input-container');
+    let keywordInputContainer = this._dashboardBody.querySelector('.keywords__input-container');
     if (!keywordInputContainer) {
       keywordInputContainer = document.createElement('div');
       keywordInputContainer.classList.add('keywords__input-container');
-      this._body.appendChild(keywordInputContainer);
+      this._dashboardBody.appendChild(keywordInputContainer);
     }
     keywordInputContainer.innerHTML = `
       <label for="custom-keyword-input"><strong>Insert keyword:</strong></label>
@@ -429,11 +436,11 @@ class KeywordView {
   renderKeywordListContainer(keywordListInfo, getActiveHighlightData) {
     const keywordListView = this.createListView(keywordListInfo, getActiveHighlightData);
 
-    let allKeywordListContainer = this._container.querySelector('.keyword-all-lists__container');
+    let allKeywordListContainer = this._dashboardBody.querySelector('.keyword-all-lists__container');
     if (!allKeywordListContainer) {
       allKeywordListContainer = document.createElement('div');
       allKeywordListContainer.classList.add('keyword-all-lists__container');
-      this._body.appendChild(allKeywordListContainer);
+      this._dashboardBody.appendChild(allKeywordListContainer);
     }
 
     const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}"]`);
@@ -507,7 +514,7 @@ class KeywordView {
     this._activeTab?.classList.remove('tab--active');
 
     this._activeTabButton = clickedButton;
-    this._activeTab = this._container.querySelector(`.tab--${clickedButton.dataset.tab}`);
+    this._activeTab = this._dashboardBody.querySelector(`.tab--${clickedButton.dataset.tab}`);
     this._activeTabButton.classList.add('tab__button--active');
     this._activeTab?.classList.add('tab--active');
   }
