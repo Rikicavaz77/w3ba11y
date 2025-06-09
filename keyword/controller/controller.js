@@ -478,7 +478,7 @@ class KeywordController {
 
   bindRefreshAnalysisButton() {
     this.view.refreshButton.addEventListener('click', () => {
-      this.update(this.view.iframe, false);
+      this.update(this.view.iframe);
     });
   }
 
