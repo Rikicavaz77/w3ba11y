@@ -177,7 +177,6 @@ describe('KeywordController', () => {
 
     it('should do nothing if sort button already active', () => {
       mockListView.isCurrentSortButton = jest.fn().mockReturnValue(true);
-      
       controller.handleKeywordSorting('meta', mockButton);
       expect(controller.sortKeywords).not.toHaveBeenCalled();
       expect(mockListView.setCurrentSortButton).not.toHaveBeenCalledWith();

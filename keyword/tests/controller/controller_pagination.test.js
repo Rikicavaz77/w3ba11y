@@ -87,7 +87,7 @@ describe('KeywordController - pagination', () => {
   
   describe('changePage()', () => {
     beforeEach(() => {
-      controller.renderPage = jest.fn();;
+      controller.renderPage = jest.fn();
     });
 
     it('should call renderPage with correct arguments', () => {
