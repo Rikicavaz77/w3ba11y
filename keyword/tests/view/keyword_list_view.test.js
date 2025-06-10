@@ -232,6 +232,14 @@ describe('KeywordListView', () => {
     expect(view.sortDirection).toBeNull();
   });
 
+  test('clearSearchKeywordField() should clear the input', () => {
+    view.searchKeywordField.value = 'test';
+
+    view.clearSearchKeywordField();
+
+    expect(view.searchKeywordField.value).toBe('');
+  });
+
   describe('areFiltersActive()', () => {
     beforeEach(() => {
       view.initialSortDirection = null;

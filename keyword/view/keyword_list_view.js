@@ -202,10 +202,15 @@ class KeywordListView {
     this._sortDirection = null;
   }
 
+  clearSearchKeywordField() {
+    if (this._searchKeywordField)
+      this._searchKeywordField.value = '';
+  }
+
   areFiltersActive() {
     return (
       this._sortDirection !== this._initialSortDirection ||
-      this._searchKeywordField.value.trim() !== ''
+      this._searchKeywordField?.value?.trim() !== ''
     );
   }
 
@@ -216,7 +221,7 @@ class KeywordListView {
     } else {
       this.clearCurrentSortButton();
     }
-    this._searchKeywordField.value = '';
+    this.clearSearchKeywordField();
   }
 
   _renderDeleteButtonIfNeeded() {
