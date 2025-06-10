@@ -523,18 +523,18 @@ class KeywordView {
     return !!this._keywordHighlightCheckbox?.checked;
   }
 
-  isButtonActive(clickedButton) {
-    if (!clickedButton) return false;
-    return clickedButton.classList.contains('keyword-button--highlight--active');
+  isHighlightButtonActive(button) {
+    if (!button) return false;
+    return button.classList.contains('keyword-button--highlight--active');
   }
 
-  setActiveButton(clickedButton) {
-    if (!clickedButton) return;
+  setActiveHighlightButton(button) {
+    if (!button) return;
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
-    clickedButton.classList.add('keyword-button--highlight--active');
+    button.classList.add('keyword-button--highlight--active');
   }
 
-  clearActiveButton() {
+  clearActiveHighlightButton() {
     this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
   }
 

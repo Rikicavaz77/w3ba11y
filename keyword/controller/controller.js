@@ -264,7 +264,7 @@ class KeywordController {
   // HANDLE SORTING FUNCTION
   handleKeywordSorting(listType, clickedButton) {
     const listView = this.view.getListViewByType(listType);
-    if (!listView) return;
+    if (!listView || listView.isCurrentSortButton(clickedButton)) return;
     
     const list = this.keywordLists[listType];
     if (!list) return;
@@ -325,7 +325,7 @@ class KeywordController {
   resetHighlightState() {
     this.activeHighlightedKeyword = null;
     this.activeHighlightSource = null;
-    this.view.clearActiveButton();
+    this.view.clearActiveHighlightButton();
   }
 
   // TOGGLE HIGHLIGHT FUNCTION
@@ -344,14 +344,14 @@ class KeywordController {
 
   // HANDLE HIGHLIGHT CLICK FUNCTION
   handleHighlightClick(keywordItem, clickedButton) {
-    if (this.view.isButtonActive(clickedButton)) {
+    if (this.view.isHighlightButtonActive(clickedButton)) {
       this.resetHighlightState();
       this.keywordHighlighter.removeHighlight();
     } else {
       this.activeHighlightedKeyword = keywordItem;
       this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
       this.view.clearHighlightCheckbox();
-      this.view.setActiveButton(clickedButton);
+      this.view.setActiveHighlightButton(clickedButton);
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
     }
   }

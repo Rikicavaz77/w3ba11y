@@ -504,36 +504,36 @@ describe('KeywordView', () => {
     });
   });
 
-  describe('isButtonActive()', () => {
+  describe('isHighlightButtonActive()', () => {
     it('should return true if button is active', () => {
       const button = document.createElement('button');
       button.classList.add('keyword-button--highlight--active');
       
-      expect(view.isButtonActive(button)).toBe(true);
+      expect(view.isHighlightButtonActive(button)).toBe(true);
     });
 
     it('should return false if button is inactive', () => {
       const button = document.createElement('button');
       
-      expect(view.isButtonActive(button)).toBe(false);
+      expect(view.isHighlightButtonActive(button)).toBe(false);
     });
   });
 
-  test('setActiveButton() should make clicked button active', () => {
+  test('setActiveHighlightButton() should make clicked button active', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
     const newButton = document.createElement('button');
-    view.setActiveButton(newButton);
+    view.setActiveHighlightButton(newButton);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
     expect(newButton.classList.contains('keyword-button--highlight--active')).toBe(true);
   });
 
-  test('clearActiveButton() should make clicked button inactive', () => {
+  test('clearActiveHighlightButton() should make clicked button inactive', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
-    view.clearActiveButton(button);
+    view.clearActiveHighlightButton(button);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
   });
 
