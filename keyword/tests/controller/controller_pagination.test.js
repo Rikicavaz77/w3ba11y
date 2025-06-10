@@ -9,7 +9,7 @@ function makeKeywords(count) {
 function mockListView(overrides = {}) {
   return {
     render: jest.fn(),
-    isCurrentPage: jest.fn(() => false),
+    isCurrentPageButton: jest.fn(() => false),
     scrollToPagination: jest.fn(),
     currentPage: 1,
     ...overrides
@@ -93,8 +93,11 @@ describe('KeywordController - pagination', () => {
     it('should call renderPage with correct arguments', () => {
       const listView = mockListView();
       controller.view = { getListViewByType: jest.fn(() => listView) };
+      const mockButton = {
+        dataset: { page: 2 }
+      };
 
-      controller.changePage('meta', 2);
+      controller.changePage('meta', mockButton);
 
       expect(controller.renderPage).toHaveBeenCalledWith(
         listView,
@@ -106,10 +109,22 @@ describe('KeywordController - pagination', () => {
     });
 
     it('should do nothing if page is current', () => {
-      const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
+      const listView = mockListView({ isCurrentPageButton: jest.fn(() => true) });
       controller.view = { getListViewByType: jest.fn(() => listView) };
 
-      controller.changePage('meta', 1);
+      controller.changePage('meta', {});
+
+      expect(controller.renderPage).not.toHaveBeenCalled();
+    });
+
+    it('should do nothing if page is not a number', () => {
+      const listView = mockListView();
+      controller.view = { getListViewByType: jest.fn(() => listView) };
+      const mockButton = {
+        dataset: { page: 'invalid' }
+      };
+
+      controller.changePage('meta', mockButton);
 
       expect(controller.renderPage).not.toHaveBeenCalled();
     });

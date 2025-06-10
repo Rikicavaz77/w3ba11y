@@ -2,6 +2,7 @@ class KeywordListView {
   constructor({ listType, title, initialSortDirection = null, getActiveHighlightData }) {
     this._listType = listType;
     this._title = title;
+    this._initialSortDirection = initialSortDirection;
     this._sortDirection = initialSortDirection;
     this._getActiveHighlightData = getActiveHighlightData;
     this._searchKeywordField = null;
@@ -32,6 +33,10 @@ class KeywordListView {
 
   get currentSortButton() {
     return this._currentSortButton;
+  }
+
+  get initialSortDirection() {
+    return this._initialSortDirection;
   }
 
   get sortDirection() {
@@ -78,6 +83,10 @@ class KeywordListView {
     this._currentSortButton = button;
   }
 
+  set initialSortDirection(sortDirection) {
+    this._initialSortDirection = sortDirection;
+  }
+
   set sortDirection(sortDirection) {
     this._sortDirection = sortDirection;
   }
@@ -100,10 +109,6 @@ class KeywordListView {
 
   set currentPage(currentPage) {
     this._currentPage = currentPage;
-  }
-
-  isCurrentPage(page) {
-    return this._currentPage === page;
   }
 
   getSearchQuery() {
@@ -155,11 +160,9 @@ class KeywordListView {
     this._searchKeywordField = keywordListContainer.querySelector('.keywords__input-wrapper__field');
     this._keywordList = keywordListContainer.querySelector('.keyword-list');
     this._pagination = keywordListContainer.querySelector('.keywords__pagination');
-    if (this._sortDirection) {
-      const button = keywordListContainer.querySelector(`.keywords__sort-button[data-sort="${this._sortDirection}"]`);
-      if (button) {
-        this.updateSortButtons(button);
-      }
+    if (this._initialSortDirection) {
+      const button = keywordListContainer.querySelector(`.keywords__sort-button[data-sort="${this._initialSortDirection}"]`);
+      this.setCurrentSortButton(button);
     }
 
     return keywordListContainer;
@@ -176,20 +179,49 @@ class KeywordListView {
     });
   }
 
-  updateSortButtons(clickedButton) {
-    if (!clickedButton) return;
-    
-    this._currentSortButton?.classList.remove('keywords__sort-button--active');
-    this._currentSortButton = clickedButton;
-    this._currentSortButton.classList.add('keywords__sort-button--active');
-    this._sortDirection = clickedButton.dataset.sort;
+  isCurrentPageButton(button) {
+    return button === this._currentPageButton;
   }
 
-  removeFilters() {
+  isCurrentSortButton(button) {
+    return button === this._currentSortButton;
+  }
+
+  setCurrentSortButton(button) {
+    if (!button || button === this._currentSortButton) return;
+    
+    this._currentSortButton?.classList.remove('keywords__sort-button--active');
+    this._currentSortButton = button;
+    this._currentSortButton.classList.add('keywords__sort-button--active');
+    this._sortDirection = button.dataset.sort;
+  }
+
+  clearCurrentSortButton() {
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = null;
     this._sortDirection = null;
-    this._searchKeywordField.value = '';
+  }
+
+  clearSearchKeywordField() {
+    if (this._searchKeywordField)
+      this._searchKeywordField.value = '';
+  }
+
+  areFiltersActive() {
+    return (
+      this._sortDirection !== this._initialSortDirection ||
+      this._searchKeywordField?.value?.trim() !== ''
+    );
+  }
+
+  removeFilters() {
+    if (this._initialSortDirection) {
+      const button = this._container.querySelector(`.keywords__sort-button[data-sort="${this._initialSortDirection}"]`);
+      this.setCurrentSortButton(button);
+    } else {
+      this.clearCurrentSortButton();
+    }
+    this.clearSearchKeywordField();
   }
 
   _renderDeleteButtonIfNeeded() {
@@ -284,6 +316,7 @@ class KeywordListView {
         this._pagination.appendChild(item);
       }
     });
+
     this._currentPageButton = this._pagination.querySelector('.keywords__pagination__button--active');
     this._paginationButtons = this._pagination.querySelectorAll('.keywords__pagination__button');
     this._currentPage = currentPage;

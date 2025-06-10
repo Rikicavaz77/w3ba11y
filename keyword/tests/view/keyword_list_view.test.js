@@ -34,6 +34,7 @@ describe('KeywordListView', () => {
     expect(view.keywordList).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
+    expect(view.initialSortDirection).toBeNull();
     expect(view.sortDirection).toBeNull();
     expect(view.currentSortButton).toBeNull();
     expect(view._getActiveHighlightData).toBe(mockGetActiveHighlightData);
@@ -43,6 +44,7 @@ describe('KeywordListView', () => {
       listType: 'oneWord', 
       initialSortDirection: 'desc'
     });
+    expect(view.initialSortDirection).toBe('desc');
     expect(view.sortDirection).toBe('desc');
     const button = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
     expect(view.currentSortButton).toBe(button);
@@ -58,6 +60,7 @@ describe('KeywordListView', () => {
     view.pagination = dummy;
     view.paginationButtons = dummy;
     view.currentPageButton = dummy;
+    view.currentPage = 1;
 
     expect(view.container).toBe(dummy);
     expect(view.searchKeywordField).toBe(dummy);
@@ -65,12 +68,7 @@ describe('KeywordListView', () => {
     expect(view.pagination).toBe(dummy);
     expect(view.paginationButtons).toBe(dummy);
     expect(view.currentPageButton).toBe(dummy);
-  });
-
-  test('isCurrentPage() should return true if current page matches', () => {    
-    view.currentPage = 3;
-    expect(view.isCurrentPage(3)).toBe(true);
-    expect(view.isCurrentPage(2)).toBe(false);
+    expect(view.currentPage).toBe(1);
   });
 
   test('getSearchQuery() should return current search query', () => {    
@@ -186,26 +184,118 @@ describe('KeywordListView', () => {
     expect(view.pagination.scrollIntoView).toHaveBeenCalled();
   });
 
-  test('updateSortButtons() should update active sort button and direction', () => {   
-    const button = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
-    view.updateSortButtons(button);
-    expect(view.currentSortButton).toEqual(button);
-    expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
-    expect(view.sortDirection).toBe('desc');
+  test('isCurrentPageButton() should return true if button matches', () => {    
+    const button = document.createElement('button');
+    view.currentPageButton = button;
+    expect(view.isCurrentPageButton(button)).toBe(true);
+    expect(view.isCurrentPageButton({})).toBe(false);
   });
 
-  test('removeFilters() should reset sort and search field', () => {   
-    const button = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
+  test('isCurrentSortButton() should return true if button matches', () => {    
+    const button = document.createElement('button');
+    view.currentSortButton = button;
+    expect(view.isCurrentSortButton(button)).toBe(true);
+    expect(view.isCurrentSortButton({})).toBe(false);
+  });
+
+  describe('setCurrentSortButton()', () => {
+    let button;
+
+    beforeEach(() => {
+      button = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
+    });
+
+    it('should update active sort button and direction', () => {   
+      expect(view.currentSortButton).toEqual(null);
+      expect(view.sortDirection).toBe(null);
+      view.setCurrentSortButton(button);
+      expect(view.currentSortButton).toEqual(button);
+      expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
+      expect(view.sortDirection).toBe('desc');
+    });
+
+    it('should handle button already active', () => {   
+      view.currentSortButton = button;
+      view.setCurrentSortButton(button);
+      expect(view.currentSortButton).toEqual(button);
+    });
+  });
+
+  test('clearCurrentSortButton() should clear active button', () => {
+    const button = document.createElement('button');
     button.classList.add('keywords__sort-button--active');
     view.currentSortButton = button;
     view.sortDirection = button.dataset.sort;
-    view.searchKeywordField.value = 'test';
-    view.removeFilters(button);
+    view.clearCurrentSortButton(button);
     expect(view.currentSortButton).toBeNull();
     expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
     expect(view.sortDirection).toBeNull();
+  });
+
+  test('clearSearchKeywordField() should clear the input', () => {
+    view.searchKeywordField.value = 'test';
+
+    view.clearSearchKeywordField();
+
     expect(view.searchKeywordField.value).toBe('');
   });
+
+  describe('areFiltersActive()', () => {
+    beforeEach(() => {
+      view.initialSortDirection = null;
+      view.sortDirection = 'desc';
+      view.searchKeywordField.value = '';
+    });
+
+    it('should return true if all filters active', () => {
+      view.searchKeywordField.value = '   test   ';
+      expect(view.areFiltersActive()).toBe(true);
+    });
+
+    it('should return true if some filters active', () => {
+      expect(view.areFiltersActive()).toBe(true);
+    });
+
+    it('should return true if all filters not active', () => {
+      view.initialSortDirection = 'desc';
+      view.sortDirection = 'desc';
+      expect(view.areFiltersActive()).toBe(false);
+    });
+  });
+
+  describe('removeFilters()', () => {
+    let descButton;
+
+    beforeEach(() => {
+      descButton = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
+      view.searchKeywordField.value = 'test';
+    });
+
+    test('should reset sorting and filtering with no initial sort direction', () => {   
+      descButton.classList.add('keywords__sort-button--active');
+      view.currentSortButton = descButton;
+      view.sortDirection = descButton.dataset.sort;
+      view.removeFilters(descButton);
+      expect(view.currentSortButton).toBeNull();
+      expect(descButton.classList.contains('keywords__sort-button--active')).toBe(false);
+      expect(view.sortDirection).toBeNull();
+      expect(view.searchKeywordField.value).toBe('');
+    });
+
+    test('should reset sorting and filtering with initial sort direction', () => {  
+      view.initialSortDirection = 'desc'; 
+      const button = view.container.querySelector('.keywords__sort-button[data-sort="asc"]');
+      button.classList.add('keywords__sort-button--active');
+      view.currentSortButton = button;
+      view.sortDirection = button.dataset.sort;
+      view.removeFilters(button);
+      expect(view.currentSortButton).toBe(descButton);
+      expect(descButton.classList.contains('keywords__sort-button--active')).toBe(true);
+      expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
+      expect(view.sortDirection).toBe('desc');
+      expect(view.searchKeywordField.value).toBe('');
+    });
+  }); 
 
   afterAll(() => {
     delete global.Utils;

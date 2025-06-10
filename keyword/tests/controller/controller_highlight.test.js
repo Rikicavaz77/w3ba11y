@@ -60,8 +60,8 @@ describe('KeywordController - highlight()', () => {
       controller.resetHighlightState = jest.fn();
 
       controller.view = {
-        isButtonActive: jest.fn().mockReturnValue(false),
-        setActiveButton: jest.fn(),
+        isHighlightButtonActive: jest.fn().mockReturnValue(false),
+        setActiveHighlightButton: jest.fn(),
         clearHighlightCheckbox: jest.fn()
       };
 
@@ -78,11 +78,11 @@ describe('KeywordController - highlight()', () => {
 
       controller.handleHighlightClick(keywordItem, mockButton);
         
-      expect(controller.view.isButtonActive).toHaveBeenCalledWith(mockButton);
+      expect(controller.view.isHighlightButtonActive).toHaveBeenCalledWith(mockButton);
       expect(controller.activeHighlightedKeyword).toBe(keywordItem);
       expect(controller.activeHighlightSource).toBe('result');
       expect(controller.view.clearHighlightCheckbox).toHaveBeenCalled();
-      expect(controller.view.setActiveButton).toHaveBeenCalled();
+      expect(controller.view.setActiveHighlightButton).toHaveBeenCalled();
       expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('testKeyword');
 
       mockButton.dataset = {};
@@ -91,7 +91,7 @@ describe('KeywordController - highlight()', () => {
     });
 
     it('should remove highlight if clicked button already active', () => {
-      controller.view.isButtonActive = jest.fn().mockReturnValue(true);
+      controller.view.isHighlightButtonActive = jest.fn().mockReturnValue(true);
 
       controller.handleHighlightClick(keywordItem, {});
         
