@@ -416,11 +416,6 @@ class KeywordController {
 
     display.splice(keywordIndex, 1);
 
-    if (original.length === 0) {
-      this.view.removeKeywordList('userAdded');
-      return;
-    }
-
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
 
