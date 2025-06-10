@@ -241,9 +241,12 @@ class KeywordController {
   }
 
   // CHANGE PAGE FUNCTION
-  changePage(listType, currentPage) {
+  changePage(listType, clickedButton) {
     const listView = this.view.getListViewByType(listType);
-    if (!listView || listView.isCurrentPage(currentPage)) return;
+    if (!listView || listView.isCurrentPageButton(clickedButton)) return;
+
+    const currentPage = parseInt(clickedButton.dataset.page, 10);
+    if (isNaN(currentPage)) return;
 
     const list = this.keywordLists[listType];
     if (!list) return;
@@ -273,7 +276,7 @@ class KeywordController {
     const { display, batchSize } = list;
 
     this.sortKeywords(display, sortDirection);
-    listView.updateSortButtons(clickedButton);
+    listView.setCurrentSortButton(clickedButton);
     this.renderPage(listView, display, batchSize, listView.currentPage);
   }
 
@@ -309,7 +312,7 @@ class KeywordController {
   // REMOVE FILTERS FUNCTION
   removeFilters(listType) {
     const listView = this.view.getListViewByType(listType);
-    if (!listView) return;
+    if (!listView || !listView.areFiltersActive()) return;
 
     const list = this.keywordLists[listType];
     if (!list) return;
@@ -563,9 +566,7 @@ class KeywordController {
       handle('.keywords__pagination__button', (button, target) => {
         const listType = this.getListType(target);
         if (!listType) return;
-        const currentPage = parseInt(button.dataset.page, 10);
-        if (isNaN(currentPage)) return;
-        this.changePage(listType, currentPage);
+        this.changePage(listType, button);
       });
 
       handle('.keywords__sort-button', (button, target) => {

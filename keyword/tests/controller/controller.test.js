@@ -46,13 +46,15 @@ describe('KeywordController', () => {
     controller.activeHighlightSource = 'list';
 
     mockListView = {
-      updateSortButtons: jest.fn(),
+      setCurrentSortButton: jest.fn(),
       removeFilters: jest.fn(),
       getSearchQuery: jest.fn().mockReturnValue('exist'),
       sortDirection: 'desc',
       currentPage: 1,
-      isCurrentSortButton: jest.fn().mockReturnValue(false)
-    }
+      isCurrentPageButton: jest.fn().mockReturnValue(false),
+      isCurrentSortButton: jest.fn().mockReturnValue(false),
+      areFiltersActive: jest.fn().mockReturnValue(true)
+    };
     controller.view = { 
       renderKeywordListContainer: jest.fn(),
       clearActiveHighlightButton: jest.fn(),
@@ -149,7 +151,7 @@ describe('KeywordController', () => {
     expect(arg.sortDirection).toBe('desc');
   });
 
-  describe('handleKeywordSorting', () => {
+  describe('handleKeywordSorting()', () => {
     let mockButton;
 
     beforeEach(() => {
@@ -164,7 +166,7 @@ describe('KeywordController', () => {
     it('should sort keywords and update UI', () => {      
       controller.handleKeywordSorting('meta', mockButton);
       expect(controller.sortKeywords).toHaveBeenCalledWith(controller.keywordLists.meta.display, 'asc');
-      expect(mockListView.updateSortButtons).toHaveBeenCalledWith(mockButton);
+      expect(mockListView.setCurrentSortButton).toHaveBeenCalledWith(mockButton);
       expect(controller.renderPage).toHaveBeenCalledWith(
         mockListView, 
         controller.keywordLists.meta.display, 
@@ -173,12 +175,12 @@ describe('KeywordController', () => {
       );
     });
 
-    it('should do nothing is sort button already active', () => {
+    it('should do nothing if sort button already active', () => {
       mockListView.isCurrentSortButton = jest.fn().mockReturnValue(true);
       
       controller.handleKeywordSorting('meta', mockButton);
       expect(controller.sortKeywords).not.toHaveBeenCalled();
-      expect(mockListView.updateSortButtons).not.toHaveBeenCalledWith();
+      expect(mockListView.setCurrentSortButton).not.toHaveBeenCalledWith();
       expect(controller.renderPage).not.toHaveBeenCalledWith();
     });
   });
@@ -225,19 +227,31 @@ describe('KeywordController', () => {
     });
   });
   
-  test('removeFilters() should reset display keywords and update UI', () => {
-    controller.keywordLists.meta.display.push(new Keyword('meta2'));
-    controller.renderPage = jest.fn();
-    
-    controller.removeFilters('meta');
-    expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['meta1']);
-    expect(mockListView.removeFilters).toHaveBeenCalled();
-    expect(controller.renderPage).toHaveBeenCalledWith( 
-      mockListView, 
-      controller.keywordLists.meta.display, 
-      5,
-      1
-    );
+  describe('removeFilters()', () => {
+    beforeEach(() => {
+      controller.renderPage = jest.fn();
+    });
+
+    it('should reset display keywords and update UI', () => {
+      controller.keywordLists.meta.display.push(new Keyword('meta2'));
+      
+      controller.removeFilters('meta');
+      expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['meta1']);
+      expect(mockListView.removeFilters).toHaveBeenCalled();
+      expect(controller.renderPage).toHaveBeenCalledWith( 
+        mockListView, 
+        controller.keywordLists.meta.display, 
+        5,
+        1
+      );
+    });
+
+    it('should do nothing if filters already inactive', () => {    
+      mockListView.areFiltersActive = jest.fn().mockReturnValue(false); 
+      controller.removeFilters('meta');
+      expect(mockListView.removeFilters).not.toHaveBeenCalled();
+      expect(controller.renderPage).not.toHaveBeenCalled();
+    });
   });
 
   test('resetHighlightState() should reset highlight data correctly', () => {

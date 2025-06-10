@@ -245,20 +245,10 @@ describe('KeywordController - events', () => {
       expect(controller.view.toggleSection).toHaveBeenCalledWith('dashboard');
     });
 
-    describe('change page', () => {
-      it('should change page', () => {
-        button.classList.add('keywords__pagination__button');
-        button.dataset.page = 2;
-        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        expect(controller.changePage).toHaveBeenCalledWith('meta', 2);
-      });
-  
-      it('should not change page if page is not a number', () => {
-        button.classList.add('keywords__pagination__button');
-        button.dataset.page = 'invalid';
-        inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        expect(controller.changePage).not.toHaveBeenCalled();
-      });
+    it('should change page', () => {
+      button.classList.add('keywords__pagination__button');
+      inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(controller.changePage).toHaveBeenCalledWith('meta', button);
     });
 
     it('should sort keywords', () => {

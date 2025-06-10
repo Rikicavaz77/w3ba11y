@@ -111,10 +111,6 @@ class KeywordListView {
     this._currentPage = currentPage;
   }
 
-  isCurrentPage(page) {
-    return page === this._currentPage;
-  }
-
   getSearchQuery() {
     return this._searchKeywordField?.value.trim() || '';
   }
@@ -183,6 +179,10 @@ class KeywordListView {
     });
   }
 
+  isCurrentPageButton(button) {
+    return button === this._currentPageButton;
+  }
+
   isCurrentSortButton(button) {
     return button === this._currentSortButton;
   }
@@ -200,6 +200,13 @@ class KeywordListView {
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
     this._currentSortButton = null;
     this._sortDirection = null;
+  }
+
+  areFiltersActive() {
+    return (
+      this._sortDirection !== this._initialSortDirection ||
+      this._searchKeywordField.value.trim() !== ''
+    );
   }
 
   removeFilters() {
@@ -304,6 +311,7 @@ class KeywordListView {
         this._pagination.appendChild(item);
       }
     });
+
     this._currentPageButton = this._pagination.querySelector('.keywords__pagination__button--active');
     this._paginationButtons = this._pagination.querySelectorAll('.keywords__pagination__button');
     this._currentPage = currentPage;
