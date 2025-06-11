@@ -6,10 +6,14 @@ const Keyword = require('../../model/keyword');
 global.Keyword = Keyword;
 
 describe('KeywordController - events', () => {
-  let controller, iframe;
+  let controller, iframe, mockListView;
 
   beforeEach(() => {
     iframe = document.createElement('iframe');
+
+    mockListView = {
+      filterQuery: ''
+    };
 
     const mockView = {
       iframe: iframe,
@@ -22,11 +26,12 @@ describe('KeywordController - events', () => {
       tooltipTriggers: [document.createElement('div')],
       tooltips: [document.createElement('div')],
       colorInputs: [document.createElement('input')],
+      allKeywordListContainer: document.createElement('div'),
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
       hideAllTooltips: jest.fn(),
-      getListViewByType: jest.fn(),
+      getListViewByType: jest.fn().mockReturnValue(mockListView),
       renderKeywordDetails: jest.fn(),
       toggleSection: jest.fn(),
       analysis: {
@@ -121,9 +126,10 @@ describe('KeywordController - events', () => {
     input.type = 'text';
     input.dataset.search = 'true';
     input.value = 'test';
-    controller.view.container.appendChild(input);
+    controller.view.allKeywordListContainer.appendChild(input);
     input.dispatchEvent(new Event('input', { bubbles: true }));
-    expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('meta', 'test');
+    expect(mockListView.filterQuery).toBe('test');
+    expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('meta');
   });
 
   test('bindGlobalShortcuts() should filter keywords', () => {

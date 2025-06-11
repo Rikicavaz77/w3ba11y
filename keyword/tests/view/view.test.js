@@ -75,6 +75,7 @@ describe('KeywordView', () => {
     view.customKeywordInput = dummy;
     view.keywordHighlightCheckbox = dummy;
     view.analyzeButton = dummy;
+    view.allKeywordListContainer = dummy;
 
     expect(view.iframe).toBe(dummy);
     expect(view.container).toBe(dummy);
@@ -90,6 +91,7 @@ describe('KeywordView', () => {
     expect(view.customKeywordInput).toBe(dummy);
     expect(view.keywordHighlightCheckbox).toBe(dummy);
     expect(view.analyzeButton).toBe(dummy);
+    expect(view.allKeywordListContainer).toBe(dummy);
   });
 
   test('should return active highlight button', () => {

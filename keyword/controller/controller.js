@@ -200,8 +200,7 @@ class KeywordController {
       if (!listView) {
         this.renderKeywordListByType(type);
       } else {
-        const filterQuery = listView.getSearchQuery();
-        this.updateVisibleKeywords(type, filterQuery);
+        this.updateVisibleKeywords(type);
       }
     });   
   }
@@ -212,14 +211,14 @@ class KeywordController {
     if (!list) return;
 
     const { display, batchSize, label, defaultSort } = list;
-    const keywordsData = display.slice(0, batchSize);
+    const slicedKeywords = display.slice(0, batchSize);
     const totalPages = Math.ceil(display.length / batchSize);
 
     this.view.renderKeywordListContainer(
       new KeywordListInfo(
         type,
         label,
-        keywordsData,
+        slicedKeywords,
         totalPages,
         defaultSort
       ), 
@@ -228,16 +227,16 @@ class KeywordController {
   }
 
   // RENDER PAGE FUNCTION
-  renderPage(listView, keywordList, batchSize, currentPage) {
-    const totalPages = Math.ceil(keywordList.length / batchSize);
+  renderPage(listView, keywordsToRender, batchSize, currentPage) {
+    const totalPages = Math.ceil(keywordsToRender.length / batchSize);
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
 
     const start = (currentPage - 1) * batchSize;
     const end = start + batchSize;
-    const keywordsData = keywordList.slice(start, end);
-    listView.render(keywordsData, totalPages, currentPage, start);
+    const slicedKeywords = keywordsToRender.slice(start, end);
+    listView.render(slicedKeywords, totalPages, currentPage, start);
   }
 
   // CHANGE PAGE FUNCTION
@@ -290,7 +289,7 @@ class KeywordController {
   }
 
   // UPDATE VISIBLE KEYWORDS FUNCTION
-  updateVisibleKeywords(listType, filterQuery) {
+  updateVisibleKeywords(listType) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
 
@@ -298,6 +297,7 @@ class KeywordController {
     if (!list) return;
 
     const { original, display, batchSize } = list;
+    const filterQuery = listView.filterQuery;
     const result = filterQuery ? this.filterKeywords(original, filterQuery) : [...original];
 
     const sortDirection = listView.sortDirection;
@@ -393,8 +393,7 @@ class KeywordController {
       display.push(keywordItem);
       this.renderKeywordListByType('userAdded');
     } else {
-      const filterQuery = listView.getSearchQuery();
-      this.updateVisibleKeywords('userAdded', filterQuery);
+      this.updateVisibleKeywords('userAdded');
     }
   }
 
@@ -505,13 +504,16 @@ class KeywordController {
   }
 
   bindSearchInput() {
-    this.view.container.addEventListener('input', event => {
+    this.view.allKeywordListContainer.addEventListener('input', event => {
       const target = event.target;
 
       if (target.matches('input[type="text"][data-search]')) {
         const listType = this.getListType(target);
         if (!listType) return;
-        this.updateVisibleKeywords(listType, target.value.trim());
+        const listView = this.view.getListViewByType(listType);
+        if (!listView) return;
+        listView.filterQuery = target.value;
+        this.updateVisibleKeywords(listType);
       }
     });
   }

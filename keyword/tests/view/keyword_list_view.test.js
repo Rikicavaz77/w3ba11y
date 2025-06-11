@@ -31,6 +31,7 @@ describe('KeywordListView', () => {
     expect(view.listType).toBe('meta');
     expect(view.container.dataset.listType).toBe('meta');
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
+    expect(view.filterQuery).toBe('');
     expect(view.keywordList).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
@@ -56,6 +57,7 @@ describe('KeywordListView', () => {
 
     view.container = dummy;
     view.searchKeywordField = dummy;
+    view.filterQuery = '  test  ';
     view.keywordList = dummy;
     view.pagination = dummy;
     view.paginationButtons = dummy;
@@ -64,18 +66,12 @@ describe('KeywordListView', () => {
 
     expect(view.container).toBe(dummy);
     expect(view.searchKeywordField).toBe(dummy);
+    expect(view.filterQuery).toBe('test');
     expect(view.keywordList).toBe(dummy);
     expect(view.pagination).toBe(dummy);
     expect(view.paginationButtons).toBe(dummy);
     expect(view.currentPageButton).toBe(dummy);
     expect(view.currentPage).toBe(1);
-  });
-
-  test('getSearchQuery() should return current search query', () => {    
-    expect(view.getSearchQuery()).toBe('');
-
-    view.searchKeywordField.value = '   test   ';
-    expect(view.getSearchQuery()).toBe('test');
   });
 
   test('render() should handle keyword and pages visualization', () => {   
@@ -234,21 +230,23 @@ describe('KeywordListView', () => {
 
   test('clearSearchKeywordField() should clear the input', () => {
     view.searchKeywordField.value = 'test';
+    view.filterQuery = 'test';
 
     view.clearSearchKeywordField();
 
     expect(view.searchKeywordField.value).toBe('');
+    expect(view.filterQuery).toBe('');
   });
 
   describe('areFiltersActive()', () => {
     beforeEach(() => {
       view.initialSortDirection = null;
       view.sortDirection = 'desc';
-      view.searchKeywordField.value = '';
+      view.filteryQuery = '';
     });
 
     it('should return true if all filters active', () => {
-      view.searchKeywordField.value = '   test   ';
+      view.filteryQuery = '   test   ';
       expect(view.areFiltersActive()).toBe(true);
     });
 
@@ -269,6 +267,7 @@ describe('KeywordListView', () => {
     beforeEach(() => {
       descButton = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
       view.searchKeywordField.value = 'test';
+      view.filterQuery = 'test';
     });
 
     test('should reset sorting and filtering with no initial sort direction', () => {   
@@ -280,6 +279,7 @@ describe('KeywordListView', () => {
       expect(descButton.classList.contains('keywords__sort-button--active')).toBe(false);
       expect(view.sortDirection).toBeNull();
       expect(view.searchKeywordField.value).toBe('');
+      expect(view.filterQuery).toBe('');
     });
 
     test('should reset sorting and filtering with initial sort direction', () => {  
@@ -294,6 +294,7 @@ describe('KeywordListView', () => {
       expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
       expect(view.sortDirection).toBe('desc');
       expect(view.searchKeywordField.value).toBe('');
+      expect(view.filterQuery).toBe('');
     });
   }); 
 
