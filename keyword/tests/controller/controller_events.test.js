@@ -125,7 +125,7 @@ describe('KeywordController - events', () => {
     const input = document.createElement('input');
     input.type = 'text';
     input.dataset.search = 'true';
-    input.value = '   test   ';
+    input.value = 'test';
     controller.view.allKeywordListContainer.appendChild(input);
     input.dispatchEvent(new Event('input', { bubbles: true }));
     expect(mockListView.filterQuery).toBe('test');

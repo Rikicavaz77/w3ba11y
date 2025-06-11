@@ -85,7 +85,7 @@ class KeywordListView {
   }
 
   set filterQuery(query) {
-    this._filterQuery = query;
+    this._filterQuery = query.trim();
   }
 
   set currentSortButton(button) {

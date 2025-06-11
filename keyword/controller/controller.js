@@ -512,7 +512,7 @@ class KeywordController {
         if (!listType) return;
         const listView = this.view.getListViewByType(listType);
         if (!listView) return;
-        listView.filterQuery = target.value.trim();
+        listView.filterQuery = target.value;
         this.updateVisibleKeywords(listType);
       }
     });
