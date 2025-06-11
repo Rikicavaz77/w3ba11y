@@ -74,6 +74,21 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
 
       keyword.frequency = (keyword.frequency || 0) + matches.length;
 
+      nodes.forEach(({ node, start, end }) => {
+        const nodeMatches = [...matches].filter((match, index) => {
+          const matchStart = match.index;
+          const matchEnd = matchStart + match[0].length;
+          if (matchStart <= start && matchEnd <= end) {
+            matches.splice(index, 1);
+            return true;
+          }
+          return false;
+        });
+        
+        const ancestors = this._findAncestors(node);
+        this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, nodeMatches.length);
+      });
+
       matches.forEach(match => {
         const matchStart = match.index;
         const matchEnd = matchStart + match[0].length;

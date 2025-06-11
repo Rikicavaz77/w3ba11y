@@ -38,7 +38,6 @@ class TreeWalkerManager {
             }
             return NodeFilter.FILTER_SKIP;
           }
-          if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_ACCEPT;
         }
       }

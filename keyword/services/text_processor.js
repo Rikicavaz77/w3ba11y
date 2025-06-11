@@ -116,14 +116,20 @@ class TextProcessor {
       const parent = this._getBlockParent(node);
 
       if (currentBlockParent === parent) {
-        if (virtualText.length > 0 && !virtualText.endsWith(' ') && !text.startsWith(' ')) {
-          virtualText += ' ';
+        if (!text.trim()) {
+          virtualText += text.replace(/\s+/g, ' ');
+          continue;
         }
+        
         const start = virtualText.length;
         virtualText += text;
         const end = virtualText.length;
         currentGroup.push({ node, start, end });
       } else {
+        if (!text.trim()) {
+          continue;
+        }
+
         if (currentGroup.length > 0) {
           nodeGroups.push({ nodes: currentGroup, virtualText, parent: currentBlockParent });
         }
@@ -149,7 +155,8 @@ class TextProcessor {
     this._treeWalker.resetWalker();
     let node;
     while ((node = this._treeWalker.nextNode())) {
-      textNodes.push(node);
+      if (node.nodeValue.trim())
+        textNodes.push(node);
     }
 
     if (this._useCache) this._cachedTextNodes = textNodes;

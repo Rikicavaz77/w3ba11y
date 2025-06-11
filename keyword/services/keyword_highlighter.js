@@ -124,21 +124,25 @@ class KeywordHighlighter {
       if (matches.length === 0) return;
 
       nodes.forEach(({ node, start, end }) => {
-        const nodeMatches = matches
-          .filter(match => {
-            const matchStart = match.index;
-            const matchEnd = matchStart + match[0].length;
-            return matchEnd > start && matchStart < end;
-          })
-          .map(match => {
-            const matchStart = match.index;
-            const matchEnd = matchStart + match[0].length;
-            return {
-              matchStart: Math.max(0, matchStart - start),
-              matchEnd: Math.min(node.nodeValue.length, matchEnd - start)
-            };
-          });
-
+        const nodeMatches = [...matches].filter((match, index) => {
+          const matchStart = match.index;
+          const matchEnd = matchStart + match[0].length;
+          if (matchEnd <= end) {
+            matches.splice(index, 1);
+            return true;
+          } else if (matchEnd > start && matchStart < end) {
+            return true;
+          }
+          return false;
+        })
+        .map(match => {
+          const matchStart = match.index;
+          const matchEnd = matchStart + match[0].length;
+          return {
+            matchStart: Math.max(0, matchStart - start),
+            matchEnd: Math.min(node.nodeValue.length, matchEnd - start)
+          };
+        });
         if (nodeMatches.length > 0) {
           this._highlightMatches(node, nodeMatches);
         }
