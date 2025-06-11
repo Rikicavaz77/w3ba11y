@@ -216,7 +216,7 @@ class KeywordListView {
   areFiltersActive() {
     return (
       this._sortDirection !== this._initialSortDirection ||
-      this._searchKeywordField?.value?.trim() !== ''
+      this._filterQuery !== ''
     );
   }
 

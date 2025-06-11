@@ -239,11 +239,11 @@ describe('KeywordListView', () => {
     beforeEach(() => {
       view.initialSortDirection = null;
       view.sortDirection = 'desc';
-      view.searchKeywordField.value = '';
+      view.filteryQuery = '';
     });
 
     it('should return true if all filters active', () => {
-      view.searchKeywordField.value = '   test   ';
+      view.filteryQuery = '   test   ';
       expect(view.areFiltersActive()).toBe(true);
     });
 
