@@ -22,6 +22,7 @@ describe('KeywordController - events', () => {
       tooltipTriggers: [document.createElement('div')],
       tooltips: [document.createElement('div')],
       colorInputs: [document.createElement('input')],
+      allKeywordListContainer: document.createElement('div'),
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
@@ -121,7 +122,7 @@ describe('KeywordController - events', () => {
     input.type = 'text';
     input.dataset.search = 'true';
     input.value = 'test';
-    controller.view.container.appendChild(input);
+    controller.view.allKeywordListContainer.appendChild(input);
     input.dispatchEvent(new Event('input', { bubbles: true }));
     expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('meta', 'test');
   });

@@ -13,6 +13,7 @@ class KeywordView {
     this._customKeywordInput = null;
     this._keywordHighlightCheckbox = null;
     this._analyzeButton = null;
+    this._allKeywordListContainer = null;
     this._keywordListViews = {};
     this._analysisResultView = null;
     this._container = this.generateKeywordViewSection();
@@ -98,6 +99,10 @@ class KeywordView {
     return this._analyzeButton;
   }
 
+  get allKeywordListContainer() {
+    return this._allKeywordListContainer;
+  }
+
   get activeHighlightButton() {
     return this._container?.querySelector('.keyword-button--highlight--active');
   }
@@ -160,6 +165,10 @@ class KeywordView {
 
   set analyzeButton(button) {
     this._analyzeButton = button;
+  }
+
+  set allKeywordListContainer(container) {
+    this._allKeywordListContainer = container;
   }
 
   getCustomKeywordValue() {
@@ -441,6 +450,7 @@ class KeywordView {
       allKeywordListContainer = document.createElement('div');
       allKeywordListContainer.classList.add('keyword-all-lists__container');
       this._dashboardBody.appendChild(allKeywordListContainer);
+      this._allKeywordListContainer = allKeywordListContainer;
     }
 
     const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}"]`);

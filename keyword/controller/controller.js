@@ -505,7 +505,7 @@ class KeywordController {
   }
 
   bindSearchInput() {
-    this.view.container.addEventListener('input', event => {
+    this.view.allKeywordListContainer.addEventListener('input', event => {
       const target = event.target;
 
       if (target.matches('input[type="text"][data-search]')) {
