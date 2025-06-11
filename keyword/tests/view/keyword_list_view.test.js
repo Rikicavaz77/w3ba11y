@@ -31,6 +31,7 @@ describe('KeywordListView', () => {
     expect(view.listType).toBe('meta');
     expect(view.container.dataset.listType).toBe('meta');
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
+    expect(view.filterQuery).toBe('');
     expect(view.keywordList).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);

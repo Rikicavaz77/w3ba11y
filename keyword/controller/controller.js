@@ -211,14 +211,14 @@ class KeywordController {
     if (!list) return;
 
     const { display, batchSize, label, defaultSort } = list;
-    const keywordsData = display.slice(0, batchSize);
+    const slicedKeywords = display.slice(0, batchSize);
     const totalPages = Math.ceil(display.length / batchSize);
 
     this.view.renderKeywordListContainer(
       new KeywordListInfo(
         type,
         label,
-        keywordsData,
+        slicedKeywords,
         totalPages,
         defaultSort
       ), 
@@ -227,16 +227,16 @@ class KeywordController {
   }
 
   // RENDER PAGE FUNCTION
-  renderPage(listView, keywordList, batchSize, currentPage) {
-    const totalPages = Math.ceil(keywordList.length / batchSize);
+  renderPage(listView, keywordsToRender, batchSize, currentPage) {
+    const totalPages = Math.ceil(keywordsToRender.length / batchSize);
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
 
     const start = (currentPage - 1) * batchSize;
     const end = start + batchSize;
-    const keywordsData = keywordList.slice(start, end);
-    listView.render(keywordsData, totalPages, currentPage, start);
+    const slicedKeywords = keywordsToRender.slice(start, end);
+    listView.render(slicedKeywords, totalPages, currentPage, start);
   }
 
   // CHANGE PAGE FUNCTION
