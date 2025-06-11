@@ -200,8 +200,7 @@ class KeywordController {
       if (!listView) {
         this.renderKeywordListByType(type);
       } else {
-        const filterQuery = listView.getSearchQuery();
-        this.updateVisibleKeywords(type, filterQuery);
+        this.updateVisibleKeywords(type);
       }
     });   
   }
@@ -290,7 +289,7 @@ class KeywordController {
   }
 
   // UPDATE VISIBLE KEYWORDS FUNCTION
-  updateVisibleKeywords(listType, filterQuery) {
+  updateVisibleKeywords(listType) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
 
@@ -298,6 +297,7 @@ class KeywordController {
     if (!list) return;
 
     const { original, display, batchSize } = list;
+    const filterQuery = listView.filterQuery;
     const result = filterQuery ? this.filterKeywords(original, filterQuery) : [...original];
 
     const sortDirection = listView.sortDirection;
@@ -393,8 +393,7 @@ class KeywordController {
       display.push(keywordItem);
       this.renderKeywordListByType('userAdded');
     } else {
-      const filterQuery = listView.getSearchQuery();
-      this.updateVisibleKeywords('userAdded', filterQuery);
+      this.updateVisibleKeywords('userAdded');
     }
   }
 
@@ -511,7 +510,10 @@ class KeywordController {
       if (target.matches('input[type="text"][data-search]')) {
         const listType = this.getListType(target);
         if (!listType) return;
-        this.updateVisibleKeywords(listType, target.value.trim());
+        const listView = this.view.getListViewByType(listType);
+        if (!listView) return;
+        listView.filterQuery = target.value.trim();
+        this.updateVisibleKeywords(listType);
       }
     });
   }

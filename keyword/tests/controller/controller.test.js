@@ -48,7 +48,7 @@ describe('KeywordController', () => {
     mockListView = {
       setCurrentSortButton: jest.fn(),
       removeFilters: jest.fn(),
-      getSearchQuery: jest.fn().mockReturnValue('exist'),
+      filterQuery: 'access',
       sortDirection: 'desc',
       currentPage: 1,
       isCurrentPageButton: jest.fn().mockReturnValue(false),
@@ -110,9 +110,7 @@ describe('KeywordController', () => {
       expect(controller.updateVisibleKeywords).toHaveBeenCalledTimes(2);
       calls = controller.updateVisibleKeywords.mock.calls;
       expect(calls[0][0]).toBe('meta');
-      expect(calls[0][1]).toBe('exist');
       expect(calls[1][0]).toBe('oneWord');
-      expect(calls[1][1]).toBe('exist');
     });
 
     it('should remove existing list', () => {
@@ -198,7 +196,7 @@ describe('KeywordController', () => {
       ];
       controller.keywordLists.meta.display = [];
   
-      controller.updateVisibleKeywords('meta', 'access');
+      controller.updateVisibleKeywords('meta');
       expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
         'access', 'accessibility'
       ]);
@@ -218,8 +216,9 @@ describe('KeywordController', () => {
         new Keyword('access'), new Keyword('accessibility'), new Keyword('account')
       ];
       controller.keywordLists.meta.display = [new Keyword('account')];
+      mockListView.filterQuery = '';
   
-      controller.updateVisibleKeywords('meta', '');
+      controller.updateVisibleKeywords('meta');
       expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
         'access', 'accessibility', 'account'
       ]);
@@ -288,7 +287,7 @@ describe('KeywordController', () => {
       controller.keywordLists.userAdded.original.push(new Keyword('existing'));
       controller.analyzeKeyword();
       expect(controller.view.clearCustomKeywordInput).toHaveBeenCalled();
-      expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('userAdded', 'exist');
+      expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('userAdded');
     });
 
     it('should analyze and render keyword with highlight button active', () => {

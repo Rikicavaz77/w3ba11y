@@ -6,6 +6,7 @@ class KeywordListView {
     this._sortDirection = initialSortDirection;
     this._getActiveHighlightData = getActiveHighlightData;
     this._searchKeywordField = null;
+    this._filterQuery = '';
     this._currentSortButton = null;
     this._keywordList = null;
     this._pagination = null;
@@ -29,6 +30,10 @@ class KeywordListView {
 
   get searchKeywordField() {
     return this._searchKeywordField;
+  }
+
+  get filterQuery() {
+    return this._filterQuery;
   }
 
   get currentSortButton() {
@@ -79,6 +84,10 @@ class KeywordListView {
     this._searchKeywordField = input;
   }
 
+  set filterQuery(query) {
+    this._filterQuery = query;
+  }
+
   set currentSortButton(button) {
     this._currentSortButton = button;
   }
@@ -109,10 +118,6 @@ class KeywordListView {
 
   set currentPage(currentPage) {
     this._currentPage = currentPage;
-  }
-
-  getSearchQuery() {
-    return this._searchKeywordField?.value.trim() || '';
   }
 
   generateKeywordListViewSection() {
@@ -205,6 +210,7 @@ class KeywordListView {
   clearSearchKeywordField() {
     if (this._searchKeywordField)
       this._searchKeywordField.value = '';
+    this._filterQuery = '';
   }
 
   areFiltersActive() {

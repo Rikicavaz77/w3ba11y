@@ -71,13 +71,6 @@ describe('KeywordListView', () => {
     expect(view.currentPage).toBe(1);
   });
 
-  test('getSearchQuery() should return current search query', () => {    
-    expect(view.getSearchQuery()).toBe('');
-
-    view.searchKeywordField.value = '   test   ';
-    expect(view.getSearchQuery()).toBe('test');
-  });
-
   test('render() should handle keyword and pages visualization', () => {   
     view.renderKeywords = jest.fn();
     view.renderPages = jest.fn();
@@ -234,10 +227,12 @@ describe('KeywordListView', () => {
 
   test('clearSearchKeywordField() should clear the input', () => {
     view.searchKeywordField.value = 'test';
+    view.filterQuery = 'test';
 
     view.clearSearchKeywordField();
 
     expect(view.searchKeywordField.value).toBe('');
+    expect(view.filterQuery).toBe('');
   });
 
   describe('areFiltersActive()', () => {
