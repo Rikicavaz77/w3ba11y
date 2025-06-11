@@ -534,8 +534,7 @@ class KeywordView {
   }
 
   isHighlightButtonActive(button) {
-    if (!button) return false;
-    return button.classList.contains('keyword-button--highlight--active');
+    return !!button?.classList.contains('keyword-button--highlight--active');
   }
 
   setActiveHighlightButton(button) {
