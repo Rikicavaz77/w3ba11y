@@ -76,11 +76,11 @@ class KeywordView {
   }
 
   get tooltipTriggers() {
-    return this._container?.querySelectorAll('.keywords__tooltip-trigger');
+    return this._container.querySelectorAll('.keywords__tooltip-trigger');
   }
 
   get tooltips() {
-    return this._container?.querySelectorAll('.keywords__tooltip-text');
+    return this._container.querySelectorAll('.keywords__tooltip-text');
   }
 
   get colorInputs() {
@@ -103,8 +103,8 @@ class KeywordView {
     return this._allKeywordListContainer;
   }
 
-  get activeHighlightButton() {
-    return this._container?.querySelector('.keyword-button--highlight--active');
+  get activeHighlightButtons() {
+    return this._container.querySelectorAll('.keyword-button--highlight--active');
   }
 
   get analysis() {
@@ -465,16 +465,16 @@ class KeywordView {
     keywordListView.render(keywordListInfo.keywords, keywordListInfo.totalPages);
   }
 
-  renderKeywordDetails(keywordItem, getActiveHighlightData) {
+  renderKeywordDetails(keywordItem, listType, getActiveHighlightedKeyword) {
     if (!this._analysisResultView) {
-      this._analysisResultView = new AnalysisResultView(getActiveHighlightData);
+      this._analysisResultView = new AnalysisResultView(getActiveHighlightedKeyword);
 
       const existing = this._container.querySelector('.keywords__section--result');
       if (existing)
         this._container.removeChild(existing);
       this._container.appendChild(this._analysisResultView.container);
     }
-    this._analysisResultView.render(keywordItem);
+    this._analysisResultView.render(keywordItem, listType);
   }
 
   render(overviewInfo, colorMap) {
@@ -539,12 +539,14 @@ class KeywordView {
 
   setActiveHighlightButton(button) {
     if (!button) return;
-    this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
+    this.clearActiveHighlightButtons();
     button.classList.add('keyword-button--highlight--active');
   }
 
-  clearActiveHighlightButton() {
-    this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
+  clearActiveHighlightButtons() {
+    this.activeHighlightButtons.forEach(button => 
+      button.classList.remove('keyword-button--highlight--active')
+    );
   }
 
   getSection(sectionName) {

@@ -1,10 +1,10 @@
 class KeywordListView {
-  constructor({ listType, title, initialSortDirection = null, getActiveHighlightData }) {
+  constructor({ listType, title, initialSortDirection = null, getActiveHighlightedKeyword }) {
     this._listType = listType;
     this._title = title;
     this._initialSortDirection = initialSortDirection;
     this._sortDirection = initialSortDirection;
-    this._getActiveHighlightData = getActiveHighlightData;
+    this._getActiveHighlightedKeyword = getActiveHighlightedKeyword;
     this._searchKeywordField = null;
     this._filterQuery = '';
     this._currentSortButton = null;
@@ -252,11 +252,7 @@ class KeywordListView {
   }
 
   _getHighlightClass(keywordItem) {
-    const { keyword, source } = this._getActiveHighlightData();
-    const isHighlighted = (
-      keyword === keywordItem &&
-      source === 'list'
-    );
+    const isHighlighted = this._getActiveHighlightedKeyword() === keywordItem;
     return isHighlighted ? 'keyword-button--highlight--active' : '';
   }
 

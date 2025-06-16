@@ -34,7 +34,6 @@ class KeywordController {
     };
 
     this.activeHighlightedKeyword = null;
-    this.activeHighlightSource = null;
     this.init();
   }
 
@@ -146,11 +145,8 @@ class KeywordController {
     return doc.documentElement.lang;
   }
 
-  getActiveHighlightData() {
-    return {
-      keyword: this.activeHighlightedKeyword,
-      source: this.activeHighlightSource
-    };
+  getActiveHighlightedKeyword() {
+    return this.activeHighlightedKeyword;
   }
 
   // PROCESS META KEYWORDS FUNCTION
@@ -222,7 +218,7 @@ class KeywordController {
         totalPages,
         defaultSort
       ), 
-      () => this.getActiveHighlightData()
+      () => this.getActiveHighlightedKeyword()
     );
   }
 
@@ -288,6 +284,18 @@ class KeywordController {
     return filteredKeywords;
   }
 
+  // REFRESH PAGE FUNCTION
+  refreshPage(listType) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView) return;
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { display, batchSize } = list;
+    this.renderPage(listView, display, batchSize, listView.currentPage);
+  }
+
   // UPDATE VISIBLE KEYWORDS FUNCTION
   updateVisibleKeywords(listType) {
     const listView = this.view.getListViewByType(listType);
@@ -327,8 +335,7 @@ class KeywordController {
   // RESET HIGHLIGHT STATE FUNCTION
   resetHighlightState() {
     this.activeHighlightedKeyword = null;
-    this.activeHighlightSource = null;
-    this.view.clearActiveHighlightButton();
+    this.view.clearActiveHighlightButtons();
   }
 
   // TOGGLE HIGHLIGHT FUNCTION
@@ -352,10 +359,13 @@ class KeywordController {
       this.keywordHighlighter.removeHighlight();
     } else {
       this.activeHighlightedKeyword = keywordItem;
-      this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
       this.view.clearHighlightCheckbox();
       this.view.setActiveHighlightButton(clickedButton);
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
+
+      if (clickedButton.dataset.keywordSource === 'result') {
+        this.refreshPage(clickedButton.dataset.listType);
+      }
     }
   }
 
@@ -384,7 +394,6 @@ class KeywordController {
     this.view.clearCustomKeywordInput();
     if (this.view.isHighlightCheckboxEnabled()) {
       this.activeHighlightedKeyword = keywordItem;
-      this.activeHighlightSource = 'list';
       this.view.clearHighlightCheckbox();
     }
     
@@ -555,9 +564,11 @@ class KeywordController {
       });
 
       handle('.keyword-button--view-details', (button, target) => {
+        const listType = this.getListType(target);
+        if (!listType) return;
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
-        this.view.renderKeywordDetails(keywordItem, () => this.getActiveHighlightData());
+        this.view.renderKeywordDetails(keywordItem, listType, () => this.getActiveHighlightedKeyword());
         this.view.toggleSection(button.dataset.section);
       });
 
