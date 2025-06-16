@@ -74,7 +74,7 @@ class AnalysisResultView {
     `;
   }
 
-  render(keywordItem, listType) {
+  render(keywordItem, keywordType) {
     let analysisResultContainer = this._body.querySelector('.keywords__analysis-container');
     if (!analysisResultContainer) {
       analysisResultContainer = document.createElement('div');
@@ -93,7 +93,7 @@ class AnalysisResultView {
         <h3 class="keywords__analysis-item__title">Keyword:</h3>
         <div class="keywords__analysis-item__action-container">
           <span class="keyword-name">${Utils.escapeHTML(keywordItem.name)}</span>
-          <button type="button" class="keywords__analysis-item__button keyword-button--highlight ${highlightClass}" data-keyword-source="result" data-list-type="${listType}">
+          <button type="button" class="keywords__analysis-item__button keyword-button--highlight ${highlightClass}" data-keyword-source="result" data-keyword-type="${keywordType}">
             <span class="visually-hidden">Highlight keyword</span>
             <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="keywords__icon--medium keywords__icon--middle-align" aria-hidden="true">
               <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->

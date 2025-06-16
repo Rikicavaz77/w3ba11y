@@ -371,7 +371,7 @@ class KeywordController {
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
 
       if (clickedButton.dataset.keywordSource === 'result') {
-        this.refreshPage(clickedButton.dataset.listType);
+        this.refreshPage(clickedButton.dataset.keywordType);
       }
     }
   }
