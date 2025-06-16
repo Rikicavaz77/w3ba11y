@@ -109,7 +109,10 @@ class KeywordController {
       this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
       this.processMostFrequentKeywords();
     }
-    this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord', 'twoWords']);
+    this.analyzeAndRenderKeywordLists(
+      ['meta', 'userAdded', 'oneWord', 'twoWords'],
+      { renderOnly: !fullRefresh }
+    );
 
     this.setupTooltipListeners();
   }
@@ -177,7 +180,7 @@ class KeywordController {
   }
 
   // ANALYZE AND RENDER KEYWORD LISTS FUNCTION
-  analyzeAndRenderKeywordLists(types) {
+  analyzeAndRenderKeywordLists(types, { renderOnly = false } = {}) {
     types.forEach(type => {
       const list = this.keywordLists[type];
       if (!list) return;
@@ -196,7 +199,11 @@ class KeywordController {
       if (!listView) {
         this.renderKeywordListByType(type);
       } else {
-        this.updateVisibleKeywords(type);
+        if (renderOnly) {
+          this.refreshPage(type);
+        } else {
+          this.updateVisibleKeywords(type);
+        }
       }
     });   
   }
