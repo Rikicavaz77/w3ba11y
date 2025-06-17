@@ -232,11 +232,11 @@ describe('KeywordListView', () => {
     beforeEach(() => {
       view.initialSortDirection = null;
       view.sortDirection = 'desc';
-      view.filteryQuery = '';
+      view.filterQuery = '';
     });
 
     it('should return true if all filters active', () => {
-      view.filteryQuery = '   test   ';
+      view.filterQuery = '   test   ';
       expect(view.areFiltersActive()).toBe(true);
     });
 

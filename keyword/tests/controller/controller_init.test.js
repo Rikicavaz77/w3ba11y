@@ -249,26 +249,48 @@ describe('KeywordController - init', () => {
     expect(controller.keywordLists.userAdded.original[1].keywordOccurrences.em).toBe(0);
   });
 
-  test('should render keyword details', () => {
-    const listContainer = controller.view.getListViewByType('meta').container;
-    const button = [...listContainer.querySelectorAll('.keyword-button--view-details')].at(-1);
-    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  describe('keyword details', () => {
+    it('should render keyword details with highlight button inactive', () => {
+      const listContainer = controller.view.getListViewByType('meta').container;
+      const button = [...listContainer.querySelectorAll('.keyword-button--view-details')].at(-1);
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-    const analysisContainer = controller.view.analysis.container;
-    expect(analysisContainer).toBeTruthy();
-    expect(analysisContainer.textContent).toContain('keyword');
-    expect(analysisContainer.textContent).toContain('2');
+      const analysisContainer = controller.view.analysis.container;
+      expect(analysisContainer).toBeTruthy();
+      expect(analysisContainer.textContent).toContain('keyword');
+      expect(analysisContainer.textContent).toContain('2');
 
-    const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
-    expect(highlightButton).toBeTruthy();
-    expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
+      const highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
+      expect(highlightButton).toBeTruthy();
+      expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(false);
 
-    highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    const highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
-    expect(highlights.length).toBe(2);
-    expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(true);
-    expect(controller.view.activeHighlightButtons).toContain(highlightButton);
-    expect(controller.activeHighlightedKeyword).toBe(controller.keywordLists.meta.original.at(-1));
+      highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const highlights = iframeDoc.querySelectorAll('.w3ba11y__keyword-highlight');
+      expect(highlights.length).toBe(2);
+      expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(true);
+      expect(controller.view.activeHighlightButtons.length).toBe(2);
+      expect(controller.view.activeHighlightButtons).toContain(
+        highlightButton,
+        [...listContainer.querySelectorAll('.keyword-button--highlight')].at(-1)
+      );
+      expect(controller.activeHighlightedKeyword).toBe(controller.keywordLists.meta.original.at(-1));
+    });
+
+    it('should render keyword details with highlight button active', () => {
+      const listContainer = controller.view.getListViewByType('meta').container;
+      let highlightButton = [...listContainer.querySelectorAll('.keyword-button--highlight')].at(-1);
+      highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const viewDetailsButton = [...listContainer.querySelectorAll('.keyword-button--view-details')].at(-1);
+      viewDetailsButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+      const analysisContainer = controller.view.analysis.container;
+      highlightButton = analysisContainer.querySelector('.keyword-button--highlight');
+      expect(highlightButton.classList.contains('keyword-button--highlight--active')).toBe(true);
+      expect(controller.view.activeHighlightButtons.length).toBe(2);
+
+      highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(controller.view.activeHighlightButtons.length).toBe(0);
+    });
   });
 
   afterAll(() => {
