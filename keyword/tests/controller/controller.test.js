@@ -78,6 +78,7 @@ describe('KeywordController', () => {
       };
 
       controller.renderKeywordListByType = jest.fn();
+      controller.refreshListPage = jest.fn();
       controller.updateVisibleKeywords = jest.fn();
     }); 
 
@@ -93,6 +94,23 @@ describe('KeywordController', () => {
 
       expect(controller.renderKeywordListByType).toHaveBeenCalledTimes(2);
       calls = controller.renderKeywordListByType.mock.calls;
+      expect(calls[0][0]).toBe('meta');
+      expect(calls[1][0]).toBe('oneWord');
+    });
+
+    it('should analyze keywords and refresh list page', () => {
+      controller.analyzeAndRenderKeywordLists(
+        ['meta', 'oneWord'],
+        { renderOnly: true }
+      );
+      
+      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledTimes(2);
+      let calls = controller.keywordAnalyzer.analyzeKeywords.mock.calls;
+      expect(calls[0][0]).toBe(controller.keywordLists.meta.original);
+      expect(calls[1][0]).toBe(controller.keywordLists.oneWord.original);
+
+      expect(controller.refreshListPage).toHaveBeenCalledTimes(2);
+      calls = controller.refreshListPage.mock.calls;
       expect(calls[0][0]).toBe('meta');
       expect(calls[1][0]).toBe('oneWord');
     });

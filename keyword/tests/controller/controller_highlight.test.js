@@ -89,8 +89,11 @@ describe('KeywordController - highlight()', () => {
       expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('testKeyword');
       expect(controller.refreshListPage).toHaveBeenCalledWith('meta');
 
+      controller.refreshListPage.mockClear();
+
       mockButton.dataset = {};
       controller.handleHighlightClick(keywordItem, mockButton);
+      expect(controller.refreshListPage).not.toHaveBeenCalled();
     });
 
     it('should remove highlight if clicked button already active', () => {
