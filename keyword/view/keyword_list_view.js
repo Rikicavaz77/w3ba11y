@@ -175,7 +175,7 @@ class KeywordListView {
 
   render(keywords, totalPages, currentPage = 1, startIndex = 0) {
     this.renderKeywords(keywords, startIndex);
-    this.renderListPages(totalPages, currentPage);
+    this.renderPages(totalPages, currentPage);
   }
 
   scrollToPagination() {
@@ -296,7 +296,7 @@ class KeywordListView {
     });
   }
 
-  renderListPages(totalPages, currentPage = 1) {
+  renderPages(totalPages, currentPage = 1) {
     if (!this._pagination) return;
     
     const range = Array.from({ length: 5 }, (_, i) => currentPage - 2 + i);

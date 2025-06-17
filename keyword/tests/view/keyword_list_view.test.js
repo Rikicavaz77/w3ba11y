@@ -73,10 +73,10 @@ describe('KeywordListView', () => {
 
   test('render() should handle keyword and pages visualization', () => {   
     view.renderKeywords = jest.fn();
-    view.renderListPages = jest.fn();
+    view.renderPages = jest.fn();
     view.render(keywords, 1);
     expect(view.renderKeywords).toHaveBeenCalledWith(keywords, 0);
-    expect(view.renderListPages).toHaveBeenCalledWith(1, 1);
+    expect(view.renderPages).toHaveBeenCalledWith(1, 1);
   });
 
   test('renderDeleteButtonIfNeeded() should handle delete button creation', () => {
@@ -141,8 +141,8 @@ describe('KeywordListView', () => {
     });
   });
 
-  test('renderListPages() should generate pagination with current page active', () => {   
-    view.renderListPages(10, 5);
+  test('renderPages() should generate pagination with current page active', () => {   
+    view.renderPages(10, 5);
     const active = view.container.querySelector('.keywords__pagination__button--active');
     expect(active).not.toBeNull();
     expect(active.dataset.page).toBe('5');
