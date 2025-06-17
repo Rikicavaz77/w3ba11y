@@ -73,6 +73,7 @@ describe('AnalysisResultView', () => {
       expect(container.innerHTML).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
       expect(container.textContent).toContain('<script>alert(1)</script>');
       expect(container.textContent).toContain('24');
+      expect(container.querySelector('.keyword-frequency-note')).toBeTruthy();
       expect(container.textContent).toContain('0.84');
       const hasMatch = /\bp\b/.test(
         container.querySelector('.keywords__tag-occurrences-list').textContent

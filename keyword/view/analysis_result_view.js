@@ -107,6 +107,7 @@ class AnalysisResultView {
         <span class="keywords__analysis-item__content">
           ${safeFrequency} ${this._renderWarningIconIfNeeded(safeFrequency)}
         </span>
+        <p class="keyword-frequency-note"><strong>Note:</strong> Keyword frequency may include occurrences in nested tags, so it might differ from the sum of occurrences across individual tags.</p>  
       </div>
       <div class="keywords__analysis-item">
         <h3 class="keywords__analysis-item__title">Density:</h3>
