@@ -175,7 +175,7 @@ class KeywordListView {
 
   render(keywords, totalPages, currentPage = 1, startIndex = 0) {
     this.renderKeywords(keywords, startIndex);
-    this.renderPages(totalPages, currentPage);
+    this.renderListPages(totalPages, currentPage);
   }
 
   scrollToPagination() {
@@ -196,8 +196,8 @@ class KeywordListView {
     if (!button || button === this._currentSortButton) return;
     
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
+    button.classList.add('keywords__sort-button--active');
     this._currentSortButton = button;
-    this._currentSortButton.classList.add('keywords__sort-button--active');
     this._sortDirection = button.dataset.sort;
   }
 
@@ -296,7 +296,7 @@ class KeywordListView {
     });
   }
 
-  renderPages(totalPages, currentPage = 1) {
+  renderListPages(totalPages, currentPage = 1) {
     if (!this._pagination) return;
     
     const range = Array.from({ length: 5 }, (_, i) => currentPage - 2 + i);

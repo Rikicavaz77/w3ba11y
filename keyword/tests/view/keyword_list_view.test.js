@@ -7,17 +7,14 @@ const Utils = require('../../utils/utils');
 global.Utils = Utils;
 
 describe('KeywordListView', () => {
-  let view, keywords, mockGetActiveHighlightData;
+  let view, keywords, mockGetActiveHighlightedKeyword;
 
   beforeEach(() => {
-    mockGetActiveHighlightData = jest.fn().mockReturnValue({
-      keyword: null,
-      source: null
-    });
+    mockGetActiveHighlightedKeyword = jest.fn().mockReturnValue(null);
     view = new KeywordListView({
       title: 'Meta keywords', 
       listType: 'meta', 
-      getActiveHighlightData: mockGetActiveHighlightData
+      getActiveHighlightedKeyword: mockGetActiveHighlightedKeyword
     });
     keywords = [
       new Keyword('test', { frequency: 26 }), 
@@ -38,7 +35,7 @@ describe('KeywordListView', () => {
     expect(view.initialSortDirection).toBeNull();
     expect(view.sortDirection).toBeNull();
     expect(view.currentSortButton).toBeNull();
-    expect(view._getActiveHighlightData).toBe(mockGetActiveHighlightData);
+    expect(view._getActiveHighlightedKeyword).toBe(mockGetActiveHighlightedKeyword);
 
     view = new KeywordListView({
       title: `Most frequent 'single-word' keywords`, 
@@ -76,10 +73,10 @@ describe('KeywordListView', () => {
 
   test('render() should handle keyword and pages visualization', () => {   
     view.renderKeywords = jest.fn();
-    view.renderPages = jest.fn();
+    view.renderListPages = jest.fn();
     view.render(keywords, 1);
     expect(view.renderKeywords).toHaveBeenCalledWith(keywords, 0);
-    expect(view.renderPages).toHaveBeenCalledWith(1, 1);
+    expect(view.renderListPages).toHaveBeenCalledWith(1, 1);
   });
 
   test('renderDeleteButtonIfNeeded() should handle delete button creation', () => {
@@ -126,13 +123,9 @@ describe('KeywordListView', () => {
     });
 
     it('should populate user-added keyword list correctly', () => {
-      mockGetActiveHighlightData = jest.fn().mockReturnValue({
-        keyword: keywords[0],
-        source: 'result'
-      });
       view.title = 'User added keywords'; 
       view.listType = 'userAdded';
-      view._getActiveHighlightData = mockGetActiveHighlightData;
+      view._getActiveHighlightedKeyword = mockGetActiveHighlightedKeyword;
       view.renderKeywords(keywords, 0);
       const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--delete')).toBeTruthy();
@@ -140,19 +133,16 @@ describe('KeywordListView', () => {
     });
 
     it('should populate keyword list correctly with highlight button active', () => {
-      mockGetActiveHighlightData = jest.fn().mockReturnValue({
-        keyword: keywords[0],
-        source: 'list'
-      });
-      view._getActiveHighlightData = mockGetActiveHighlightData;
+      mockGetActiveHighlightedKeyword = jest.fn().mockReturnValue(keywords[0]);
+      view._getActiveHighlightedKeyword = mockGetActiveHighlightedKeyword;
       view.renderKeywords(keywords, 0);
       const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeTruthy();
     });
   });
 
-  test('renderPages() should generate pagination with current page active', () => {   
-    view.renderPages(10, 5);
+  test('renderListPages() should generate pagination with current page active', () => {   
+    view.renderListPages(10, 5);
     const active = view.container.querySelector('.keywords__pagination__button--active');
     expect(active).not.toBeNull();
     expect(active.dataset.page).toBe('5');

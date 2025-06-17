@@ -94,12 +94,12 @@ describe('KeywordView', () => {
     expect(view.allKeywordListContainer).toBe(dummy);
   });
 
-  test('should return active highlight button', () => {
+  test('should return active highlight buttons', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
     
-    const activeButton = view.activeHighlightButton;
+    const activeButton = view.activeHighlightButtons[0];
     expect(activeButton).toBe(button);
   });
 
@@ -140,7 +140,7 @@ describe('KeywordView', () => {
 
   test('renderKeywordAnalysisOverview() should create overview container', () => {
     const overviewInfo = {
-      metaTagKeywordsContent: 'test, another test',
+      metaKeywordsTagContent: 'test, another test',
       lang: 'en-US',
       wordCount: 2000,
       uniqueWordCount: 1000
@@ -157,7 +157,7 @@ describe('KeywordView', () => {
     expect(overview.querySelectorAll('.keywords__overview-icon--warning').length).toBe(0);
 
     const anotherOverviewInfo = {
-      metaTagKeywordsContent: '',
+      metaKeywordsTagContent: '',
       lang: '',
       wordCount: 64,
       uniqueWordCount: 0
@@ -266,12 +266,12 @@ describe('KeywordView', () => {
   });
 
   describe('renderKeywordDetails()', () => {
-    let mockContainer, mockRender, mockGetActiveHighlightData;
+    let mockContainer, mockRender, mockGetActiveHighlightedKeyword;
 
     beforeEach(() => {
       mockContainer = document.createElement('div');
       mockRender = jest.fn();
-      mockGetActiveHighlightData = () => {};
+      mockGetActiveHighlightedKeyword = () => {};
       AnalysisResultView.mockImplementation(() => ({
         container: mockContainer,
         render: mockRender
@@ -279,15 +279,15 @@ describe('KeywordView', () => {
     });
 
     it('should create and render AnalysisResultView if not present', () => {
-      view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
-      expect(mockRender).toHaveBeenCalledWith(keywords[0]);
+      view.renderKeywordDetails(keywords[0], 'meta', mockGetActiveHighlightedKeyword);
+      expect(mockRender).toHaveBeenCalledWith(keywords[0], 'meta');
       expect(view.analysis).toBeDefined();
 
-      view.renderKeywordDetails(keywords[1], mockGetActiveHighlightData);
-      expect(mockRender).toHaveBeenCalledWith(keywords[1]);
+      view.renderKeywordDetails(keywords[1], 'meta', mockGetActiveHighlightedKeyword);
+      expect(mockRender).toHaveBeenCalledWith(keywords[1], 'meta');
       
       expect(AnalysisResultView).toHaveBeenCalledTimes(1);
-      expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightData);
+      expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightedKeyword);
     });
 
     it('should remove existing section before appending new one', () => {
@@ -295,7 +295,7 @@ describe('KeywordView', () => {
       dummy.classList.add('keywords__section--result');
       view.container.appendChild(dummy);
 
-      view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
+      view.renderKeywordDetails(keywords[0], 'meta', mockGetActiveHighlightedKeyword);
       expect(view.container.contains(mockContainer)).toBe(true);
       expect(view.container.contains(dummy)).toBe(false);
     });
@@ -304,7 +304,7 @@ describe('KeywordView', () => {
   describe('changeTab()', () => {
     beforeEach(() => {
       view.render({
-        metaTagKeywordsContent: '',
+        metaKeywordsTagContent: '',
         lang: '',
         wordCount: 0,
         uniqueWordCount: 0
@@ -376,7 +376,7 @@ describe('KeywordView', () => {
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBeNull();
         expect(result.currentSortButton).toBeNull();
-        expect(typeof result._getActiveHighlightData).toBe('function');
+        expect(typeof result._getActiveHighlightedKeyword).toBe('function');
       });
 
       ['oneWord', 'twoWords'].forEach(type => {
@@ -391,7 +391,7 @@ describe('KeywordView', () => {
         const button = result.container.querySelector('.keywords__sort-button[data-sort="desc"]');
         expect(result.currentSortButton).toBe(button);
         expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
-        expect(typeof result._getActiveHighlightData).toBe('function');
+        expect(typeof result._getActiveHighlightedKeyword).toBe('function');
       });
     });
 
@@ -531,11 +531,11 @@ describe('KeywordView', () => {
     expect(newButton.classList.contains('keyword-button--highlight--active')).toBe(true);
   });
 
-  test('clearActiveHighlightButton() should make clicked button inactive', () => {
+  test('clearActiveHighlightButtons() should make highlight buttons inactive', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
-    view.clearActiveHighlightButton(button);
+    view.clearActiveHighlightButtons();
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
   });
 

@@ -7,14 +7,11 @@ const Utils = require('../../utils/utils');
 global.Utils = Utils;
 
 describe('AnalysisResultView', () => {
-  let view, keywordItem, mockGetActiveHighlightData;
+  let view, keywordItem, mockGetActiveHighlightedKeyword;
 
   beforeEach(() => {
-    mockGetActiveHighlightData = jest.fn().mockReturnValue({
-      keyword: null,
-      source: null
-    });
-    view = new AnalysisResultView(mockGetActiveHighlightData);
+    mockGetActiveHighlightedKeyword = jest.fn().mockReturnValue(null);
+    view = new AnalysisResultView(mockGetActiveHighlightedKeyword);
     keywordItem = new Keyword('test', {
       frequency: 24,
       density: 0.84,
@@ -60,10 +57,18 @@ describe('AnalysisResultView', () => {
   describe('render()', () => {
     it('should populate analysis container with keyword data', () => {    
       keywordItem.name = '<script>alert(1)</script>';
-      view.render(keywordItem);
+      view.render(keywordItem, 'meta');
       
       const container = view.body.querySelector('.keywords__analysis-container');
       expect(container).not.toBeNull();
+      const highlightButton = container.querySelector('.keyword-button--highlight');
+      expect(highlightButton).toBeTruthy();
+      expect(highlightButton.dataset.keywordSource).toBe('result');
+      expect(highlightButton.dataset.keywordType).toBe('meta');
+      expect(highlightButton.classList.contains('.keyword-button--highlight--active')).toBe(false);
+      expect(container.querySelectorAll('.keywords__icon--error').length).toBe(0);
+      expect(view.currentKeywordItem).toBe(keywordItem);
+
       expect(container.innerHTML).not.toContain('<script>alert(1)</script>');
       expect(container.innerHTML).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
       expect(container.textContent).toContain('<script>alert(1)</script>');
@@ -74,13 +79,10 @@ describe('AnalysisResultView', () => {
       );
       expect(hasMatch).toBe(true);
       expect(container.textContent).toContain('2');
-      expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
-      expect(container.querySelectorAll('.keywords__icon--error').length).toBe(0);
-      expect(view.currentKeywordItem).toBe(keywordItem);
     });
 
     it('should handle more renderings', () => {
-      view.render(keywordItem);
+      view.render(keywordItem, 'meta');
       
       const anotherkeywordItem = new Keyword('another test', {
         frequency: 'invalid',
@@ -93,7 +95,7 @@ describe('AnalysisResultView', () => {
           p: null
         }
       });
-      view.render(anotherkeywordItem);
+      view.render(anotherkeywordItem, 'meta');
 
       const container = view.body.querySelectorAll('.keywords__analysis-container');
       expect(container.length).toBe(1);
@@ -104,25 +106,11 @@ describe('AnalysisResultView', () => {
     });
 
     it('should make highlight button active', () => {
-      mockGetActiveHighlightData = jest.fn().mockReturnValue({
-        keyword: keywordItem,
-        source: 'result'
-      });
-      view._getActiveHighlightData = mockGetActiveHighlightData;
-      view.render(keywordItem);
+      mockGetActiveHighlightedKeyword = jest.fn().mockReturnValue(keywordItem);
+      view._getActiveHighlightedKeyword = mockGetActiveHighlightedKeyword;
+      view.render(keywordItem, 'meta');
       const container = view.body.querySelector('.keywords__analysis-container');
       expect(container.querySelector('.keyword-button--highlight--active')).toBeTruthy();
-    });
-
-    it('should not make highlight button active', () => {
-      mockGetActiveHighlightData = jest.fn().mockReturnValue({
-        keyword: keywordItem,
-        source: 'list'
-      });
-      view._getActiveHighlightData = mockGetActiveHighlightData;
-      view.render(keywordItem);
-      const container = view.body.querySelector('.keywords__analysis-container');
-      expect(container.querySelector('.keyword-button--highlight--active')).toBeNull();
     });
   }); 
 

@@ -228,7 +228,7 @@ class ImgViewAnalysis {
     });
   }
 
-  changePage(imagesData, clickedButton) {
+  changeListPage(imagesData, clickedButton) {
     this.renderImages(imagesData);
     this.currentPageButton?.classList.remove('pagination__button--active');
     this.currentPageButton = clickedButton;
