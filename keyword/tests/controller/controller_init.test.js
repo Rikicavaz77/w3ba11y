@@ -280,8 +280,8 @@ describe('KeywordController - init', () => {
       const listContainer = controller.view.getListViewByType('meta').container;
       let highlightButton = [...listContainer.querySelectorAll('.keyword-button--highlight')].at(-1);
       highlightButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      const viewDetailsButton = [...listContainer.querySelectorAll('.keyword-button--view-details')].at(-1);
-      viewDetailsButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const button = [...listContainer.querySelectorAll('.keyword-button--view-details')].at(-1);
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
       const analysisContainer = controller.view.analysis.container;
       highlightButton = analysisContainer.querySelector('.keyword-button--highlight');

@@ -98,7 +98,7 @@ describe('KeywordController', () => {
       expect(calls[1][0]).toBe('oneWord');
     });
 
-    it('should analyze keywords and refresh list page', () => {
+    it('should analyze keywords and refresh current list page', () => {
       controller.analyzeAndRenderKeywordLists(
         ['meta', 'oneWord'],
         { renderOnly: true }
@@ -115,7 +115,7 @@ describe('KeywordController', () => {
       expect(calls[1][0]).toBe('oneWord');
     });
 
-    it('should analyze and update visible keywords', () => {
+    it('should analyze keywords and update visible ones', () => {
       controller.analyzeAndRenderKeywordLists(['meta', 'oneWord']);
       
       expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledTimes(2);
