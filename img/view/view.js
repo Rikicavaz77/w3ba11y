@@ -150,8 +150,8 @@ class ImgView {
     this.container.querySelector(`.tab--${buttonClicked.dataset.tab}`).classList.add('tab--active');
   }
 
-  changeListPage(imagesData, clickedButton) {
-    this.analysisTab.changeListPage(imagesData, clickedButton);
+  changePage(imagesData, clickedButton) {
+    this.analysisTab.changePage(imagesData, clickedButton);
   }
 
   more(hook) {

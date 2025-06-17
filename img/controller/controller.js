@@ -96,7 +96,7 @@ class ImgController {
 
 
   // CHANGE PAGE FUNCTION
-  changeListPage(clickedButton) {
+  changePage(clickedButton) {
     if (clickedButton === this.view.currentPageButton)
       return;
 
@@ -108,7 +108,7 @@ class ImgController {
     });
 
     const index = clickedButton.dataset.index;
-    this.view.changeListPage(imagesData.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, imagesData.length)), clickedButton);
+    this.view.changePage(imagesData.slice(parseInt(index) * this.BATCH_SIZE, Math.min((parseInt(index) + 1) * this.BATCH_SIZE, imagesData.length)), clickedButton);
     this.setupImgListeners(index);
   }
 
@@ -299,7 +299,7 @@ class ImgController {
 
   setupPaginationListeners() {
     this.view.paginationButtons.forEach(button => {
-      button.addEventListener('click', () => this.changeListPage(button));
+      button.addEventListener('click', () => this.changePage(button));
     });
   }
 
