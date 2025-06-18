@@ -36,6 +36,7 @@
     <li>🔒<a href="#usage-terms">Usage Terms</a></li>
     <li>📬<a href="#contacts">Contacts</a></li>
     <li>📝<a href="#credits">Credits</a></li>
+    <li>📓<a href="#developer-notes">Developer Notes</a></li>
   </ol>
 </details>
 
@@ -234,3 +235,50 @@ The icons used in this project are provided by:
 - [**Font Awesome**](https://fontawesome.com): a vast library of free and premium vector icons
 - [**Heroicons**](https://heroicons.com): a collection of hand-crafted SVG icons, by the makers of Tailwind CSS
 - [**Remix Icon**](https://remixicon.com): an open-source library of carefully crafted icons
+
+<!-- DEVELOPER NOTES -->
+## 📓Developer Notes
+
+When performing analysis on a static copy of the DOM, certain data (such as text nodes, node ancestors, etc.) can be cached to avoid recalculating them during every analysis run.
+
+If, during execution, testing, or after adding new features, storing these values in memory becomes too heavy, you can disable caching module by module as follows:
+
+### `TextProcessor` (manual caching)
+
+When creating the object, change:
+
+```js
+new TextProcessor(doc, treeWalker, true)
+```
+
+to 
+
+```js
+new TextProcessor(doc, treeWalker, false)
+```
+
+You can also manually reset the cache where needed.
+
+### `TagAccessor` (manual caching)
+
+When creating the object, change:
+
+```js
+new TagAccessor(doc, true)
+```
+
+to
+
+```js
+new TagAccessor(doc, false)
+```
+
+You can also manually reset the cache where needed.
+
+### `WordCounter` (automatic caching)
+
+You can manually reset the cache once the analysis is complete.
+
+### `AllInOneAnalysisStrategy` (automatic caching)
+
+You can manually reset the cache once the analysis is complete.
