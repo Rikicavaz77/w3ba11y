@@ -1,16 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-const KeywordAnalysisStrategy = require('../../../services/strategy/keyword_analysis_strategy');
+const KeywordAnalysisStrategy = require('@keyword/services/strategy/keyword_analysis_strategy');
 global.KeywordAnalysisStrategy = KeywordAnalysisStrategy;
-const AllInOneAnalysisStrategy = require('../../../services/strategy/all_in_one_analysis_strategy');
-const KeywordAnalyzer = require('../../../services/keyword_analyzer');
-const TreeWalkerManager = require('../../../services/tree_walker_manager');
-const TextProcessor = require('../../../services/text_processor');
-const TagAccessor = require('../../../services/tag_accessor');
-const WordCounter = require('../../../services/word_counter');
-const Keyword = require('../../../model/keyword');
-const Utils = require('../../../utils/utils');
+const AllInOneAnalysisStrategy = require('@keyword/services/strategy/all_in_one_analysis_strategy');
+const KeywordAnalyzer = require('@keyword/services/keyword_analyzer');
+const TreeWalkerManager = require('@keyword/services/tree_walker_manager');
+const TextProcessor = require('@keyword/services/text_processor');
+const TagAccessor = require('@keyword/services/tag_accessor');
+const WordCounter = require('@keyword/services/word_counter');
+const Keyword = require('@keyword/model/keyword');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
 
 global.sw = {

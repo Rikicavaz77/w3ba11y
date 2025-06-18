@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-const KeywordView = require('../../view/view');
-const Keyword = require('../../model/keyword');
-const KeywordListView = require('../../view/keyword_list_view');
+const KeywordView = require('@keyword/view/view');
+const Keyword = require('@keyword/model/keyword');
+const KeywordListView = require('@keyword/view/keyword_list_view');
 global.KeywordListView = KeywordListView;
-jest.mock('../../view/analysis_result_view');
-const AnalysisResultView = require('../../view/analysis_result_view');
+jest.mock('@keyword/view/analysis_result_view');
+const AnalysisResultView = require('@keyword/view/analysis_result_view');
 global.AnalysisResultView = AnalysisResultView;
-const Utils = require('../../utils/utils');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
 
 describe('KeywordView', () => {

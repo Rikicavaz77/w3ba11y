@@ -1,5 +1,5 @@
-const KeywordController = require('../../controller/controller');
-const Keyword = require('../../model/keyword');
+const KeywordController = require('@keyword/controller/controller');
+const Keyword = require('@keyword/model/keyword');
 
 describe('KeywordController - highlight()', () => {
   let controller;
