@@ -168,6 +168,8 @@ This feature collects images on the page, including purely decorative ones inser
 
 ### 🔑Keywords
 
+***The keyword analysis feature is designed to inspect web pages in English and Italian (with limited support for other languages).*
+
 This feature provides a general overview of the **on-page SEO analysis**:
 - Meta keywords tag content
 - Page language
