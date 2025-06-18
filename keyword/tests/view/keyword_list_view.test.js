@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-const KeywordListView = require('../../view/keyword_list_view');
-const Keyword = require('../../model/keyword');
-const Utils = require('../../utils/utils');
+const KeywordListView = require('@keyword/view/keyword_list_view');
+const Keyword = require('@keyword/model/keyword');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
 
 describe('KeywordListView', () => {

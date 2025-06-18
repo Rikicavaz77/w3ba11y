@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-const AnalysisResultView = require('../../view/analysis_result_view');
-const Keyword = require('../../model/keyword');
-const Utils = require('../../utils/utils');
+const AnalysisResultView = require('@keyword/view/analysis_result_view');
+const Keyword = require('@keyword/model/keyword');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
 
 describe('AnalysisResultView', () => {

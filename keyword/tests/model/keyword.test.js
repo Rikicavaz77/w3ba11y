@@ -1,4 +1,4 @@
-const Keyword = require('../../model/keyword');
+const Keyword = require('@keyword/model/keyword');
 
 describe('Keyword', () => {
   let keyword;

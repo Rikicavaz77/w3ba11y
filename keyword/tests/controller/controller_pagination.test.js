@@ -1,4 +1,4 @@
-const KeywordController = require('../../controller/controller');
+const KeywordController = require('@keyword/controller/controller');
 
 function makeKeywords(count) {
   return Array.from({ length: count }, (_, i) => ({

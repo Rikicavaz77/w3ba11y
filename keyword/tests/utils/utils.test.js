@@ -1,4 +1,4 @@
-const Utils = require('../../utils/utils');
+const Utils = require('@keyword/utils/utils');
 
 describe('Utils', () => {
   describe('escapeRegExp()', () => {

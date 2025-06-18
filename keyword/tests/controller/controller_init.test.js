@@ -1,36 +1,36 @@
 /**
  * @jest-environment jsdom
  */
-const KeywordController = require('../../controller/controller');
-const OverviewInfo = require('../../model/overview_info');
+const KeywordController = require('@keyword/controller/controller');
+const OverviewInfo = require('@keyword/model/overview_info');
 global.OverviewInfo = OverviewInfo;
-const KeywordListInfo = require('../../model/keyword_list_info');
+const KeywordListInfo = require('@keyword/model/keyword_list_info');
 global.KeywordListInfo = KeywordListInfo;
-const Keyword = require('../../model/keyword');
+const Keyword = require('@keyword/model/keyword');
 global.Keyword = Keyword;
-const Utils = require('../../utils/utils');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
-const KeywordView = require('../../view/view');
+const KeywordView = require('@keyword/view/view');
 global.KeywordView = KeywordView;
-const KeywordListView = require('../../view/keyword_list_view');
+const KeywordListView = require('@keyword/view/keyword_list_view');
 global.KeywordListView = KeywordListView;
-const AnalysisResultView = require('../../view/analysis_result_view');
+const AnalysisResultView = require('@keyword/view/analysis_result_view');
 global.AnalysisResultView = AnalysisResultView;
-const TreeWalkerManager = require('../../services/tree_walker_manager');
+const TreeWalkerManager = require('@keyword/services/tree_walker_manager');
 global.TreeWalkerManager = TreeWalkerManager;
-const TextProcessor = require('../../services/text_processor');
+const TextProcessor = require('@keyword/services/text_processor');
 global.TextProcessor = TextProcessor;
-const TagAccessor = require('../../services/tag_accessor');
+const TagAccessor = require('@keyword/services/tag_accessor');
 global.TagAccessor = TagAccessor;
-const KeywordHighlighter = require('../../services/keyword_highlighter');
+const KeywordHighlighter = require('@keyword/services/keyword_highlighter');
 global.KeywordHighlighter = KeywordHighlighter;
-const WordCounter = require('../../services/word_counter');
+const WordCounter = require('@keyword/services/word_counter');
 global.WordCounter = WordCounter;
-const KeywordAnalysisStrategy = require('../../services/strategy/keyword_analysis_strategy');
+const KeywordAnalysisStrategy = require('@keyword/services/strategy/keyword_analysis_strategy');
 global.KeywordAnalysisStrategy = KeywordAnalysisStrategy;
-const AllInOneAnalysisStrategy = require('../../services/strategy/all_in_one_analysis_strategy');
+const AllInOneAnalysisStrategy = require('@keyword/services/strategy/all_in_one_analysis_strategy');
 global.AllInOneAnalysisStrategy = AllInOneAnalysisStrategy;
-const KeywordAnalyzer = require('../../services/keyword_analyzer');
+const KeywordAnalyzer = require('@keyword/services/keyword_analyzer');
 global.KeywordAnalyzer = KeywordAnalyzer;
 
 global.sw = {

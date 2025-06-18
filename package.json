@@ -36,6 +36,9 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": []
+    "coveragePathIgnorePatterns": [],
+    "moduleNameMapper": {
+      "^@keyword/(.*)$": "<rootDir>/keyword/$1"
+    }
   }
 }
