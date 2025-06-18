@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-const TextProcessor = require('../../services/text_processor');
-const TreeWalkerManager = require('../../services/tree_walker_manager');
-const Utils = require('../../utils/utils');
+const TextProcessor = require('@keyword/services/text_processor');
+const TreeWalkerManager = require('@keyword/services/tree_walker_manager');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
 
 describe('TextProcessor', () => {

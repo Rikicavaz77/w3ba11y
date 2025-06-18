@@ -1,6 +1,6 @@
-const KeywordController = require('../../controller/controller');
-const Keyword = require('../../model/keyword');
-const Utils = require('../../utils/utils');
+const KeywordController = require('@keyword/controller/controller');
+const Keyword = require('@keyword/model/keyword');
+const Utils = require('@keyword/utils/utils');
 global.Utils = Utils;
 
 describe('KeywordController - filterKeywords()', () => {
