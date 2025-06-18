@@ -241,7 +241,7 @@ The icons used in this project are provided by:
 
 When performing analysis on a static copy of the DOM, certain data (such as text nodes, node ancestors, etc.) can be cached to avoid recalculating them during every analysis run.
 
-If, during execution, testing, or after adding new features, storing these values in memory becomes too heavy, you can disable caching module by module as follows:
+If, during execution, testing, or after adding new features, storing these values in memory becomes too heavy, you can disable caching on a per-module basis as follows:
 
 ### `TextProcessor` (manual caching)
 
@@ -279,6 +279,14 @@ You can also manually reset the cache where needed.
 
 You can manually reset the cache once the analysis is complete.
 
+```js
+wordCounter.resetCache()
+```
+
 ### `AllInOneAnalysisStrategy` (automatic caching)
 
 You can manually reset the cache once the analysis is complete.
+
+```js
+strategy.resetCache()
+```
