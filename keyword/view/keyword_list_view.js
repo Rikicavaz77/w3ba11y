@@ -1,11 +1,12 @@
 class KeywordListView {
-  constructor({ listType, title, initialSortDirection = null, getActiveHighlightData }) {
+  constructor({ listType, title, initialSortDirection = null, getActiveHighlightedKeyword }) {
     this._listType = listType;
     this._title = title;
     this._initialSortDirection = initialSortDirection;
     this._sortDirection = initialSortDirection;
-    this._getActiveHighlightData = getActiveHighlightData;
+    this._getActiveHighlightedKeyword = getActiveHighlightedKeyword;
     this._searchKeywordField = null;
+    this._filterQuery = '';
     this._currentSortButton = null;
     this._keywordList = null;
     this._pagination = null;
@@ -29,6 +30,10 @@ class KeywordListView {
 
   get searchKeywordField() {
     return this._searchKeywordField;
+  }
+
+  get filterQuery() {
+    return this._filterQuery;
   }
 
   get currentSortButton() {
@@ -79,6 +84,10 @@ class KeywordListView {
     this._searchKeywordField = input;
   }
 
+  set filterQuery(query) {
+    this._filterQuery = query.trim();
+  }
+
   set currentSortButton(button) {
     this._currentSortButton = button;
   }
@@ -109,10 +118,6 @@ class KeywordListView {
 
   set currentPage(currentPage) {
     this._currentPage = currentPage;
-  }
-
-  getSearchQuery() {
-    return this._searchKeywordField?.value.trim() || '';
   }
 
   generateKeywordListViewSection() {
@@ -191,8 +196,8 @@ class KeywordListView {
     if (!button || button === this._currentSortButton) return;
     
     this._currentSortButton?.classList.remove('keywords__sort-button--active');
+    button.classList.add('keywords__sort-button--active');
     this._currentSortButton = button;
-    this._currentSortButton.classList.add('keywords__sort-button--active');
     this._sortDirection = button.dataset.sort;
   }
 
@@ -205,12 +210,13 @@ class KeywordListView {
   clearSearchKeywordField() {
     if (this._searchKeywordField)
       this._searchKeywordField.value = '';
+    this._filterQuery = '';
   }
 
   areFiltersActive() {
     return (
       this._sortDirection !== this._initialSortDirection ||
-      this._searchKeywordField?.value?.trim() !== ''
+      this._filterQuery !== ''
     );
   }
 
@@ -246,11 +252,7 @@ class KeywordListView {
   }
 
   _getHighlightClass(keywordItem) {
-    const { keyword, source } = this._getActiveHighlightData();
-    const isHighlighted = (
-      keyword === keywordItem &&
-      source === 'list'
-    );
+    const isHighlighted = this._getActiveHighlightedKeyword() === keywordItem;
     return isHighlighted ? 'keyword-button--highlight--active' : '';
   }
 

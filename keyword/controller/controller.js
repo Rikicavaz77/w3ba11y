@@ -34,7 +34,6 @@ class KeywordController {
     };
 
     this.activeHighlightedKeyword = null;
-    this.activeHighlightSource = null;
     this.init();
   }
 
@@ -42,7 +41,7 @@ class KeywordController {
     this.createOverview();
     this.view.render(this.overviewInfo, this.keywordHighlighter.colorMap);
 
-    this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
+    this.processMetaKeywords(this.overviewInfo.metaKeywordsTagContent);
     this.processMostFrequentKeywords();
     this.analyzeAndRenderKeywordLists(['meta', 'oneWord', 'twoWords']);
 
@@ -107,10 +106,13 @@ class KeywordController {
     this.view.renderKeywordAnalysisOverview(this.overviewInfo);
 
     if (fullRefresh) {
-      this.processMetaKeywords(this.overviewInfo.metaTagKeywordsContent);
+      this.processMetaKeywords(this.overviewInfo.metaKeywordsTagContent);
       this.processMostFrequentKeywords();
     }
-    this.analyzeAndRenderKeywordLists(['meta', 'userAdded', 'oneWord', 'twoWords']);
+    this.analyzeAndRenderKeywordLists(
+      ['meta', 'userAdded', 'oneWord', 'twoWords'],
+      { renderOnly: !fullRefresh }
+    );
 
     this.setupTooltipListeners();
   }
@@ -128,17 +130,17 @@ class KeywordController {
 
   // CREATE OVERVIEW FUNCTION
   createOverview() {
-    const metaTagKeywordsContent = this.getMetaTagKeywordsContent(this.view.iframe);
+    const metaKeywordsTagContent = this.getMetaKeywordsTagContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
     this.overviewInfo = new OverviewInfo(
       this.wordCounter.totalWords,
       this.wordCounter.uniqueWords,
-      metaTagKeywordsContent,
+      metaKeywordsTagContent,
       lang
     );
   }
 
-  getMetaTagKeywordsContent(doc) {
+  getMetaKeywordsTagContent(doc) {
     return doc.querySelector('meta[name="keywords" i]')?.content ?? '';
   }
 
@@ -146,11 +148,8 @@ class KeywordController {
     return doc.documentElement.lang;
   }
 
-  getActiveHighlightData() {
-    return {
-      keyword: this.activeHighlightedKeyword,
-      source: this.activeHighlightSource
-    };
+  getActiveHighlightedKeyword() {
+    return this.activeHighlightedKeyword;
   }
 
   // PROCESS META KEYWORDS FUNCTION
@@ -181,7 +180,7 @@ class KeywordController {
   }
 
   // ANALYZE AND RENDER KEYWORD LISTS FUNCTION
-  analyzeAndRenderKeywordLists(types) {
+  analyzeAndRenderKeywordLists(types, { renderOnly = false } = {}) {
     types.forEach(type => {
       const list = this.keywordLists[type];
       if (!list) return;
@@ -200,8 +199,11 @@ class KeywordController {
       if (!listView) {
         this.renderKeywordListByType(type);
       } else {
-        const filterQuery = listView.getSearchQuery();
-        this.updateVisibleKeywords(type, filterQuery);
+        if (renderOnly) {
+          this.refreshListPage(type);
+        } else {
+          this.updateVisibleKeywords(type);
+        }
       }
     });   
   }
@@ -212,36 +214,36 @@ class KeywordController {
     if (!list) return;
 
     const { display, batchSize, label, defaultSort } = list;
-    const keywordsData = display.slice(0, batchSize);
+    const slicedKeywords = display.slice(0, batchSize);
     const totalPages = Math.ceil(display.length / batchSize);
 
     this.view.renderKeywordListContainer(
       new KeywordListInfo(
         type,
         label,
-        keywordsData,
+        slicedKeywords,
         totalPages,
         defaultSort
       ), 
-      () => this.getActiveHighlightData()
+      () => this.getActiveHighlightedKeyword()
     );
   }
 
-  // RENDER PAGE FUNCTION
-  renderPage(listView, keywordList, batchSize, currentPage) {
-    const totalPages = Math.ceil(keywordList.length / batchSize);
+  // RENDER LIST PAGE FUNCTION
+  renderListPage(listView, keywordsToRender, batchSize, currentPage) {
+    const totalPages = Math.ceil(keywordsToRender.length / batchSize);
     if (currentPage > totalPages || currentPage < 1) {
       currentPage = 1;
     }
 
     const start = (currentPage - 1) * batchSize;
     const end = start + batchSize;
-    const keywordsData = keywordList.slice(start, end);
-    listView.render(keywordsData, totalPages, currentPage, start);
+    const slicedKeywords = keywordsToRender.slice(start, end);
+    listView.render(slicedKeywords, totalPages, currentPage, start);
   }
 
-  // CHANGE PAGE FUNCTION
-  changePage(listType, clickedButton) {
+  // CHANGE LIST PAGE FUNCTION
+  changeListPage(listType, clickedButton) {
     const listView = this.view.getListViewByType(listType);
     if (!listView || listView.isCurrentPageButton(clickedButton)) return;
 
@@ -252,7 +254,7 @@ class KeywordController {
     if (!list) return;
 
     const { display, batchSize } = list;
-    this.renderPage(listView, display, batchSize, currentPage);
+    this.renderListPage(listView, display, batchSize, currentPage);
     listView.scrollToPagination();
   }
 
@@ -277,7 +279,7 @@ class KeywordController {
 
     this.sortKeywords(display, sortDirection);
     listView.setCurrentSortButton(clickedButton);
-    this.renderPage(listView, display, batchSize, listView.currentPage);
+    this.renderListPage(listView, display, batchSize, listView.currentPage);
   }
 
   // SEARCH FUNCTION
@@ -289,8 +291,20 @@ class KeywordController {
     return filteredKeywords;
   }
 
+  // REFRESH LIST PAGE FUNCTION
+  refreshListPage(listType) {
+    const listView = this.view.getListViewByType(listType);
+    if (!listView) return;
+
+    const list = this.keywordLists[listType];
+    if (!list) return;
+
+    const { display, batchSize } = list;
+    this.renderListPage(listView, display, batchSize, listView.currentPage);
+  }
+
   // UPDATE VISIBLE KEYWORDS FUNCTION
-  updateVisibleKeywords(listType, filterQuery) {
+  updateVisibleKeywords(listType) {
     const listView = this.view.getListViewByType(listType);
     if (!listView) return;
 
@@ -298,6 +312,7 @@ class KeywordController {
     if (!list) return;
 
     const { original, display, batchSize } = list;
+    const filterQuery = listView.filterQuery;
     const result = filterQuery ? this.filterKeywords(original, filterQuery) : [...original];
 
     const sortDirection = listView.sortDirection;
@@ -306,7 +321,7 @@ class KeywordController {
     }
 
     display.splice(0, display.length, ...result);
-    this.renderPage(listView, display, batchSize, listView.currentPage);
+    this.renderListPage(listView, display, batchSize, listView.currentPage);
   }
 
   // REMOVE FILTERS FUNCTION
@@ -321,14 +336,13 @@ class KeywordController {
 
     display.splice(0, display.length, ...original);
     listView.removeFilters();
-    this.renderPage(listView, display, batchSize, listView.currentPage);
+    this.renderListPage(listView, display, batchSize, listView.currentPage);
   }
 
   // RESET HIGHLIGHT STATE FUNCTION
   resetHighlightState() {
     this.activeHighlightedKeyword = null;
-    this.activeHighlightSource = null;
-    this.view.clearActiveHighlightButton();
+    this.view.clearActiveHighlightButtons();
   }
 
   // TOGGLE HIGHLIGHT FUNCTION
@@ -352,10 +366,13 @@ class KeywordController {
       this.keywordHighlighter.removeHighlight();
     } else {
       this.activeHighlightedKeyword = keywordItem;
-      this.activeHighlightSource = clickedButton.dataset.keywordSource ?? 'list';
       this.view.clearHighlightCheckbox();
       this.view.setActiveHighlightButton(clickedButton);
       this.keywordHighlighter.highlightKeyword(keywordItem.name);
+
+      if (clickedButton.dataset.keywordSource === 'result') {
+        this.refreshListPage(clickedButton.dataset.keywordType);
+      }
     }
   }
 
@@ -384,7 +401,6 @@ class KeywordController {
     this.view.clearCustomKeywordInput();
     if (this.view.isHighlightCheckboxEnabled()) {
       this.activeHighlightedKeyword = keywordItem;
-      this.activeHighlightSource = 'list';
       this.view.clearHighlightCheckbox();
     }
     
@@ -393,14 +409,13 @@ class KeywordController {
       display.push(keywordItem);
       this.renderKeywordListByType('userAdded');
     } else {
-      const filterQuery = listView.getSearchQuery();
-      this.updateVisibleKeywords('userAdded', filterQuery);
+      this.updateVisibleKeywords('userAdded');
     }
   }
 
   // DELETE KEYWORD FUNCTION
-  deleteKeyword(listType, keywordIndex) {
-    const list = this.keywordLists[listType];
+  deleteKeyword(keywordType, keywordIndex) {
+    const list = this.keywordLists[keywordType];
     if (!list) return;
 
     const { original, display, batchSize } = list;
@@ -419,10 +434,10 @@ class KeywordController {
 
     display.splice(keywordIndex, 1);
 
-    const listView = this.view.getListViewByType(listType);
+    const listView = this.view.getListViewByType(keywordType);
     if (!listView) return;
 
-    this.renderPage(listView, display, batchSize, listView.currentPage);
+    this.renderListPage(listView, display, batchSize, listView.currentPage);
   }
 
   // GET KEYWORD INDEX FUNCTION
@@ -505,13 +520,16 @@ class KeywordController {
   }
 
   bindSearchInput() {
-    this.view.container.addEventListener('input', event => {
+    this.view.allKeywordListContainer.addEventListener('input', event => {
       const target = event.target;
 
       if (target.matches('input[type="text"][data-search]')) {
         const listType = this.getListType(target);
         if (!listType) return;
-        this.updateVisibleKeywords(listType, target.value.trim());
+        const listView = this.view.getListViewByType(listType);
+        if (!listView) return;
+        listView.filterQuery = target.value;
+        this.updateVisibleKeywords(listType);
       }
     });
   }
@@ -553,9 +571,11 @@ class KeywordController {
       });
 
       handle('.keyword-button--view-details', (button, target) => {
+        const listType = this.getListType(target);
+        if (!listType) return;
         const keywordItem = this.getKeywordItem(target);
         if (!keywordItem) return;
-        this.view.renderKeywordDetails(keywordItem, () => this.getActiveHighlightData());
+        this.view.renderKeywordDetails(keywordItem, listType, () => this.getActiveHighlightedKeyword());
         this.view.toggleSection(button.dataset.section);
       });
 
@@ -566,7 +586,7 @@ class KeywordController {
       handle('.keywords__pagination__button', (button, target) => {
         const listType = this.getListType(target);
         if (!listType) return;
-        this.changePage(listType, button);
+        this.changeListPage(listType, button);
       });
 
       handle('.keywords__sort-button', (button, target) => {

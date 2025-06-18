@@ -39,18 +39,18 @@ describe('KeywordController', () => {
     });
   });
 
-  describe('getMetaTagKeywordsContent()', () => {
+  describe('getMetaKeywordsTagContent()', () => {
     it('should return meta keywords content', () => {
       document.head.innerHTML = `
         <meta name="keywords" content="seo, accessibility, keyword">
       `;
-      const result = controller.getMetaTagKeywordsContent(document);
+      const result = controller.getMetaKeywordsTagContent(document);
       expect(result).toBe('seo, accessibility, keyword');
     });
 
     it('should return empty string if no meta keywords present', () => {
       document.head.innerHTML = '';
-      const result = controller.getMetaTagKeywordsContent(document);
+      const result = controller.getMetaKeywordsTagContent(document);
       expect(result).toBe('');
     });
   });

@@ -968,3 +968,8 @@ pre {
   padding: 0.5rem;
   border-left: 1px solid #cfcfcf;
 }
+
+.keyword-frequency-note {
+  font-size: 0.8rem;
+  width: 100%;
+}

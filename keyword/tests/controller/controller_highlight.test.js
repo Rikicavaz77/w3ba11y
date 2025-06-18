@@ -56,6 +56,7 @@ describe('KeywordController - highlight()', () => {
     beforeEach(() => {
       keywordItem = new Keyword('testKeyword');
 
+      controller.refreshListPage = jest.fn();
       controller.clearHighlightCheckbox = jest.fn();
       controller.resetHighlightState = jest.fn();
 
@@ -73,21 +74,26 @@ describe('KeywordController - highlight()', () => {
 
     it('should highlight keyword if clicked button not active', () => {
       const mockButton = {
-        dataset: { keywordSource: 'result' }
+        dataset: { 
+          keywordSource: 'result',
+          keywordType: 'meta' 
+        }
       };
 
       controller.handleHighlightClick(keywordItem, mockButton);
         
       expect(controller.view.isHighlightButtonActive).toHaveBeenCalledWith(mockButton);
       expect(controller.activeHighlightedKeyword).toBe(keywordItem);
-      expect(controller.activeHighlightSource).toBe('result');
       expect(controller.view.clearHighlightCheckbox).toHaveBeenCalled();
       expect(controller.view.setActiveHighlightButton).toHaveBeenCalled();
       expect(controller.keywordHighlighter.highlightKeyword).toHaveBeenCalledWith('testKeyword');
+      expect(controller.refreshListPage).toHaveBeenCalledWith('meta');
+
+      controller.refreshListPage.mockClear();
 
       mockButton.dataset = {};
       controller.handleHighlightClick(keywordItem, mockButton);
-      expect(controller.activeHighlightSource).toBe('list');
+      expect(controller.refreshListPage).not.toHaveBeenCalled();
     });
 
     it('should remove highlight if clicked button already active', () => {

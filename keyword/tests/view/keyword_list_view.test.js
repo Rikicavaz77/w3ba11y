@@ -7,17 +7,14 @@ const Utils = require('../../utils/utils');
 global.Utils = Utils;
 
 describe('KeywordListView', () => {
-  let view, keywords, mockGetActiveHighlightData;
+  let view, keywords, mockGetActiveHighlightedKeyword;
 
   beforeEach(() => {
-    mockGetActiveHighlightData = jest.fn().mockReturnValue({
-      keyword: null,
-      source: null
-    });
+    mockGetActiveHighlightedKeyword = jest.fn().mockReturnValue(null);
     view = new KeywordListView({
       title: 'Meta keywords', 
       listType: 'meta', 
-      getActiveHighlightData: mockGetActiveHighlightData
+      getActiveHighlightedKeyword: mockGetActiveHighlightedKeyword
     });
     keywords = [
       new Keyword('test', { frequency: 26 }), 
@@ -31,13 +28,14 @@ describe('KeywordListView', () => {
     expect(view.listType).toBe('meta');
     expect(view.container.dataset.listType).toBe('meta');
     expect(view.searchKeywordField).toBeInstanceOf(HTMLElement);
+    expect(view.filterQuery).toBe('');
     expect(view.keywordList).toBeInstanceOf(HTMLElement);
     expect(view.pagination).toBeInstanceOf(HTMLElement);
     expect(view.currentPage).toBe(1);
     expect(view.initialSortDirection).toBeNull();
     expect(view.sortDirection).toBeNull();
     expect(view.currentSortButton).toBeNull();
-    expect(view._getActiveHighlightData).toBe(mockGetActiveHighlightData);
+    expect(view._getActiveHighlightedKeyword).toBe(mockGetActiveHighlightedKeyword);
 
     view = new KeywordListView({
       title: `Most frequent 'single-word' keywords`, 
@@ -56,6 +54,7 @@ describe('KeywordListView', () => {
 
     view.container = dummy;
     view.searchKeywordField = dummy;
+    view.filterQuery = '  test  ';
     view.keywordList = dummy;
     view.pagination = dummy;
     view.paginationButtons = dummy;
@@ -64,18 +63,12 @@ describe('KeywordListView', () => {
 
     expect(view.container).toBe(dummy);
     expect(view.searchKeywordField).toBe(dummy);
+    expect(view.filterQuery).toBe('test');
     expect(view.keywordList).toBe(dummy);
     expect(view.pagination).toBe(dummy);
     expect(view.paginationButtons).toBe(dummy);
     expect(view.currentPageButton).toBe(dummy);
     expect(view.currentPage).toBe(1);
-  });
-
-  test('getSearchQuery() should return current search query', () => {    
-    expect(view.getSearchQuery()).toBe('');
-
-    view.searchKeywordField.value = '   test   ';
-    expect(view.getSearchQuery()).toBe('test');
   });
 
   test('render() should handle keyword and pages visualization', () => {   
@@ -130,13 +123,9 @@ describe('KeywordListView', () => {
     });
 
     it('should populate user-added keyword list correctly', () => {
-      mockGetActiveHighlightData = jest.fn().mockReturnValue({
-        keyword: keywords[0],
-        source: 'result'
-      });
       view.title = 'User added keywords'; 
       view.listType = 'userAdded';
-      view._getActiveHighlightData = mockGetActiveHighlightData;
+      view._getActiveHighlightedKeyword = mockGetActiveHighlightedKeyword;
       view.renderKeywords(keywords, 0);
       const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--delete')).toBeTruthy();
@@ -144,11 +133,8 @@ describe('KeywordListView', () => {
     });
 
     it('should populate keyword list correctly with highlight button active', () => {
-      mockGetActiveHighlightData = jest.fn().mockReturnValue({
-        keyword: keywords[0],
-        source: 'list'
-      });
-      view._getActiveHighlightData = mockGetActiveHighlightData;
+      mockGetActiveHighlightedKeyword = jest.fn().mockReturnValue(keywords[0]);
+      view._getActiveHighlightedKeyword = mockGetActiveHighlightedKeyword;
       view.renderKeywords(keywords, 0);
       const items = view.container.querySelectorAll('.keyword-list__item');
       expect(items[0].querySelector('.keyword-button--highlight--active')).toBeTruthy();
@@ -234,21 +220,23 @@ describe('KeywordListView', () => {
 
   test('clearSearchKeywordField() should clear the input', () => {
     view.searchKeywordField.value = 'test';
+    view.filterQuery = 'test';
 
     view.clearSearchKeywordField();
 
     expect(view.searchKeywordField.value).toBe('');
+    expect(view.filterQuery).toBe('');
   });
 
   describe('areFiltersActive()', () => {
     beforeEach(() => {
       view.initialSortDirection = null;
       view.sortDirection = 'desc';
-      view.searchKeywordField.value = '';
+      view.filterQuery = '';
     });
 
     it('should return true if all filters active', () => {
-      view.searchKeywordField.value = '   test   ';
+      view.filterQuery = '   test   ';
       expect(view.areFiltersActive()).toBe(true);
     });
 
@@ -269,6 +257,7 @@ describe('KeywordListView', () => {
     beforeEach(() => {
       descButton = view.container.querySelector('.keywords__sort-button[data-sort="desc"]');
       view.searchKeywordField.value = 'test';
+      view.filterQuery = 'test';
     });
 
     test('should reset sorting and filtering with no initial sort direction', () => {   
@@ -280,6 +269,7 @@ describe('KeywordListView', () => {
       expect(descButton.classList.contains('keywords__sort-button--active')).toBe(false);
       expect(view.sortDirection).toBeNull();
       expect(view.searchKeywordField.value).toBe('');
+      expect(view.filterQuery).toBe('');
     });
 
     test('should reset sorting and filtering with initial sort direction', () => {  
@@ -294,6 +284,7 @@ describe('KeywordListView', () => {
       expect(button.classList.contains('keywords__sort-button--active')).toBe(false);
       expect(view.sortDirection).toBe('desc');
       expect(view.searchKeywordField.value).toBe('');
+      expect(view.filterQuery).toBe('');
     });
   }); 
 

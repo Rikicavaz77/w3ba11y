@@ -6,10 +6,14 @@ const Keyword = require('../../model/keyword');
 global.Keyword = Keyword;
 
 describe('KeywordController - events', () => {
-  let controller, iframe;
+  let controller, iframe, mockListView;
 
   beforeEach(() => {
     iframe = document.createElement('iframe');
+
+    mockListView = {
+      filterQuery: ''
+    };
 
     const mockView = {
       iframe: iframe,
@@ -22,11 +26,12 @@ describe('KeywordController - events', () => {
       tooltipTriggers: [document.createElement('div')],
       tooltips: [document.createElement('div')],
       colorInputs: [document.createElement('input')],
+      allKeywordListContainer: document.createElement('div'),
       changeTab: jest.fn(),
       showTooltip: jest.fn(),
       hideTooltip: jest.fn(),
       hideAllTooltips: jest.fn(),
-      getListViewByType: jest.fn(),
+      getListViewByType: jest.fn().mockReturnValue(mockListView),
       renderKeywordDetails: jest.fn(),
       toggleSection: jest.fn(),
       analysis: {
@@ -52,12 +57,12 @@ describe('KeywordController - events', () => {
     controller.updateVisibleKeywords = jest.fn();
     controller.clearHighlightCheckbox = jest.fn();
     controller.getKeywordItem = jest.fn().mockReturnValue(new Keyword('test'));
-    controller.changePage = jest.fn();
+    controller.changeListPage = jest.fn();
     controller.handleKeywordSorting = jest.fn();
     controller.removeFilters = jest.fn();
     controller.deleteKeyword = jest.fn();
     controller.handleHighlightClick = jest.fn();
-    controller.getActiveHighlightData = jest.fn();
+    controller.getActiveHighlightedKeyword = jest.fn();
     controller.resetHighlightState = jest.fn();
     controller.update = jest.fn();
     controller.keywordHighlighter = {
@@ -121,9 +126,10 @@ describe('KeywordController - events', () => {
     input.type = 'text';
     input.dataset.search = 'true';
     input.value = 'test';
-    controller.view.container.appendChild(input);
+    controller.view.allKeywordListContainer.appendChild(input);
     input.dispatchEvent(new Event('input', { bubbles: true }));
-    expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('meta', 'test');
+    expect(mockListView.filterQuery).toBe('test');
+    expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('meta');
   });
 
   test('bindGlobalShortcuts() should filter keywords', () => {
@@ -232,9 +238,10 @@ describe('KeywordController - events', () => {
       expect(controller.view.renderKeywordDetails).toHaveBeenCalledTimes(1);
       const args = controller.view.renderKeywordDetails.mock.calls[0];
       expect(args[0].name).toBe('test');
-      expect(typeof args[1]).toBe('function');
-      args[1]();
-      expect(controller.getActiveHighlightData).toHaveBeenCalled();
+      expect(args[1]).toBe('meta');
+      expect(typeof args[2]).toBe('function');
+      args[2]();
+      expect(controller.getActiveHighlightedKeyword).toHaveBeenCalled();
       expect(controller.view.toggleSection).toHaveBeenCalledWith('result');
     });
 
@@ -248,7 +255,7 @@ describe('KeywordController - events', () => {
     it('should change page', () => {
       button.classList.add('keywords__pagination__button');
       inner.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(controller.changePage).toHaveBeenCalledWith('meta', button);
+      expect(controller.changeListPage).toHaveBeenCalledWith('meta', button);
     });
 
     it('should sort keywords', () => {

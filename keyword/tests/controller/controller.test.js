@@ -43,12 +43,11 @@ describe('KeywordController', () => {
     }
 
     controller.activeHighlightedKeyword = keywords[0];
-    controller.activeHighlightSource = 'list';
 
     mockListView = {
       setCurrentSortButton: jest.fn(),
       removeFilters: jest.fn(),
-      getSearchQuery: jest.fn().mockReturnValue('exist'),
+      filterQuery: 'access',
       sortDirection: 'desc',
       currentPage: 1,
       isCurrentPageButton: jest.fn().mockReturnValue(false),
@@ -57,7 +56,7 @@ describe('KeywordController', () => {
     };
     controller.view = { 
       renderKeywordListContainer: jest.fn(),
-      clearActiveHighlightButton: jest.fn(),
+      clearActiveHighlightButtons: jest.fn(),
       getListViewByType: jest.fn().mockReturnValue(mockListView),
       getCustomKeywordValue: jest.fn().mockReturnValue('seo'),
       isHighlightCheckboxEnabled: jest.fn().mockReturnValue(false),
@@ -67,10 +66,9 @@ describe('KeywordController', () => {
     };
   });
 
-  test('getActiveHighlightData() should return highlight data correctly', () => {
-    const highlightData = controller.getActiveHighlightData();
-    expect(highlightData.keyword).toBe(controller.keywordLists.meta.original[0]);
-    expect(highlightData.source).toBe('list');
+  test('getActiveHighlightedKeyword() should return highlighted keyword correctly', () => {
+    const highlightedKeyword = controller.getActiveHighlightedKeyword();
+    expect(highlightedKeyword).toBe(controller.keywordLists.meta.original[0]);
   });
 
   describe('analyzeAndRenderKeywordLists()', () => {
@@ -80,6 +78,7 @@ describe('KeywordController', () => {
       };
 
       controller.renderKeywordListByType = jest.fn();
+      controller.refreshListPage = jest.fn();
       controller.updateVisibleKeywords = jest.fn();
     }); 
 
@@ -99,7 +98,24 @@ describe('KeywordController', () => {
       expect(calls[1][0]).toBe('oneWord');
     });
 
-    it('should analyze and update visible keywords', () => {
+    it('should analyze keywords and refresh current list page', () => {
+      controller.analyzeAndRenderKeywordLists(
+        ['meta', 'oneWord'],
+        { renderOnly: true }
+      );
+      
+      expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledTimes(2);
+      let calls = controller.keywordAnalyzer.analyzeKeywords.mock.calls;
+      expect(calls[0][0]).toBe(controller.keywordLists.meta.original);
+      expect(calls[1][0]).toBe(controller.keywordLists.oneWord.original);
+
+      expect(controller.refreshListPage).toHaveBeenCalledTimes(2);
+      calls = controller.refreshListPage.mock.calls;
+      expect(calls[0][0]).toBe('meta');
+      expect(calls[1][0]).toBe('oneWord');
+    });
+
+    it('should analyze keywords and update visible ones', () => {
       controller.analyzeAndRenderKeywordLists(['meta', 'oneWord']);
       
       expect(controller.keywordAnalyzer.analyzeKeywords).toHaveBeenCalledTimes(2);
@@ -110,9 +126,7 @@ describe('KeywordController', () => {
       expect(controller.updateVisibleKeywords).toHaveBeenCalledTimes(2);
       calls = controller.updateVisibleKeywords.mock.calls;
       expect(calls[0][0]).toBe('meta');
-      expect(calls[0][1]).toBe('exist');
       expect(calls[1][0]).toBe('oneWord');
-      expect(calls[1][1]).toBe('exist');
     });
 
     it('should remove existing list', () => {
@@ -140,10 +154,7 @@ describe('KeywordController', () => {
     expect(arg.sortDirection).toBeNull();
     arg = args[1];
     expect(typeof arg).toBe('function');
-    expect(arg()).toEqual({
-      keyword: controller.keywordLists.meta.original[0],
-      source: 'list'
-    });
+    expect(arg()).toEqual(controller.keywordLists.meta.original[0]);
 
     controller.renderKeywordListByType('oneWord');
     arg = controller.view.renderKeywordListContainer.mock.calls[1][0];
@@ -156,7 +167,7 @@ describe('KeywordController', () => {
 
     beforeEach(() => {
       controller.sortKeywords = jest.fn();
-      controller.renderPage = jest.fn();
+      controller.renderListPage = jest.fn();
       
       mockButton = {
         dataset: { sort: 'asc' }
@@ -167,7 +178,7 @@ describe('KeywordController', () => {
       controller.handleKeywordSorting('meta', mockButton);
       expect(controller.sortKeywords).toHaveBeenCalledWith(controller.keywordLists.meta.display, 'asc');
       expect(mockListView.setCurrentSortButton).toHaveBeenCalledWith(mockButton);
-      expect(controller.renderPage).toHaveBeenCalledWith(
+      expect(controller.renderListPage).toHaveBeenCalledWith(
         mockListView, 
         controller.keywordLists.meta.display, 
         5,
@@ -180,14 +191,27 @@ describe('KeywordController', () => {
       controller.handleKeywordSorting('meta', mockButton);
       expect(controller.sortKeywords).not.toHaveBeenCalled();
       expect(mockListView.setCurrentSortButton).not.toHaveBeenCalledWith();
-      expect(controller.renderPage).not.toHaveBeenCalledWith();
+      expect(controller.renderListPage).not.toHaveBeenCalledWith();
     });
+  });
+
+  test('refreshListPage() should call renderListPage with correct arguments', () => {
+    controller.renderListPage = jest.fn();
+
+    controller.refreshListPage('meta');
+
+    expect(controller.renderListPage).toHaveBeenCalledWith(
+      mockListView,
+      controller.keywordLists.meta.display,
+      5, 
+      1
+    );
   });
 
   describe('updateVisibleKeywords()', () => {
     beforeEach(() => {
       controller.sortKeywords = jest.fn();
-      controller.renderPage = jest.fn();
+      controller.renderListPage = jest.fn();
     });
 
     it('should filter and render keywords ', () => {
@@ -198,14 +222,14 @@ describe('KeywordController', () => {
       ];
       controller.keywordLists.meta.display = [];
   
-      controller.updateVisibleKeywords('meta', 'access');
+      controller.updateVisibleKeywords('meta');
       expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
         'access', 'accessibility'
       ]);
       const [ sortedKeywords, direction ] = controller.sortKeywords.mock.calls[0];
       expect(sortedKeywords.map(k => k.name)).toEqual(['access', 'accessibility']);
       expect(direction).toBe('desc');
-      expect(controller.renderPage).toHaveBeenCalledWith(
+      expect(controller.renderListPage).toHaveBeenCalledWith(
         mockListView, 
         controller.keywordLists.meta.display, 
         5,
@@ -218,8 +242,9 @@ describe('KeywordController', () => {
         new Keyword('access'), new Keyword('accessibility'), new Keyword('account')
       ];
       controller.keywordLists.meta.display = [new Keyword('account')];
+      mockListView.filterQuery = '';
   
-      controller.updateVisibleKeywords('meta', '');
+      controller.updateVisibleKeywords('meta');
       expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual([
         'access', 'accessibility', 'account'
       ]);
@@ -228,7 +253,7 @@ describe('KeywordController', () => {
   
   describe('removeFilters()', () => {
     beforeEach(() => {
-      controller.renderPage = jest.fn();
+      controller.renderListPage = jest.fn();
     });
 
     it('should reset display keywords and update UI', () => {
@@ -237,7 +262,7 @@ describe('KeywordController', () => {
       controller.removeFilters('meta');
       expect(controller.keywordLists.meta.display.map(k => k.name)).toEqual(['meta1']);
       expect(mockListView.removeFilters).toHaveBeenCalled();
-      expect(controller.renderPage).toHaveBeenCalledWith( 
+      expect(controller.renderListPage).toHaveBeenCalledWith( 
         mockListView, 
         controller.keywordLists.meta.display, 
         5,
@@ -249,15 +274,14 @@ describe('KeywordController', () => {
       mockListView.areFiltersActive = jest.fn().mockReturnValue(false); 
       controller.removeFilters('meta');
       expect(mockListView.removeFilters).not.toHaveBeenCalled();
-      expect(controller.renderPage).not.toHaveBeenCalled();
+      expect(controller.renderListPage).not.toHaveBeenCalled();
     });
   });
 
   test('resetHighlightState() should reset highlight data correctly', () => {
     controller.resetHighlightState();
     expect(controller.activeHighlightedKeyword).toBeNull();
-    expect(controller.activeHighlightSource).toBeNull();
-    expect(controller.view.clearActiveHighlightButton).toHaveBeenCalled();
+    expect(controller.view.clearActiveHighlightButtons).toHaveBeenCalled();
   });
 
   describe('analyzeKeyword()', () => {
@@ -288,7 +312,7 @@ describe('KeywordController', () => {
       controller.keywordLists.userAdded.original.push(new Keyword('existing'));
       controller.analyzeKeyword();
       expect(controller.view.clearCustomKeywordInput).toHaveBeenCalled();
-      expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('userAdded', 'exist');
+      expect(controller.updateVisibleKeywords).toHaveBeenCalledWith('userAdded');
     });
 
     it('should analyze and render keyword with highlight button active', () => {
@@ -297,7 +321,6 @@ describe('KeywordController', () => {
       expect(controller.keywordAnalyzer.analyzeKeyword).toHaveBeenCalledWith(expect.any(Keyword));
       expect(controller.view.clearCustomKeywordInput).toHaveBeenCalled();
       expect(controller.activeHighlightedKeyword.name).toBe('seo');
-      expect(controller.activeHighlightSource).toBe('list');
       expect(controller.view.clearHighlightCheckbox).toHaveBeenCalled();
     });
 
@@ -323,7 +346,7 @@ describe('KeywordController', () => {
   describe('deleteKeyword()', () => {
     beforeEach(() => {
       controller.resetHighlightState = jest.fn();
-      controller.renderPage = jest.fn();
+      controller.renderListPage = jest.fn();
 
       controller.keywordLists.userAdded.original.push(
         new Keyword('another userAdded keyword'), 
@@ -341,7 +364,7 @@ describe('KeywordController', () => {
       ]);
       expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual(['userAdded1']);
       expect(controller.resetHighlightState).not.toHaveBeenCalled();
-      expect(controller.renderPage).toHaveBeenCalledWith(
+      expect(controller.renderListPage).toHaveBeenCalledWith(
         mockListView, 
         controller.keywordLists.userAdded.display, 
         5,
@@ -359,7 +382,7 @@ describe('KeywordController', () => {
       ]);
       expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual(['userAdded1']);
       expect(controller.resetHighlightState).toHaveBeenCalled();
-      expect(controller.renderPage).toHaveBeenCalledWith(
+      expect(controller.renderListPage).toHaveBeenCalledWith(
         mockListView, 
         controller.keywordLists.userAdded.display, 
         5,
@@ -376,15 +399,15 @@ describe('KeywordController', () => {
       expect(controller.keywordLists.userAdded.display.map(k => k.name)).toEqual([
         'userAdded1', 'another userAdded keyword'
       ]);
-      expect(controller.renderPage).not.toHaveBeenCalled();
+      expect(controller.renderListPage).not.toHaveBeenCalled();
     });
 
-    it('should not call renderPage if listView is null', () => {
+    it('should not call renderListPage if listView is null', () => {
       controller.view.getListViewByType = jest.fn().mockReturnValue(null),
 
       controller.deleteKeyword('userAdded', 1);
 
-      expect(controller.renderPage).not.toHaveBeenCalled();
+      expect(controller.renderListPage).not.toHaveBeenCalled();
     });
   });
 

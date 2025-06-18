@@ -13,6 +13,7 @@ class KeywordView {
     this._customKeywordInput = null;
     this._keywordHighlightCheckbox = null;
     this._analyzeButton = null;
+    this._allKeywordListContainer = null;
     this._keywordListViews = {};
     this._analysisResultView = null;
     this._container = this.generateKeywordViewSection();
@@ -75,11 +76,11 @@ class KeywordView {
   }
 
   get tooltipTriggers() {
-    return this._container?.querySelectorAll('.keywords__tooltip-trigger');
+    return this._container.querySelectorAll('.keywords__tooltip-trigger');
   }
 
   get tooltips() {
-    return this._container?.querySelectorAll('.keywords__tooltip-text');
+    return this._container.querySelectorAll('.keywords__tooltip-text');
   }
 
   get colorInputs() {
@@ -98,8 +99,12 @@ class KeywordView {
     return this._analyzeButton;
   }
 
-  get activeHighlightButton() {
-    return this._container?.querySelector('.keyword-button--highlight--active');
+  get allKeywordListContainer() {
+    return this._allKeywordListContainer;
+  }
+
+  get activeHighlightButtons() {
+    return this._container.querySelectorAll('.keyword-button--highlight--active');
   }
 
   get analysis() {
@@ -162,6 +167,10 @@ class KeywordView {
     this._analyzeButton = button;
   }
 
+  set allKeywordListContainer(container) {
+    this._allKeywordListContainer = container;
+  }
+
   getCustomKeywordValue() {
     return this._customKeywordInput?.value.trim() || '';
   }
@@ -171,15 +180,15 @@ class KeywordView {
       listType: type,
       title,
       initialSortDirection: sortDirection,
-      getActiveHighlightData: getActive
+      getActiveHighlightedKeyword: getActive
     });
   }
 
-  createListView(keywordListInfo, getActiveHighlightData) {
+  createListView(keywordListInfo, getActiveHighlightedKeyword) {
     const type = keywordListInfo.type;
 
     if (!this._keywordListViews[type]) {
-      this._keywordListViews[type] = this._performListViewCreation(keywordListInfo, getActiveHighlightData);
+      this._keywordListViews[type] = this._performListViewCreation(keywordListInfo, getActiveHighlightedKeyword);
     }
 
     return this._keywordListViews[type];
@@ -307,7 +316,7 @@ class KeywordView {
         ${this._renderOverviewItem({
           title: 'Meta Keywords',
           tooltip: `Google no longer uses meta keywords as a ranking factor. However, including them can be useful for compatibility or documentation reasons.`,
-          value: overviewInfo.metaTagKeywordsContent?.trim() ?? '', 
+          value: overviewInfo.metaKeywordsTagContent?.trim() ?? '', 
           iconSvg: `
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="keywords__overview-icon keywords__icon--small" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
@@ -433,14 +442,15 @@ class KeywordView {
     this._analyzeButton = keywordInputContainer.querySelector('.keywords__analyze-button');
   }
 
-  renderKeywordListContainer(keywordListInfo, getActiveHighlightData) {
-    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightData);
+  renderKeywordListContainer(keywordListInfo, getActiveHighlightedKeyword) {
+    const keywordListView = this.createListView(keywordListInfo, getActiveHighlightedKeyword);
 
     let allKeywordListContainer = this._dashboardBody.querySelector('.keyword-all-lists__container');
     if (!allKeywordListContainer) {
       allKeywordListContainer = document.createElement('div');
       allKeywordListContainer.classList.add('keyword-all-lists__container');
       this._dashboardBody.appendChild(allKeywordListContainer);
+      this._allKeywordListContainer = allKeywordListContainer;
     }
 
     const existing = allKeywordListContainer.querySelector(`[data-list-type="${keywordListInfo.type}"]`);
@@ -455,16 +465,16 @@ class KeywordView {
     keywordListView.render(keywordListInfo.keywords, keywordListInfo.totalPages);
   }
 
-  renderKeywordDetails(keywordItem, getActiveHighlightData) {
+  renderKeywordDetails(keywordItem, keywordType, getActiveHighlightedKeyword) {
     if (!this._analysisResultView) {
-      this._analysisResultView = new AnalysisResultView(getActiveHighlightData);
+      this._analysisResultView = new AnalysisResultView(getActiveHighlightedKeyword);
 
       const existing = this._container.querySelector('.keywords__section--result');
       if (existing)
         this._container.removeChild(existing);
       this._container.appendChild(this._analysisResultView.container);
     }
-    this._analysisResultView.render(keywordItem);
+    this._analysisResultView.render(keywordItem, keywordType);
   }
 
   render(overviewInfo, colorMap) {
@@ -503,7 +513,7 @@ class KeywordView {
   }
 
   hideAllTooltips() {
-    this.tooltips?.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
+    this.tooltips.forEach(tooltip => tooltip.classList.add('keywords--not-visible'));
   }
 
   changeTab(clickedButton) {
@@ -524,18 +534,19 @@ class KeywordView {
   }
 
   isHighlightButtonActive(button) {
-    if (!button) return false;
-    return button.classList.contains('keyword-button--highlight--active');
+    return !!button?.classList.contains('keyword-button--highlight--active');
   }
 
   setActiveHighlightButton(button) {
     if (!button) return;
-    this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
+    this.clearActiveHighlightButtons();
     button.classList.add('keyword-button--highlight--active');
   }
 
-  clearActiveHighlightButton() {
-    this.activeHighlightButton?.classList.remove('keyword-button--highlight--active');
+  clearActiveHighlightButtons() {
+    this.activeHighlightButtons.forEach(button => 
+      button.classList.remove('keyword-button--highlight--active')
+    );
   }
 
   getSection(sectionName) {
