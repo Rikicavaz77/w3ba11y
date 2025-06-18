@@ -18,7 +18,7 @@ describe('KeywordHighlighter', () => {
       <p>Compound keyword appears in the same tag</p>
       <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
-    const treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document);
     const textProcessor = new TextProcessor(document, treeWalker);
     highlighter = new KeywordHighlighter(textProcessor);
   });
@@ -26,7 +26,7 @@ describe('KeywordHighlighter', () => {
   describe('highlightKeyword()', () => {
     it('should highlight simple keyword', () => {
       highlighter.highlightKeyword('keyword');
-      const highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      const highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(4);
       expect(highlights[0].textContent.toLowerCase()).toBe('keyword');
       expect(highlights[0].dataset.parent).toBe('p');
@@ -34,19 +34,19 @@ describe('KeywordHighlighter', () => {
 
     it('should highlight compound keyword in the same tag', () => {
       highlighter.highlightKeyword('test keyword');
-      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      let highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(1);
       expect(highlights[0].textContent.toLowerCase()).toBe('test keyword');
       expect(highlights[0].dataset.parent).toBe('p');
 
       highlighter.highlightKeyword('same tag');
-      highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(1);
       expect(highlights[0].textContent.toLowerCase()).toBe('same tag');
       expect(highlights[0].dataset.parent).toBe('p');
 
       highlighter.highlightKeyword('different tags');
-      highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(1);
       expect(highlights[0].textContent.toLowerCase()).toBe('different tags');
       expect(highlights[0].dataset.parent).toBe('p');
@@ -54,7 +54,7 @@ describe('KeywordHighlighter', () => {
 
     it('should highlight compound keyword in different tags', () => {
       highlighter.highlightKeyword('compound keyword');
-      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      const highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(3);
       expect(highlights[0].textContent.toLowerCase()).toBe('compound keyword');
       expect(highlights[0].dataset.parent).toBe('p');
@@ -68,23 +68,23 @@ describe('KeywordHighlighter', () => {
   describe('removeHighlight()', () => {
     it('should restore plain text', () => {
       highlighter.highlightKeyword('keyword');
-      let highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      let highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBeGreaterThan(0);
 
       highlighter.removeHighlight();
-      highlights = document.querySelectorAll('.w3ba11y__highlight-keyword');
+      highlights = document.querySelectorAll('.w3ba11y__keyword-highlight');
       expect(highlights.length).toBe(0);
     });
 
     it('should avoid dom breaking', () => {
       let textNodes = highlighter._textProcessor.getTextNodes();
-      let initialLength = textNodes.length;
+      const initialLength = textNodes.length;
 
       highlighter.highlightKeyword('keyword');
       highlighter.removeHighlight();
 
       textNodes = highlighter._textProcessor.getTextNodes();
-      let currentLength = textNodes.length;
+      const currentLength = textNodes.length;
       expect(currentLength).toBe(initialLength);
     });
   });
@@ -94,9 +94,9 @@ describe('KeywordHighlighter', () => {
     highlighter.updateTagColors('p', 'bg', '#ffea00');
     expect(highlighter.colorMap.p.bg).toBe('#ffea00');
 
-    const style = document.getElementById('w3ba11y-highlight-keyword-style-override');
+    const style = document.getElementById('w3ba11y-keyword-highlight-style-override');
     const tagStyle = style.textContent
-      .split('.w3ba11y__highlight-keyword[')
+      .split('.w3ba11y__keyword-highlight[')
       .filter(tag => tag.includes('data-parent=\"p\"'))
       .join('');
 

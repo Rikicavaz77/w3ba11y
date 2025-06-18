@@ -27,9 +27,12 @@ describe('KeywordView', () => {
 
   test('should initialize container and internal refs', () => {
     expect(view.container).toBeInstanceOf(HTMLElement);
-    expect(view.header).toBeInstanceOf(HTMLElement);
-    expect(view.body).toBeInstanceOf(HTMLElement);
+    expect(view.dashboardSection).toBeInstanceOf(HTMLElement);
+    expect(view.dashboardHeader).toBeInstanceOf(HTMLElement);
+    expect(view.dashboardBody).toBeInstanceOf(HTMLElement);
+    expect(view.activeSection.classList.contains('keywords__section--dashboard')).toBe(true);
     expect(view.tabButtons.length).toBeGreaterThan(0);
+    expect(view.refreshButton).toBeInstanceOf(HTMLElement);
     expect(view.activeTabButton.classList.contains('tab__button--overview')).toBe(true);
     expect(view.iframe).toBe(document);
   });
@@ -58,32 +61,54 @@ describe('KeywordView', () => {
   test('setters should assign values correctly', () => {
     const dummy = {};
 
-    view.header = dummy;
-    view.body = dummy;
+    view.iframe = dummy;
+    view.container = dummy;
+    view.dashboardSection = dummy;
+    view.activeSection = dummy;
+    view.dashboardHeader = dummy;
+    view.dashboardBody = dummy;
+    view.refreshButton = dummy;
     view.tabButtons = dummy;
     view.activeTabButton = dummy;
+    view.activeTab = dummy;
     view.colorInputs = dummy;
     view.customKeywordInput = dummy;
     view.keywordHighlightCheckbox = dummy;
     view.analyzeButton = dummy;
+    view.allKeywordListContainer = dummy;
 
-    expect(view.header).toBe(dummy);
-    expect(view.body).toBe(dummy);
+    expect(view.iframe).toBe(dummy);
+    expect(view.container).toBe(dummy);
+    expect(view.dashboardSection).toBe(dummy);
+    expect(view.activeSection).toBe(dummy);
+    expect(view.dashboardHeader).toBe(dummy);
+    expect(view.dashboardBody).toBe(dummy);
+    expect(view.refreshButton).toBe(dummy);
     expect(view.tabButtons).toBe(dummy);
     expect(view.activeTabButton).toBe(dummy);
+    expect(view.activeTab).toBe(dummy);
     expect(view.colorInputs).toBe(dummy);
     expect(view.customKeywordInput).toBe(dummy);
     expect(view.keywordHighlightCheckbox).toBe(dummy);
     expect(view.analyzeButton).toBe(dummy);
+    expect(view.allKeywordListContainer).toBe(dummy);
   });
 
-  test('should return active highlight button', () => {
+  test('should return active highlight buttons', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
     
-    const activeButton = view.activeHighlightButton;
+    const activeButton = view.activeHighlightButtons[0];
     expect(activeButton).toBe(button);
+  });
+
+  test('getCustomKeywordValue() should return current custom keyword value', () => {    
+    view.renderKeywordInputBox();
+    expect(view.getCustomKeywordValue()).toBe('');
+
+    view.customKeywordInput.value = '   test   ';
+    expect(view.getCustomKeywordValue()).toBe('test');
   });
 
   test('renderOverviewItem() should render an item with correct data', () => {
@@ -92,54 +117,55 @@ describe('KeywordView', () => {
       tooltip: 'Tooltip text',
       value: 'test', 
       iconSvg: '<svg></svg>',
-      warningIconSvg: '<svg class="keywords__overview-warning-icon"></svg>'
+      warningIconSvg: '<svg class="keywords__overview-icon--warning"></svg>'
     };
 
-    let item = view.renderOverviewItem(itemInfo);
+    let item = view._renderOverviewItem(itemInfo);
     const listContainer = document.createElement('div');
     listContainer.innerHTML = item;
     expect(listContainer.textContent).toContain('Test item');
     expect(listContainer.textContent).toContain('Tooltip text');
     expect(listContainer.textContent).toContain('test');
     expect(listContainer.querySelector('#test-item-tooltip')).toBeTruthy();
-    expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeNull();
+    expect(listContainer.querySelector('.keywords__overview-icon--warning')).toBeNull();
 
     ['', 0, null].forEach(value => {
       itemInfo.value = value;
-      item = view.renderOverviewItem(itemInfo);
+      item = view._renderOverviewItem(itemInfo);
       listContainer.innerHTML = item;
       expect(listContainer.textContent).toContain(value === 0 ? '0' : 'Missing');
-      expect(listContainer.querySelector('.keywords__overview-warning-icon')).toBeTruthy();
+      expect(listContainer.querySelector('.keywords__overview-icon--warning')).toBeTruthy();
     });
   });
 
   test('renderKeywordAnalysisOverview() should create overview container', () => {
     const overviewInfo = {
-      metaTagKeywordsContent: 'test, another test',
+      metaKeywordsTagContent: 'test, another test',
       lang: 'en-US',
       wordCount: 2000,
       uniqueWordCount: 1000
     };
 
     view.renderKeywordAnalysisOverview(overviewInfo);
-    let overview = view.body.querySelector('.keywords__overview-container');
+    let overview = view.dashboardBody.querySelector('.keywords__overview-container');
     expect(overview).toBeTruthy();
+    expect(view.activeTab).toBe(overview);
     expect(overview.textContent).toContain('test, another test');
     expect(overview.textContent).toContain('en-US');
     expect(overview.textContent).toContain('2000');
     expect(overview.textContent).toContain('1000');
-    expect(overview.querySelectorAll('.keywords__overview-warning-icon').length).toBe(0);
+    expect(overview.querySelectorAll('.keywords__overview-icon--warning').length).toBe(0);
 
     const anotherOverviewInfo = {
-      metaTagKeywordsContent: '',
+      metaKeywordsTagContent: '',
       lang: '',
       wordCount: 64,
       uniqueWordCount: 0
     };
 
     view.renderKeywordAnalysisOverview(anotherOverviewInfo);
-    expect(view.body.querySelectorAll('.keywords__overview-container').length).toBe(1);
-    overview = view.body.querySelector('.keywords__overview-container');
+    expect(view.dashboardBody.querySelectorAll('.keywords__overview-container').length).toBe(1);
+    overview = view.dashboardBody.querySelector('.keywords__overview-container');
     const matches = overview.textContent.match(/Missing/gi);
     expect(matches.length).toBe(2);
     expect(overview.textContent).toContain('0');
@@ -154,25 +180,21 @@ describe('KeywordView', () => {
 
     view.renderKeywordSettings(colorMap);
 
-    const settings = view.body.querySelector('.keywords__settings-container');
+    const settings = view.dashboardBody.querySelector('.keywords__settings-container');
     expect(settings).toBeTruthy();
     expect(settings.innerHTML).toContain('highlight-bg-p');
     expect(settings.innerHTML).toContain('highlight-color-h1');
     expect(settings.innerHTML).toContain('highlight-border-h1');
     expect(view.colorInputs.length).toBe(6);
-    
-    const anotherColorMap = {
-      strong: { bg: '#e6320e', color: '#000000', border: '#000000' }
-    };
 
-    view.renderKeywordSettings(anotherColorMap);
-    expect(view.body.querySelectorAll('.keywords__settings-container').length).toBe(1);
+    view.renderKeywordSettings({});
+    expect(view.dashboardBody.querySelectorAll('.keywords__settings-container').length).toBe(1);
   });
 
   test('renderKeywordInputBox() should create input container', () => {
     view.renderKeywordInputBox();
 
-    const box = view.body.querySelector('.keywords__input-container');
+    const box = view.dashboardBody.querySelector('.keywords__input-container');
     expect(box).toBeTruthy();
     expect(view.customKeywordInput).toBeDefined();
     expect(view.customKeywordInput.classList.contains('keywords__input-wrapper__field')).toBe(true);
@@ -182,7 +204,7 @@ describe('KeywordView', () => {
     expect(view.analyzeButton.classList.contains('keywords__analyze-button')).toBe(true);
 
     view.renderKeywordInputBox();
-    expect(view.body.querySelectorAll('.keywords__input-container').length).toBe(1);
+    expect(view.dashboardBody.querySelectorAll('.keywords__input-container').length).toBe(1);
   });
 
   describe('renderKeywordListContainer()', () => {
@@ -207,7 +229,7 @@ describe('KeywordView', () => {
       const appendSpy = jest.spyOn(Element.prototype, 'appendChild');
   
       view.renderKeywordListContainer(keywordListInfo, () => {});
-      const all = view.body.querySelector('.keyword-all-lists__container');
+      const all = view.dashboardBody.querySelector('.keyword-all-lists__container');
       expect(all).toBeTruthy();
       expect(all.contains(mockListView.container)).toBe(true);
       expect(mockListView.render).toHaveBeenCalledWith(keywords, 1);
@@ -234,22 +256,22 @@ describe('KeywordView', () => {
       const existing = document.createElement('div');
       existing.dataset.listType = 'meta';
       all.appendChild(existing);
-      view.body.appendChild(all);
+      view.dashboardBody.appendChild(all);
 
       view.renderKeywordListContainer(keywordListInfo);
       expect(mockListView.render).toHaveBeenCalled();
-      expect(view.body.querySelectorAll('.keyword-all-lists__container').length).toBe(1);
+      expect(view.dashboardBody.querySelectorAll('.keyword-all-lists__container').length).toBe(1);
       expect(all.querySelectorAll('[data-list-type="meta"]').length).toBe(1);
     });
   });
 
   describe('renderKeywordDetails()', () => {
-    let mockContainer, mockRender, mockGetActiveHighlightData;
+    let mockContainer, mockRender, mockGetActiveHighlightedKeyword;
 
     beforeEach(() => {
       mockContainer = document.createElement('div');
       mockRender = jest.fn();
-      mockGetActiveHighlightData = () => {};
+      mockGetActiveHighlightedKeyword = () => {};
       AnalysisResultView.mockImplementation(() => ({
         container: mockContainer,
         render: mockRender
@@ -257,15 +279,15 @@ describe('KeywordView', () => {
     });
 
     it('should create and render AnalysisResultView if not present', () => {
-      view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
-      expect(mockRender).toHaveBeenCalledWith(keywords[0]);
+      view.renderKeywordDetails(keywords[0], 'meta', mockGetActiveHighlightedKeyword);
+      expect(mockRender).toHaveBeenCalledWith(keywords[0], 'meta');
       expect(view.analysis).toBeDefined();
 
-      view.renderKeywordDetails(keywords[1], mockGetActiveHighlightData);
-      expect(mockRender).toHaveBeenCalledWith(keywords[1]);
+      view.renderKeywordDetails(keywords[1], 'meta', mockGetActiveHighlightedKeyword);
+      expect(mockRender).toHaveBeenCalledWith(keywords[1], 'meta');
       
       expect(AnalysisResultView).toHaveBeenCalledTimes(1);
-      expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightData);
+      expect(AnalysisResultView).toHaveBeenCalledWith(mockGetActiveHighlightedKeyword);
     });
 
     it('should remove existing section before appending new one', () => {
@@ -273,7 +295,7 @@ describe('KeywordView', () => {
       dummy.classList.add('keywords__section--result');
       view.container.appendChild(dummy);
 
-      view.renderKeywordDetails(keywords[0], mockGetActiveHighlightData);
+      view.renderKeywordDetails(keywords[0], 'meta', mockGetActiveHighlightedKeyword);
       expect(view.container.contains(mockContainer)).toBe(true);
       expect(view.container.contains(dummy)).toBe(false);
     });
@@ -282,7 +304,7 @@ describe('KeywordView', () => {
   describe('changeTab()', () => {
     beforeEach(() => {
       view.render({
-        metaTagKeywordsContent: '',
+        metaKeywordsTagContent: '',
         lang: '',
         wordCount: 0,
         uniqueWordCount: 0
@@ -309,10 +331,10 @@ describe('KeywordView', () => {
   });
 
   test('getListViewByType() should return correct list view', () => {
-    view._metaKeywordsListView = { listType: 'meta' };
-    view._userKeywordsListView = { listType: 'userAdded' };
-    view._oneWordKeywordsListView = { listType: 'oneWord' };
-    view._twoWordsKeywordsListView = { listType: 'twoWords' };
+    view._keywordListViews.meta = { listType: 'meta' };
+    view._keywordListViews.userAdded = { listType: 'userAdded' };
+    view._keywordListViews.oneWord = { listType: 'oneWord' };
+    view._keywordListViews.twoWords = { listType: 'twoWords' };
     
     expect(view.getListViewByType('meta')).toEqual({ listType: 'meta' });
     expect(view.getListViewByType('userAdded')).toEqual({ listType: 'userAdded' });
@@ -320,27 +342,56 @@ describe('KeywordView', () => {
     expect(view.getListViewByType('twoWords')).toEqual({ listType: 'twoWords' });
     expect(view.getListViewByType('unknown')).toBeNull();
   });
+
+  test('removeKeywordList() should remove keyword list container', () => {
+    view.renderKeywordListContainer({
+      type: 'meta',
+      title: 'test',
+      keywords: [],
+      totalPages: 0
+    }, () => {});
+
+    let listView = view.getListViewByType('meta');
+    let listContainer = view.container.querySelector(`[data-list-type="meta"]`);
+    expect(listView).toBeTruthy();
+    expect(listContainer).toBeTruthy();
+
+    view.removeKeywordList('meta');
+
+    listView = view.getListViewByType('meta');
+    listContainer = view.container.querySelector(`[data-list-type="meta"]`);
+    expect(listView).toBeNull();
+    expect(listContainer).toBeNull();
+  })
   
   describe('createListView()', () => {
     it('should create list view correctly', () => {
       ['meta', 'userAdded'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type, sortDirection: null }, () => {});
+        const result = view.createListView({ 
+          title: 'Test', 
+          type: type, 
+          sortDirection: null 
+        }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBeNull();
         expect(result.currentSortButton).toBeNull();
-        expect(typeof result._getActiveHighlightData).toBe('function');
+        expect(typeof result._getActiveHighlightedKeyword).toBe('function');
       });
 
       ['oneWord', 'twoWords'].forEach(type => {
-        const result = view.createListView({ title: 'Test', type: type, sortDirection: 'desc' }, () => {});
+        const result = view.createListView({ 
+          title: 'Test', 
+          type: type, 
+          sortDirection: 'desc' 
+        }, () => {});
         expect(result).toBeInstanceOf(KeywordListView);
         expect(result.container.dataset.listType).toBe(type);
         expect(result.sortDirection).toBe('desc');
         const button = result.container.querySelector('.keywords__sort-button[data-sort="desc"]');
         expect(result.currentSortButton).toBe(button);
         expect(button.classList.contains('keywords__sort-button--active')).toBe(true);
-        expect(typeof result._getActiveHighlightData).toBe('function');
+        expect(typeof result._getActiveHighlightedKeyword).toBe('function');
       });
     });
 
@@ -350,11 +401,6 @@ describe('KeywordView', () => {
         const second = view.createListView({ title: 'Another test', type: type }, () => {});
         expect(second).toBe(first);
       });
-    });
-
-    it('should return null for unknown type', () => {
-      const result = view.createListView({ title: 'Unknonw', type: 'unsupportedType' }, () => {});
-      expect(result).toBeNull();
     });
   });
 
@@ -373,20 +419,33 @@ describe('KeywordView', () => {
     expect(view.renderKeywordInputBox).toHaveBeenCalled();
   });
 
-  test('toggleSection() should activate correct section and scroll', () => {
-    const mockSection = document.createElement('div');
-    mockSection.classList.add('keywords__section', 'keywords__section--test');
-    view.container.appendChild(mockSection);
-    
-    const header = document.createElement('div');
-    header.classList.add('w3ba11y__header');
-    header.scrollIntoView = jest.fn();
-    document.body.querySelector('aside').prepend(header);
+  describe('toggleSection()', () => {
+    let header;
 
-    view.toggleSection('test');
-    expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(false);
-    expect(mockSection.classList.contains('keywords__section--active')).toBe(true);
-    expect(header.scrollIntoView).toHaveBeenCalled();
+    beforeEach(() => {
+      header = document.createElement('div');
+      header.classList.add('w3ba11y__header');
+      header.scrollIntoView = jest.fn();
+      document.body.querySelector('aside').prepend(header);
+    });
+    
+    it('should activate correct section and scroll', () => {    
+      const mockSection = document.createElement('div');
+      mockSection.classList.add('keywords__section', 'keywords__section--test');
+      view.container.appendChild(mockSection);
+
+      view.toggleSection('test');
+      expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(false);
+      expect(mockSection.classList.contains('keywords__section--active')).toBe(true);
+      expect(header.scrollIntoView).toHaveBeenCalled();
+    });
+
+    it('should not switch if section already active', () => {
+      view.toggleSection('dashboard');
+      expect(view.dashboardSection.classList.contains('keywords__section--active')).toBe(true);
+      expect(view.activeSection).toBe(view.dashboardSection);
+      expect(header.scrollIntoView).not.toHaveBeenCalled();
+    });
   });
 
   test('showTooltip() should make tooltip visible', () => {
@@ -423,49 +482,85 @@ describe('KeywordView', () => {
     expect(tooltip2.classList.contains('keywords--not-visible')).toBe(true);
   });
 
-  describe('isButtonActive()', () => {
+  describe('isHighlightCheckboxEnabled()', () => {
+    beforeEach(() => {
+      view.renderKeywordInputBox();
+    });
+
+    it('should return true if checkbox is enabled', () => {
+      view.keywordHighlightCheckbox.checked = true;
+      
+      expect(view.isHighlightCheckboxEnabled()).toBe(true);
+    });
+
+    it('should return false if checkbox is not enabled', () => {
+      view.keywordHighlightCheckbox.checked = false;
+      
+      expect(view.isHighlightCheckboxEnabled()).toBe(false);
+    });
+
+    it('should return false if checkbox is undefined', () => {
+      view.keywordHighlightCheckbox = null;
+      
+      expect(view.isHighlightCheckboxEnabled()).toBe(false);
+    });
+  });
+
+  describe('isHighlightButtonActive()', () => {
     it('should return true if button is active', () => {
       const button = document.createElement('button');
       button.classList.add('keyword-button--highlight--active');
       
-      expect(view.isButtonActive(button)).toBe(true);
+      expect(view.isHighlightButtonActive(button)).toBe(true);
     });
 
     it('should return false if button is inactive', () => {
       const button = document.createElement('button');
       
-      expect(view.isButtonActive(button)).toBe(false);
+      expect(view.isHighlightButtonActive(button)).toBe(false);
     });
   });
 
-  test('setActiveButton() should make clicked button active', () => {
+  test('setActiveHighlightButton() should make clicked button active', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
     const newButton = document.createElement('button');
-    view.setActiveButton(newButton);
+    view.setActiveHighlightButton(newButton);
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
     expect(newButton.classList.contains('keyword-button--highlight--active')).toBe(true);
   });
 
-  test('clearActiveButton() should make clicked button inactive', () => {
+  test('clearActiveHighlightButtons() should make highlight buttons inactive', () => {
     const button = document.createElement('button');
     button.classList.add('keyword-button--highlight--active');
     view.container.appendChild(button);
-    view.clearActiveButton(button);
+    view.clearActiveHighlightButtons();
     expect(button.classList.contains('keyword-button--highlight--active')).toBe(false);
-  });
-
-  test('getAllSection() should return all sections', () => { 
-    const sections = view.getAllSection();
-    expect(sections.length).toBe(1);
-    expect(sections[0]).toBe(view.dashboardSection);
   });
 
   test('getSection() should return the section by class', () => { 
     const section = view.getSection('dashboard');
     expect(section).toBeTruthy();
     expect(section).toBe(view.dashboardSection);
+  });
+  
+  test('clearHighlightCheckbox() should uncheck the checkbox', () => {
+    view.renderKeywordInputBox();
+    view.keywordHighlightCheckbox.checked = true;
+
+    view.clearHighlightCheckbox();
+
+    expect(view.keywordHighlightCheckbox.checked).toBe(false);
+  });
+
+  test('clearCustomKeywordInput() should clear the input', () => {
+    view.renderKeywordInputBox();
+    view.customKeywordInput.value = 'test';
+
+    view.clearCustomKeywordInput();
+
+    expect(view.customKeywordInput.value).toBe('');
   });
 
   afterAll(() => {

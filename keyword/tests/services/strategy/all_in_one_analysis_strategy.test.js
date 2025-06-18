@@ -28,7 +28,7 @@ describe('AllInOneAnalysisStrategy', () => {
       <p>Compound keyword appears in the same tag</p>
       <p><strong style="display: inline;">Compound <em style="display: inline;">keyword</em></strong> appears in two different tags</p>
     `;
-    const treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document);
     const textProcessor = new TextProcessor(document, treeWalker);
     const tagAccessor = new TagAccessor(document);
     const wordCounter = new WordCounter(textProcessor, tagAccessor);
@@ -41,12 +41,12 @@ describe('AllInOneAnalysisStrategy', () => {
 
   test('reset() should restore cache', () => {
     const ancestorCache = strategy._ancestorCache;
-    const currentAncestorCache = strategy.reset();
+    const currentAncestorCache = strategy.resetCache();
     expect(currentAncestorCache).not.toBe(ancestorCache);
   });
 
   describe('findAncestors()', () => {
-    it('should find all valid ancestors', () => {
+    it('should find all valid ancenstors', () => {
       const p = document.createElement('p');
       const strong = document.createElement('strong');
       const em = document.createElement('em');
@@ -55,19 +55,17 @@ describe('AllInOneAnalysisStrategy', () => {
       const textNode = document.createTextNode('Javascript');
       em.appendChild(textNode);
 
-      strategy.reset();
       const ancestors = strategy._findAncestors(textNode);
       expect(ancestors).toContain(p, strong, em);
     });
 
-    it('should return an empty array if no valid ancestors', () => {
+    it('should return an empty array if no valid ancenstors', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       div.appendChild(span);
       const textNode = document.createTextNode('Javascript');
       span.appendChild(textNode);
 
-      strategy.reset();
       const ancestors = strategy._findAncestors(textNode);
       expect(ancestors).toEqual([]);
     });
@@ -86,7 +84,6 @@ describe('AllInOneAnalysisStrategy', () => {
       strong.appendChild(secondTextNode);
       const textNodes = [firstTextNode, secondTextNode];
   
-      strategy.reset();
       const commonAncestors = strategy._getCommonAncestors(textNodes);
       expect(commonAncestors).toContain(p, strong);
       expect(commonAncestors).not.toContain(em);
@@ -102,7 +99,6 @@ describe('AllInOneAnalysisStrategy', () => {
       div.appendChild(secondTextNode);
       const textNodes = [firstTextNode, secondTextNode];
   
-      strategy.reset();
       const commonAncestors = strategy._getCommonAncestors(textNodes);
       expect(commonAncestors).toEqual([]);
     });

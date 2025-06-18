@@ -19,6 +19,16 @@ describe('TagAccessor', () => {
     accessor = new TagAccessor(document);
   });
 
+  test('setters should assign values correctly', () => {
+    const dummy = {};
+
+    accessor.doc = dummy;
+    accessor.useCache = dummy;
+
+    expect(accessor.doc).toBe(dummy);
+    expect(accessor.useCache).toBe(dummy);
+  });
+
   describe('getTag()', () => {
     it('should return single element for type=single', () => {
       const description = accessor.getTag('description');

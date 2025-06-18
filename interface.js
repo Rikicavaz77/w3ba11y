@@ -19,6 +19,10 @@ class Interface {
     return document.querySelector('aside');
   }
 
+  get header() {
+    return document.querySelector('.w3ba11y__header');
+  }
+
   get iframe() {
     return this._iframe;
   }
@@ -37,7 +41,7 @@ class Interface {
       <html lang="en">
         <head>
           <title>${document.title}</title>
-          <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+          <link rel="stylesheet" href="${chrome.runtime.getURL('static/fonts/remixicon.css')}">
         </head>
         <body>
           <aside>
@@ -45,7 +49,7 @@ class Interface {
               <img class="w3ba11y__logo" src="${chrome.runtime.getURL('static/img/logo.png')}" alt="Logo">
               <h1>w3ba11y</h1>
               <div class="w3ba11y__sidebar-actions">
-                <button class="w3ba11y__close-button">
+                <button type="button" class="w3ba11y__close-button">
                   <span class="visually-hidden">Close the extension</span>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w3ba11y__close-icon" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -56,6 +60,20 @@ class Interface {
             <div class="w3ba11y__body">
               <section class="w3ba11y__section w3ba11y__section--active w3ba11y__section--general">
                 <h2 class="section__title">Analysis</h2>
+                <div class="w3ba11y__feature-access-container">
+                  <button type="button" data-section="img" data-loading="true" class="section__button section__button--img">
+                    <span class="button__title">Images</span>
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
+                  </button>
+                  <button type="button" data-section="h" data-loading="true" class="section__button section__button--h">
+                    <span class="button__title">Headings</span>
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
+                  </button>
+                  <button type="button" data-section="keyword" data-loading="true" class="section__button section__button--keyword">
+                    <span class="button__title">Keywords</span>
+                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
+                  </button>
+                </div>
                 <div class="warning-message-container">
                   <strong>**Warning:</strong>
                   <ul class="warning-message-list">
@@ -72,20 +90,6 @@ class Interface {
                       Keyword frequency is calculated by analyzing the entire page, including hidden elements and non-visual content. As a result, some relevant keywords may not be immediately visible after using the highlighter.
                     </li>
                   </ul> 
-                </div>
-                <div>
-                  <button data-section="img" data-loading="true" class="section__button section__button--img">
-                    <span class="button__title">Images</span>
-                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading images warnings">
-                  </button>
-                  <button data-section="h" data-loading="true" class="section__button section__button--h">
-                    <span class="button__title">Headings</span>
-                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading headings warnings">
-                  </button>
-                  <button data-section="keyword" data-loading="true" class="section__button section__button--keyword">
-                    <span class="button__title">Keywords</span>
-                    <img src="${chrome.runtime.getURL('static/img/loading.gif')}" width="15px" height="15px" alt="Loading keywords warnings">
-                  </button>
                 </div>
               </section>
             </div>

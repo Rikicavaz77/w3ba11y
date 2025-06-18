@@ -19,9 +19,26 @@ class KeywordAnalyzer {
     this._strategy.setContext(this);
   }
 
+  _resetCache({ text = false, tags = false, words = false, strategy = false } = {}) {
+    if (text) this._textProcessor.resetCache();
+    if (tags) this._tagAccessor.resetCache();
+    if (words) this._wordCounter.resetCache();
+    if (strategy) this._strategy.resetCache();
+  }
+
+  fullRefresh() {
+    this._resetCache({
+      text: true,
+      tags: true,
+      words: true,
+      strategy: true
+    });
+  }
+
   countOccurrencesInTag(tagName, pattern) {
     let tags = this._tagAccessor.getTag(tagName);
     if (!tags) return 0;
+    
     tags = Array.isArray(tags) ? tags : [tags];
     let count = 0;
     tags.forEach(tag => {
@@ -32,33 +49,24 @@ class KeywordAnalyzer {
     return count;
   }
 
-  _prepareAnalysisData(keywords = []) {
-    const hasSimple = keywords.some(k => !/\s+/.test(k.name));
-    const hasCompound = keywords.some(k => /\s+/.test(k.name));
-
-    if (hasSimple) {
-      this._textNodes = this._textProcessor.getTextNodes();
-    }
-
-    if (hasCompound) {
-      this._nodeGroups = this._textProcessor.getTextNodeGroups();
-    }
-  }
-
   _performAnalysis(keyword) {
+    if (keyword.status === 'done') keyword.reset();
+
     const isCompound = /\s+/.test(keyword.name);
     const pattern = this._textProcessor.getKeywordPattern(keyword.name);
     
     if (isCompound) {
-      this._strategy.analyzeCompoundKeyword(this._nodeGroups, pattern, keyword);
+      const nodeGroups = this._textProcessor.getTextNodeGroups();
+      this._strategy.analyzeCompoundKeyword(nodeGroups, pattern, keyword);
     } else {
-      this._strategy.analyzeSimpleKeyword(this._textNodes, pattern, keyword);
+      const textNodes = this._textProcessor.getTextNodes();
+      this._strategy.analyzeSimpleKeyword(textNodes, pattern, keyword);
     }
 
-    ["title", "description", "alt"].forEach(tagName => {
-      let count = this.countOccurrencesInTag(tagName, pattern);
-      keyword.frequency += count;
-      keyword.keywordOccurrences[tagName] += count;
+    ['title', 'description', 'alt'].forEach(tagName => {
+      const count = this.countOccurrencesInTag(tagName, pattern);
+      keyword.frequency = (keyword.frequency || 0) + count;
+      keyword.keywordOccurrences[tagName] = (keyword.keywordOccurrences[tagName] || 0) + count;
     });
 
     keyword.calculateDensity(this._wordCounter.totalWords);
@@ -66,21 +74,30 @@ class KeywordAnalyzer {
   }
   
   analyzeKeyword(keyword) {
-    this._prepareAnalysisData([keyword]);
     this._performAnalysis(keyword);
-    this._strategy.reset();
   }
 
   analyzeKeywords(keywords) {
-    this._prepareAnalysisData(keywords);
+    if (keywords.length === 0) return;
+
+    const prevTextCache = this._textProcessor.useCache;
+    const prevTagCache = this._tagAccessor.useCache;
+
     try {
-      this._tagAccessor.useCache = true;
+      if (!prevTextCache) this._textProcessor.useCache = true;
+      if (!prevTagCache) this._tagAccessor.useCache = true;
+
       keywords.forEach(keyword => {
         this._performAnalysis(keyword);
       });
     } finally {
-      this._tagAccessor.useCache = false;
-      this._strategy.reset();
+      if (!prevTextCache) this._textProcessor.useCache = false;
+      if (!prevTagCache) this._tagAccessor.useCache = false;
+
+      this._resetCache({
+        text: !prevTextCache,
+        tags: !prevTagCache
+      });
     }
   }
 }

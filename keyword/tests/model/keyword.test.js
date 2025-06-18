@@ -24,6 +24,17 @@ describe('Keyword', () => {
     expect(keyword.keywordOccurrences.description).toBe(0);
   });
 
+  test('reset() should restore keyword data correctly', () => {
+    keyword.reset();
+
+    expect(keyword.frequency).toBe(0);
+    expect(keyword.density).toBe(0);
+    expect(keyword.status).toBe('analyzing');
+    expect(keyword.keywordOccurrences.title).toBe(0);
+    expect(keyword.keywordOccurrences.description).toBe(0);
+    expect(keyword.keywordOccurrences.p).toBe(0);
+  });
+
   test('calculateDensity() should set correct density value', () => {
     keyword.calculateDensity(2000);
     expect(keyword.density).toBeCloseTo(1.2);

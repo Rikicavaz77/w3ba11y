@@ -25,10 +25,24 @@ describe('WordCounter', () => {
       <p>This is a test of ("il caffè")</p>
       <img src="test.jpg" alt="Image alt text">
     `;
-    const treeWalker = new TreeWalkerManager(document.body);
+    const treeWalker = new TreeWalkerManager(document);
     const textProcessor = new TextProcessor(document, treeWalker);
     const tagAccessor = new TagAccessor(document);
     wordCounter = new WordCounter(textProcessor, tagAccessor);
+  });
+
+  describe('getBaseLang()', () => {
+    it('should return base lang correctly', () => {
+      let baseLang = wordCounter._getBaseLang('en');
+      expect(baseLang).toBe('en');
+
+      baseLang = wordCounter._getBaseLang('en-US');
+      expect(baseLang).toBe('en');
+    });
+
+    it('should return an empty string if no lang', () => {
+      expect(wordCounter._getBaseLang('')).toBe('');
+    });
   });
 
   test('countWords() should count total and unique words', () => {

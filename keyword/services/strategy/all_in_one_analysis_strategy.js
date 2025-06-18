@@ -8,7 +8,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     this._context = context;
   }
 
-  reset() {
+  resetCache() {
     this._ancestorCache = new WeakMap(); 
   }
 
@@ -18,7 +18,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
     let current = node.parentNode;
     const ancestors = [];
     while (current && current !== this._context.root) {
-      let tagName = current.nodeName.toLowerCase();
+      const tagName = current.nodeName.toLowerCase();
       if (this._context.allowedParentTags.includes(tagName)) {
         ancestors.push(current);
       }
@@ -32,17 +32,17 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
   _getCommonAncestors(nodes) {
     if (nodes.length === 0) return [];
 
-    const firstAncestors = this._findAncestors(nodes[0]);
-    const commonAncestors = new Set(firstAncestors);
+    const commonAncestors = new Set(this._findAncestors(nodes[0]));
 
     for (let i = 1; i < nodes.length; i++) {
+      if (commonAncestors.size === 0) break;
+
       const currentAncestors = new Set(this._findAncestors(nodes[i]));
 
       for (const ancestor of [...commonAncestors]) {
         if (!currentAncestors.has(ancestor)) {
           commonAncestors.delete(ancestor);
         }
-        if (commonAncestors.size === 0) break;
       }
     }
     return [...commonAncestors];
@@ -50,7 +50,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
 
   _updateOccurrencesByAncestors(ancestors, keywordOccurrences, occurrences = 1) {
     ancestors.forEach(ancestor => {
-      let tagName = ancestor.nodeName.toLowerCase();
+      const tagName = ancestor.nodeName.toLowerCase();
       keywordOccurrences[tagName] = (keywordOccurrences[tagName] || 0) + occurrences;
     });
   }
@@ -58,11 +58,12 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
   analyzeSimpleKeyword(textNodes, pattern, keyword) {
     textNodes.forEach(node => {
       const matches = node.nodeValue.match(pattern) || [];
-      if (matches.length > 0) {
-        const ancestors = this._findAncestors(node);
-        this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, matches.length);
-      }
-      keyword.frequency += matches.length;
+      if (matches.length === 0) return;
+
+      keyword.frequency = (keyword.frequency || 0) + matches.length;
+
+      const ancestors = this._findAncestors(node);
+      this._updateOccurrencesByAncestors(ancestors, keyword.keywordOccurrences, matches.length);
     });
   } 
 
@@ -71,7 +72,7 @@ class AllInOneAnalysisStrategy extends KeywordAnalysisStrategy {
       const matches = [...virtualText.matchAll(pattern)];
       if (matches.length === 0) return;
 
-      keyword.frequency += matches.length;
+      keyword.frequency = (keyword.frequency || 0) + matches.length;
 
       matches.forEach(match => {
         const matchStart = match.index;

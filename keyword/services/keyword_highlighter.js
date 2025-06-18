@@ -2,17 +2,17 @@ class KeywordHighlighter {
   constructor(textProcessor) {
     this._textProcessor = textProcessor;
     this._colorMap = {
-      h1:     { bg: "#eb9fc5", color: "#560e63", border: "#af0bcc" },
-      h2:     { bg: "#ffae90", color: "#8e282a", border: "#e53935" },
-      h3:     { bg: "#fff94f", color: "#c24315", border: "#ffa588" },
-      h4:     { bg: "#1984b5", color: "#000048", border: "#bfd5e2" },
-      h5:     { bg: "#00ff8c", color: "#0c5f09", border: "#81e392" },
-      h6:     { bg: "#fc7faa", color: "#790041", border: "#d81b60" },
-      p:      { bg: "#c8e6c9", color: "#007032", border: "#66bb6a" },
-      strong: { bg: "#eb0f0f", color: "#000022", border: "#e77f45" },
-      em:     { bg: "#e281fa", color: "#501f6d", border: "#d98ae0" },
-      a:      { bg: "#81d4fa", color: "#0d47a1", border: "#0288d1" },
-      li:     { bg: "#ff6f00", color: "#562020", border: "#e68c19" }
+      h1:     { bg: '#eb9fc5', color: '#560e63', border: '#af0bcc' },
+      h2:     { bg: '#ffae90', color: '#8e282a', border: '#e53935' },
+      h3:     { bg: '#fff94f', color: '#c24315', border: '#ffa588' },
+      h4:     { bg: '#1984b5', color: '#000048', border: '#bfd5e2' },
+      h5:     { bg: '#00ff8c', color: '#0c5f09', border: '#81e392' },
+      h6:     { bg: '#fc7faa', color: '#790041', border: '#d81b60' },
+      p:      { bg: '#c8e6c9', color: '#007032', border: '#66bb6a' },
+      strong: { bg: '#eb0f0f', color: '#000022', border: '#e77f45' },
+      em:     { bg: '#e281fa', color: '#501f6d', border: '#d98ae0' },
+      a:      { bg: '#81d4fa', color: '#0d47a1', border: '#0288d1' },
+      li:     { bg: '#ff6f00', color: '#562020', border: '#e68c19' }
     };
     this._injectHighlightBlock();
   }
@@ -38,52 +38,54 @@ class KeywordHighlighter {
 
   _injectHighlightBlock() {
     const staticCSS = `
-      .w3ba11y__highlight-keyword {
+      .w3ba11y__keyword-highlight {
         --highlight-bg-color: #98746d;
         --highlight-color: #011502;
         --highlight-border-color: #ba9588;
-        background: linear-gradient(to right, var(--highlight-bg-color), rgba(255, 255, 255, 0.4));
-        color: var(--highlight-color);
+        background: linear-gradient(to right, var(--highlight-bg-color), rgba(255, 255, 255, 0.4)) !important;
+        color: var(--highlight-color) !important;
         position: relative;
         display: inline-block;
         padding: 0.2em 1em;
         border-radius: 6px;
-        border: 2px solid var(--highlight-border-color);
+        border: 2px solid var(--highlight-border-color) !important;
       }
-      .w3ba11y__highlight-keyword::before {
+      .w3ba11y__keyword-highlight::before {
         font-size: calc((0.6em + 0.6rem) / 2);
-        background-color: #000;
-        color: #fff;
+        background-color: #000 !important;
+        color: #fff !important;
         content: attr(data-parent);
         text-transform: capitalize;
+        line-height: 1;
         position: absolute;
         top: -4px;
         left: -2px;
-        padding: 0 0.2em;
+        padding: 0.4em;
         border-radius: 6px;
+        pointer-events: none;
       }
     `;
 
     const dynamicCSS = Object.entries(this._colorMap)
       .map(([key, value]) => `
-        .w3ba11y__highlight-keyword[data-parent="${key}"] {
+        .w3ba11y__keyword-highlight[data-parent="${key}"] {
           --highlight-bg-color: ${value.bg};
           --highlight-color: ${value.color};
           --highlight-border-color: ${value.border};
         }
       `).join('\n');
 
-    let styleEl = this.doc.getElementById('w3ba11y-highlight-keyword-style-override');
+    let styleEl = this.doc.getElementById('w3ba11y-keyword-highlight-style-override');
     if (!styleEl) {
       styleEl = this.doc.createElement('style');
-      styleEl.id = 'w3ba11y-highlight-keyword-style-override';
+      styleEl.id = 'w3ba11y-keyword-highlight-style-override';
       this.doc.head.appendChild(styleEl);
     }
     styleEl.textContent = staticCSS + dynamicCSS;
   }
 
   removeHighlight() {
-    const highlightedKeywords = this.root.querySelectorAll('.w3ba11y__highlight-keyword');
+    const highlightedKeywords = this.root.querySelectorAll('.w3ba11y__keyword-highlight');
     const parents = new Set();
 
     highlightedKeywords.forEach(element => {
@@ -106,8 +108,10 @@ class KeywordHighlighter {
           matchStart: match.index,
           matchEnd: match.index + match[0].length
         }));
-      if (matches.length === 0) return;
-      this._highlightMatches(node, matches);
+
+      if (matches.length > 0) {
+        this._highlightMatches(node, matches);
+      }
     });
   }
 
@@ -148,14 +152,14 @@ class KeywordHighlighter {
     const fragment = this.doc.createDocumentFragment();
     let lastIndex = 0;
 
-    for (const { matchStart, matchEnd} of matches) {
+    for (const { matchStart, matchEnd } of matches) {
       if (matchStart > lastIndex) {
         const newTextNode = this.doc.createTextNode(text.slice(lastIndex, matchStart));
         fragment.appendChild(newTextNode);
       }
 
-      const span = this.doc.createElement("span");
-      span.classList.add("w3ba11y__highlight-keyword");
+      const span = this.doc.createElement('span');
+      span.classList.add('w3ba11y__keyword-highlight');
       span.dataset.parent = parent.toLowerCase();
       span.textContent = text.slice(matchStart, matchEnd);
       fragment.appendChild(span);

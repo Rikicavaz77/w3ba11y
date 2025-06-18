@@ -4,29 +4,37 @@ class TagAccessor {
     this._cache = {};
     this._useCache = useCache;
     this._tagAccess = {
-      title:      { selector: "title", type: "single", textSource: "innerText" },
-      description:{ selector: "meta[name='description' i]", type: "single", textSource: "content" },
-      h1:         { selector: "h1", type: "multi", textSource: "innerText" },
-      h2:         { selector: "h2", type: "multi", textSource: "innerText" },
-      h3:         { selector: "h3", type: "multi", textSource: "innerText" },
-      h4:         { selector: "h4", type: "multi", textSource: "innerText" },
-      h5:         { selector: "h5", type: "multi", textSource: "innerText" },
-      h6:         { selector: "h6", type: "multi", textSource: "innerText" },
-      p:          { selector: "p", type: "multi", textSource: "innerText" },
-      strong:     { selector: "strong", type: "multi", textSource: "innerText" },
-      em:         { selector: "em", type: "multi", textSource: "innerText" },
-      a:          { selector: "a", type: "multi", textSource: "innerText" },
-      li:          { selector: "li", type: "multi", textSource: "innerText" },
-      alt:        { selector: "img[alt]", type: "multi", textSource: "alt" }
+      title:       { selector: 'title', type: 'single', textSource: 'textContent' },
+      description: { selector: 'meta[name="description" i]', type: 'single', textSource: 'content' },
+      h1:          { selector: 'h1', type: 'multi', textSource: 'textContent' },
+      h2:          { selector: 'h2', type: 'multi', textSource: 'textContent' },
+      h3:          { selector: 'h3', type: 'multi', textSource: 'textContent' },
+      h4:          { selector: 'h4', type: 'multi', textSource: 'textContent' },
+      h5:          { selector: 'h5', type: 'multi', textSource: 'textContent' },
+      h6:          { selector: 'h6', type: 'multi', textSource: 'textContent' },
+      p:           { selector: 'p', type: 'multi', textSource: 'textContent' },
+      strong:      { selector: 'strong', type: 'multi', textSource: 'textContent' },
+      em:          { selector: 'em', type: 'multi', textSource: 'textContent' },
+      a:           { selector: 'a', type: 'multi', textSource: 'textContent' },
+      li:          { selector: 'li', type: 'multi', textSource: 'textContent' },
+      alt:         { selector: 'img[alt]', type: 'multi', textSource: 'alt' }
     };
   }
 
-  get useCache() {
-    return this._useCache;
+  set doc(doc) {
+    this._doc = doc;
   }
 
   set useCache(useCache) {
     this._useCache = useCache;
+  }
+
+  get doc() {
+    return this._doc;
+  }
+
+  get useCache() {
+    return this._useCache;
   }
 
   resetCache() {
@@ -34,28 +42,36 @@ class TagAccessor {
   }
 
   getTag(tagName) {
-    if (this._useCache && this._cache?.[tagName]) return this._cache[tagName];
+    if (this._useCache && tagName in this._cache) return this._cache[tagName];
 
-    const { selector, type } = this._tagAccess[tagName];
-    const result = (type === "multi") ? Array.from(this._doc.querySelectorAll(selector)) : this._doc.querySelector(selector);
+    const tagConfig = this._tagAccess[tagName];
+    if (!tagConfig) return;
+
+    const { selector, type } = tagConfig;
+    const result = (type === 'multi') 
+      ? Array.from(this._doc.querySelectorAll(selector)) 
+      : this._doc.querySelector(selector);
 
     if (this._useCache) this._cache[tagName] = result;
     return result;
   }
 
   getTagOccurrences(tagName) {
-    const { selector, type } = this._tagAccess[tagName];
-    if (type === "multi") {
-      return this._doc.querySelectorAll(selector).length;
-    } 
-    return this._doc.querySelector(selector) ? 1 : 0;
+    const tagConfig = this._tagAccess[tagName];
+    if (!tagConfig) return 0;
+
+    const { selector, type } = tagConfig;
+    return (type === 'multi') 
+      ? this._doc.querySelectorAll(selector).length
+      : this._doc.querySelector(selector) ? 1 : 0;
   }
 
   extractText(tagName, element) {
-    const { textSource } = this._tagAccess[tagName];
-    const value = 
-      element?.[textSource] ??
-      (textSource === 'innerText' ? element?.textContent : undefined);
+    const tagConfig = this._tagAccess[tagName];
+    if (!tagConfig) return '';
+
+    const { textSource } = tagConfig;
+    const value = element?.[textSource];
     return value?.toLowerCase() ?? '';
   }
 }

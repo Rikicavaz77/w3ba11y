@@ -9,7 +9,7 @@ function makeKeywords(count) {
 function mockListView(overrides = {}) {
   return {
     render: jest.fn(),
-    isCurrentPage: jest.fn(() => false),
+    isCurrentPageButton: jest.fn(() => false),
     scrollToPagination: jest.fn(),
     currentPage: 1,
     ...overrides
@@ -21,15 +21,19 @@ describe('KeywordController - pagination', () => {
 
   beforeEach(() => {
     controller = Object.create(KeywordController.prototype);
-    controller.displayMetaKeywords = makeKeywords(12);
-    controller.batchSizes = { meta: 5 };
+    controller.keywordLists = {
+      meta: { 
+        batchSize: 5,
+        display: makeKeywords(12)
+      }
+    };
   });
 
-  describe('renderPage()', () => {
+  describe('renderListPage()', () => {
     it('should render correct slice for page 2', () => {
       const listView = mockListView({ currentPage: 2 });
   
-      controller.renderPage('meta', listView, controller.displayMetaKeywords, 2);
+      controller.renderListPage(listView, controller.keywordLists.meta.display, 5, 2);
   
       expect(listView.render).toHaveBeenCalledWith(
         [
@@ -48,7 +52,7 @@ describe('KeywordController - pagination', () => {
     it('should render correct slice for page 3', () => {
       const listView = mockListView({ currentPage: 3 });
   
-      controller.renderPage('meta', listView, controller.displayMetaKeywords, 3);
+      controller.renderListPage(listView, controller.keywordLists.meta.display, 5, 3);
   
       expect(listView.render).toHaveBeenCalledWith(
         [
@@ -64,7 +68,7 @@ describe('KeywordController - pagination', () => {
     it('should adjust currentPage if incorrect', () => {
       const listView = mockListView({ currentPage: 4 });
   
-      controller.renderPage('meta', listView, controller.displayMetaKeywords, 4);
+      controller.renderListPage(listView, controller.keywordLists.meta.display, 5, 4);
   
       expect(listView.render).toHaveBeenCalledWith(
         [
@@ -81,33 +85,48 @@ describe('KeywordController - pagination', () => {
     });
   });
   
-  describe('changePage()', () => {
+  describe('changeListPage()', () => {
     beforeEach(() => {
-      controller.renderPage = jest.fn();
+      controller.renderListPage = jest.fn();
     });
 
-    it('should call renderPage with correct arguments', () => {
+    it('should call renderListPage with correct arguments', () => {
       const listView = mockListView();
       controller.view = { getListViewByType: jest.fn(() => listView) };
+      const mockButton = {
+        dataset: { page: 2 }
+      };
 
-      controller.changePage('meta', 2);
+      controller.changeListPage('meta', mockButton);
 
-      expect(controller.renderPage).toHaveBeenCalledWith(
-        'meta',
+      expect(controller.renderListPage).toHaveBeenCalledWith(
         listView,
-        controller.displayMetaKeywords,
+        controller.keywordLists.meta.display,
+        5, 
         2
       );
       expect(listView.scrollToPagination).toHaveBeenCalled();
     });
 
     it('should do nothing if page is current', () => {
-      const listView = mockListView({ isCurrentPage: jest.fn(() => true) });
+      const listView = mockListView({ isCurrentPageButton: jest.fn(() => true) });
       controller.view = { getListViewByType: jest.fn(() => listView) };
 
-      controller.changePage('meta', 1);
+      controller.changeListPage('meta', {});
 
-      expect(controller.renderPage).not.toHaveBeenCalled();
+      expect(controller.renderListPage).not.toHaveBeenCalled();
+    });
+
+    it('should do nothing if page is not a number', () => {
+      const listView = mockListView();
+      controller.view = { getListViewByType: jest.fn(() => listView) };
+      const mockButton = {
+        dataset: { page: 'invalid' }
+      };
+
+      controller.changeListPage('meta', mockButton);
+
+      expect(controller.renderListPage).not.toHaveBeenCalled();
     });
   });
 });

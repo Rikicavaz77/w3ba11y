@@ -1,5 +1,5 @@
 class Keyword {
-  constructor(name, { status = "analyzing", frequency = 0, density = 0, keywordOccurrences = null } = {}) {
+  constructor(name, { status = 'analyzing', frequency = 0, density = 0, keywordOccurrences = null } = {}) {
     this._name = name;
     this._status = status;
     this._frequency = frequency;
@@ -60,6 +60,13 @@ class Keyword {
 
   set keywordOccurrences(keywordOccurrences) {
     this._keywordOccurrences = keywordOccurrences;
+  }
+
+  reset() {
+    this._status = 'analyzing';
+    this._frequency = 0;
+    this._density = 0;
+    this._keywordOccurrences = this._defaultKeywordOccurrences();
   }
 
   calculateDensity(totalWords) {
