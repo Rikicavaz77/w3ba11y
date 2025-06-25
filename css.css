@@ -4,6 +4,10 @@
   font-family: 'Roboto', sans-serif;
 }
 
+:root {
+  color-scheme: light !important;
+}
+
 /*///////////////////////////////////////////////////////// KEYWORDS /////////////////////////////////////////////////////////*/
 .w3ba11y__section--keyword * {
   padding: 0;
@@ -41,6 +45,20 @@ aside {
   background-color: #d0cee5;
   box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
   z-index: 9999;
+}
+
+aside,
+aside p,
+aside button,
+aside h1, h2, h3, h4, h5, h6,
+aside label,
+aside span,
+aside li,
+aside div,
+aside section,
+aside strong,
+aside em {
+  color: #000;
 }
 
 main {
