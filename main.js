@@ -73,8 +73,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   };
 
   const handleCloseClick = (e) => {
+    console.log('prova 2');
     const closeBtn = e.target.closest('.w3ba11y__close-button');
     if (closeBtn) {
+      console.log('prova 2');
       chrome.runtime.sendMessage({ action: 'stop' });
     }
   };
@@ -90,7 +92,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             interfaceInstance.removeLoading();
             if (!clickListenerAdded) {
               document.addEventListener('click', handleSectionClick);
+              console.log('prova 1');
               document.addEventListener('click', handleCloseClick);
+              console.log('prova 1');
               clickListenerAdded = true;
             }
           }
@@ -113,8 +117,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
     case 'stop':
       try {
+        console.log('prova 4');
         window.location.reload();
       } catch (e) {
+        console.log('prova 4');
         window.top.location.href = window.location.href;
       }
       break;
