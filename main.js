@@ -6,12 +6,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     interfaceInstance = new Interface(location);
     interfaceInstance.render();
+    addGlobalListeners();
 
     interfaceInstance.iframe.contentWindow.addEventListener('load', function () {
       let currentUrl = interfaceInstance.iframe.contentWindow.location.href.split('#')[0];
       interfaceInstance.iframeDoc = interfaceInstance.iframe.contentDocument || interfaceInstance.iframe.contentWindow.document;
       interfaceInstance.iframeDoc.addEventListener('click', (e) => {
-        let target = e.target.closest('a');
+        const target = e.target.closest('a');
         if (target) {
           const href = target.getAttribute('href');
 
@@ -28,9 +29,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           }
 
           e.preventDefault();
-
-          document.removeEventListener('click', handleSectionClick);
-          document.removeEventListener('click', handleCloseClick);
+          removeGlobalListeners();
           window.top.location.href = target.href; 
         }
         else {
@@ -42,8 +41,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             urlCounter++;
         
             if (currentUrl !== newUrl && newUrl !== 'about:blank') {
-              document.removeEventListener('click', handleSectionClick);
-              document.removeEventListener('click', handleCloseClick);
+              removeGlobalListeners();
               chrome.runtime.sendMessage({ action: "run", location: newUrl });
               currentUrl = newUrl;
               urlCheck = true;
@@ -55,15 +53,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           }, 300);
         }
       });
-
-      setTimeout(() => {
-        chrome.runtime.sendMessage({ action: "runComponents" });
-      }, 3000);
+      
+      chrome.runtime.sendMessage({ action: "runComponents" });
     });
   };
 
   const handleSectionClick = (e) => {
-    const target = e.target.closest('.section__button');
+    const target = e.target.closest('.section__button:not([data-loading="true"])');
     if (target) {
       interfaceInstance.getAllSection().forEach(section => section.classList.remove('w3ba11y__section--active'));
       interfaceInstance.getSection(target.dataset.section)?.classList.add('w3ba11y__section--active');
@@ -73,55 +69,42 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   };
 
   const handleCloseClick = (e) => {
-    console.log('prova 2');
     const closeBtn = e.target.closest('.w3ba11y__close-button');
     if (closeBtn) {
-      console.log('prova 2');
       chrome.runtime.sendMessage({ action: 'stop' });
     }
   };
   
-  const setupListeners = () => {
-    let clickListenerAdded = false;
+  const addGlobalListeners = () => {
+    document.addEventListener('click', handleCloseClick);
+    document.addEventListener('click', handleSectionClick);
+  };
 
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      switch (message.action) {
-        case 'finishedComponents':
-          interfaceInstance.removeSectionLoading(message.component);
-          if (interfaceInstance.getAllSectionLoading().length === 0) {
-            interfaceInstance.removeLoading();
-            if (!clickListenerAdded) {
-              document.addEventListener('click', handleSectionClick);
-              console.log('prova 1');
-              document.addEventListener('click', handleCloseClick);
-              console.log('prova 1');
-              clickListenerAdded = true;
-            }
-          }
-          break;
-      }
-    });
+  const removeGlobalListeners = () => {
+    document.removeEventListener('click', handleSectionClick);
+    document.removeEventListener('click', handleCloseClick);
   };
 
   switch (message.action) {
     case 'run':
       if (document.readyState === 'complete') {
         initializeInterface(message.location ? message.location : window.location.href);
-        setupListeners();
       } else {
         window.addEventListener('load', () => {
           initializeInterface(message.location ? message.location : window.location.href);
-          setupListeners();
         });
       }
       break;
     case 'stop':
       try {
-        console.log('prova 4');
         window.location.reload();
       } catch (e) {
-        console.log('prova 4');
         window.top.location.href = window.location.href;
+      }
+      break;
+    case 'finishedComponents':
+      if (interfaceInstance) {
+        interfaceInstance.removeSectionLoading(message.component);
       }
       break;
   }

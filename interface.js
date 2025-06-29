@@ -121,12 +121,9 @@ class Interface {
   }
 
   removeSectionLoading(component) {
-    document.querySelector(`.section__button--${component}`).dataset.loading = "false";
-  }
-
-  removeLoading() {
-    document.querySelectorAll('.section__button')?.forEach(button => {
-      button.querySelector('img')?.remove();
-    });
+    const button = document.querySelector(`.section__button--${component}`);
+    if (!button) return;
+    button.dataset.loading = 'false';
+    button.querySelector('img')?.remove();
   }
 }
