@@ -69,13 +69,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   };
 
   const handleCloseClick = (e) => {
+    console.log('Click detected:', e.target);
     const closeBtn = e.target.closest('.w3ba11y__close-button');
     if (closeBtn) {
+      console.log('Close button clicked');
       chrome.runtime.sendMessage({ action: 'stop' });
     }
   };
   
   const addGlobalListeners = () => {
+    console.log('[addGlobalListeners] Adding event listeners...');
     document.addEventListener('click', handleCloseClick);
     document.addEventListener('click', handleSectionClick);
   };
@@ -96,9 +99,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       break;
     case 'stop':
+      console.log('Received "stop" action');
       try {
         window.location.reload();
       } catch (e) {
+        console.log('Reload failed, fallback triggered.');
         window.top.location.href = window.location.href;
       }
       break;
