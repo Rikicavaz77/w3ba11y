@@ -81,8 +81,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   };
 
   const removeGlobalListeners = () => {
-    document.removeEventListener('click', handleSectionClick);
     document.removeEventListener('click', handleCloseClick);
+    document.removeEventListener('click', handleSectionClick);
   };
 
   switch (message.action) {

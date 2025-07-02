@@ -53,8 +53,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           fetchImageSize(message.src, tabId);
           break;
         case 'stop':
-          console.log('prova 3');
-          
           chrome.storage.local.remove(tabId.toString(), () => {
             console.log(`Tab ${tabId} is now inactive`);
           });
