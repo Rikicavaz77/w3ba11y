@@ -48,8 +48,13 @@ aside {
 }
 
 aside,
+aside section,
+aside div,
 aside p,
+aside li,
 aside button,
+aside input,
+aside textarea,
 aside h1, 
 aside h2, 
 aside h3, 
@@ -58,9 +63,6 @@ aside h5,
 aside h6,
 aside label,
 aside span,
-aside li,
-aside div,
-aside section,
 aside strong,
 aside em {
   color: #000;
