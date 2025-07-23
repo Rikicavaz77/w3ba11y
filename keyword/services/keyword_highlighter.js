@@ -42,6 +42,9 @@ class KeywordHighlighter {
         --highlight-bg-color: #98746d;
         --highlight-color: #011502;
         --highlight-border-color: #ba9588;
+        -webkit-background-clip: initial !important;
+        background-clip: initial !important;
+        -webkit-text-fill-color: initial !important;
         background: linear-gradient(to right, var(--highlight-bg-color), rgba(255, 255, 255, 0.4)) !important;
         color: var(--highlight-color) !important;
         position: relative;
