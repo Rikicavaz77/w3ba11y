@@ -132,11 +132,13 @@ class KeywordController {
   createOverview() {
     const metaKeywordsTagContent = this.getMetaKeywordsTagContent(this.view.iframe);
     const lang = this.getLang(this.view.iframe);
+    const metaDescriptionTagContent = this.getMetaDescriptionTagContent(this.view.iframe);
     this.overviewInfo = new OverviewInfo(
       this.wordCounter.totalWords,
       this.wordCounter.uniqueWords,
       metaKeywordsTagContent,
-      lang
+      lang, 
+      metaDescriptionTagContent
     );
   }
 
@@ -146,6 +148,10 @@ class KeywordController {
 
   getLang(doc) {
     return doc.documentElement.lang;
+  }
+
+  getMetaDescriptionTagContent(doc) {
+    return doc.querySelector('meta[name="description" i]')?.content ?? '';
   }
 
   getActiveHighlightedKeyword() {

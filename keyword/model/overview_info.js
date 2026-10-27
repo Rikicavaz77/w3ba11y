@@ -1,9 +1,10 @@
 class OverviewInfo {
-  constructor(wordCount, uniqueWordCount, metaKeywordsTagContent, lang) {
+  constructor(wordCount, uniqueWordCount, metaKeywordsTagContent, lang, metaDescriptionTagContent) {
     this._wordCount = wordCount;
     this._uniqueWordCount = uniqueWordCount;
     this._metaKeywordsTagContent = metaKeywordsTagContent;
     this._lang = lang;
+    this._metaDescriptionTagContent = metaDescriptionTagContent;
   } 
 
   set wordCount(wordCount) {
@@ -28,6 +29,10 @@ class OverviewInfo {
 
   get lang() {
     return this._lang;
+  }
+
+  get metaDescriptionTagContent() {
+    return this._metaDescriptionTagContent;
   }
 }
 
