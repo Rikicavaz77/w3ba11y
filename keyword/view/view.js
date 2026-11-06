@@ -8,6 +8,7 @@ class KeywordView {
     this._refreshButton = null;
     this._tabButtons = null;
     this._activeTabButton = null;
+    this._resizeTabButtons = null;
     this._activeTab = null;
     this._colorInputs = null;
     this._customKeywordInput = null;
@@ -53,6 +54,10 @@ class KeywordView {
 
   get activeTabButton() {
     return this._activeTabButton;
+  }
+
+  get resizeTabButtons() {
+    return this._resizeTabButtons;
   }
 
   get activeTab() {
@@ -145,6 +150,10 @@ class KeywordView {
 
   set activeTabButton(button) {
     this._activeTabButton = button;
+  }
+
+  set resizeTabButtons(buttons) {
+    this._resizeTabButtons = buttons;
   }
 
   set activeTab(tab) {
@@ -312,7 +321,7 @@ class KeywordView {
       </svg>
     `;
     overviewContainer.innerHTML = `
-      <ul class="keywords__overview-list">
+      <ul id="keywords-overview-list" class="keywords__overview-list">
         ${this._renderOverviewItem({
           title: 'Meta Keywords',
           tooltip: `Google no longer uses meta keywords as a ranking factor. However, including them can be useful for compatibility or documentation reasons.`,
@@ -370,6 +379,14 @@ class KeywordView {
           warningIconSvg: warningIconSvg
         })}
       </ul>
+      <div class="keywords__inner-tab__footer">
+        <button type="button" class="keywords__resize-tab-button" aria-expanded="true" aria-controls="keywords-overview-list">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__resize-tab-icon keywords__icon--large" aria-hidden="true">
+            <path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" />
+          </svg>
+          <span class="visually-hidden">Toggle overview list</span>
+        </button>
+      </div> 
     `;
   }
 
@@ -377,7 +394,7 @@ class KeywordView {
     let settingsContainer = this._dashboardBody.querySelector('.keywords__settings-container');
     if (!settingsContainer) {
       settingsContainer = document.createElement('div');
-      settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings');
+      settingsContainer.classList.add('keywords__settings-container', 'tab', 'tab--settings', 'collapsed');
       settingsContainer.dataset.tab = 'settings';
       this._dashboardBody.appendChild(settingsContainer);
     }
@@ -394,7 +411,7 @@ class KeywordView {
           <span id="tags-color-tooltip" role="tooltip" class="keywords__tooltip-text keywords--not-visible">Customize the colors used to highlight keywords based on the parent tag.</span>                              
         </div>
       </div>
-      <ul class="keywords__tag-color-options">
+      <ul id="keywords-tag-color-options" class="keywords__tag-color-options">
       ${Object.entries(colorMap)
         .map(([key, value]) => {
           return `
@@ -417,6 +434,14 @@ class KeywordView {
         }).join('')
       }
       </ul>
+      <div class="keywords__inner-tab__footer">
+        <button type="button" class="keywords__resize-tab-button" aria-expanded="false" aria-controls="keywords-tag-color-options">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="keywords__resize-tab-icon keywords__icon--large" aria-hidden="true">
+            <path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" />
+          </svg>
+          <span class="visually-hidden">Toggle tag color options</span>
+        </button>
+      </div> 
     `;
 
     this._colorInputs = settingsContainer.querySelectorAll('.keywords__color-selector__input');
@@ -491,6 +516,7 @@ class KeywordView {
   render(overviewInfo, colorMap) {
     this.renderKeywordAnalysisOverview(overviewInfo);
     this.renderKeywordSettings(colorMap);
+    this._resizeTabButtons = this._dashboardBody.querySelectorAll('.keywords__resize-tab-button');
     this.renderKeywordInputBox();
   }
 

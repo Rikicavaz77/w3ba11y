@@ -481,6 +481,17 @@ class KeywordController {
     this.view.tabButtons.forEach(button => {
       button.addEventListener('click', () => this.eventHandlers.changeTab(button));
     });
+
+    this.view.resizeTabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tab = button.closest('.tab');
+        if (!tab) return;
+
+        const isCollapsed = tab.classList.toggle('collapsed');
+        
+        button.setAttribute('aria-expanded', !isClosed);
+      });
+    });
   }
 
   setupTooltipListeners() {
