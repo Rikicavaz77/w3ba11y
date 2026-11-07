@@ -489,7 +489,7 @@ class KeywordController {
 
         const isCollapsed = tab.classList.toggle('collapsed');
         
-        button.setAttribute('aria-expanded', !isClosed);
+        button.setAttribute('aria-expanded', !isCollapsed);
       });
     });
   }
